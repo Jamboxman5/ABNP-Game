@@ -3,7 +3,7 @@ package me.jamboxman5.abnpgame.client;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import me.jamboxman5.abnpgame.ABNPGame;
+import me.jamboxman5.abnpgame.Drop;
 
 public class HtmlLauncher extends GwtApplication {
 
@@ -17,6 +17,6 @@ public class HtmlLauncher extends GwtApplication {
 
         @Override
         public ApplicationListener createApplicationListener () {
-                return new ABNPGame();
+                return new Drop();
         }
 }
