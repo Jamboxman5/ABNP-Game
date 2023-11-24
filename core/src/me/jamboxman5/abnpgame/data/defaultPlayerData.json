@@ -1,0 +1,15 @@
+{
+	"username": "Albaño Pecór",
+	"money": 0,
+	"experience": 0,
+	"weaponLoadout": {
+		"weapons": [
+		{
+			"type": "M1911",
+			"ammo": "StandardAmmo",
+			"mods": []
+		}
+		]
+	},
+	"purchasedWeapons": ["M1911"] 
+}

@@ -1,0 +1,23 @@
+{
+	"username": "testPlayer",
+	"money": 69420,
+	"experience": 1337,
+	"weaponLoadout": {
+		"weapons": [
+		{
+			"type": "M4A1",
+			"ammo": "StandardAmmo",
+			"mods": [
+			{"type": "RedDotSight"}
+			]
+		},
+		{
+			"type": "M1911",
+			"ammo": "StandardAmmo",
+			"mods": []
+		}
+		
+		]
+	},
+	"purchasedWeapons": ["M4A1", "Winchester 12GA", "M1911"] 
+}
