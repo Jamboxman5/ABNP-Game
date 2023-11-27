@@ -1,5 +1,8 @@
 package me.jamboxman5.abnpgame.weapon.firearms.shotgun;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.ShellAmmo;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
@@ -14,28 +17,25 @@ public class ShotgunWinchester12 extends Firearm {
 	}
 	
 	public ShotgunWinchester12(WeaponModLoadout mods, Ammo ammo, int loadedAmmo) {
-		BufferedImage[] iSprites = {setup("/resources/entity/player/shotgun/Player_Shotgun", .33)};
-		BufferedImage[] sSprites = {setup("/resources/entity/player/shotgun/Player_Shotgun_Shoot_2", .33),
-									setup("/resources/entity/player/shotgun/Player_Shotgun_Shoot_2", .33),
-									setup("/resources/entity/player/shotgun/Player_Shotgun_Shoot_1", .33),
-									setup("/resources/entity/player/shotgun/Player_Shotgun_Shoot_1", .33),
-									setup("/resources/entity/player/shotgun/Player_Shotgun_Shoot_0", .33),
-									setup("/resources/entity/player/shotgun/Player_Shotgun_Shoot_0", .33),
-									setup("/resources/entity/player/shotgun/Player_Shotgun_Shoot_0", .33)};
-		BufferedImage[] rSprites = {setup("/resources/entity/player/shotgun/Player_Shotgun", .33)};
-		this.attackSound = "sfx/weapon/shotgun/Shotgun_Shot";
-		this.reloadSound = "sfx/weapon/rifle/Assault_Rifle_Reload";
+		idleSprites = new Array<>(new Sprite[]{setup("entity/player/shotgun/Player_Shotgun", .33f)});
+		shootSprites = new Array<>(new Sprite[]{setup("entity/player/shotgun/Player_Shotgun_Shoot_2", .33f),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_2", .33f),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_1", .33f),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_1", .33f),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_0", .33f),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_0", .33f),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_0", .33f)});
+		reloadSprites = new Array<>(new Sprite[]{setup("entity/player/shotgun/Player_Shotgun", .33f)});
+		this.attackSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/shotgun/Shotgun_Shot.wav"));
+		this.reloadSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav"));
 		this.attackRateMS = 1100;
 		this.damage = 85;
 		this.equippedMods = mods;
 		this.reloadSpeedMS = 2300;
 		this.magSize = 6;
 		this.range = 350;
-		this.idleSprites = iSprites;
-		this.shootSprites = sSprites;
-		this.reloadSprites = rSprites;
 		this.activeSprites = idleSprites;
-		this.hudSprite = setup("/resources/weapon/shotgun/Winchester12", .27);
+		this.hudSprite = setup("weapon/shotgun/Winchester12", .27f);
 		this.loaded = loadedAmmo;
 		this.currentAmmo = ammo;
 		this.name = "Winchester 12GA";

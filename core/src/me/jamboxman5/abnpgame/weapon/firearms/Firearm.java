@@ -28,7 +28,7 @@ public class Firearm extends Weapon {
 	protected Ammo currentAmmo;
 
 	protected Sprite setup(String imagePath, float scale) {
-		Texture t = new Texture(Gdx.files.internal(imagePath));
+		Texture t = new Texture(Gdx.files.internal(imagePath + ".png/"));
 		Sprite s = new Sprite(t);
 		s.scale(scale);
 		return s;

@@ -29,8 +29,8 @@ public abstract class Weapon {
 	public Array<Sprite> reloadSprites;
 	public Array<Sprite> activeSprites;
 			
-	protected BufferedImage dropSprite;
-	protected BufferedImage hudSprite;
+	protected Sprite dropSprite;
+	protected Sprite hudSprite;
 	protected Sound attackSound;
 	protected String name;
 	protected WeaponType type;
@@ -41,7 +41,7 @@ public abstract class Weapon {
 	public Sprite getPlayerSprite(int idx) {
 		return activeSprites.get(idx);
 	}
-	public BufferedImage getHudSprite() { return hudSprite; }
+	public Sprite getHudSprite() { return hudSprite; }
 	public String getName() { return name; }
 	public abstract void attack();
 	protected boolean canAttack() {

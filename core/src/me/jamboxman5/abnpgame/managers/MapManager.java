@@ -1,23 +1,24 @@
 package me.jamboxman5.abnpgame.managers;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.maps.MapRenderer;
+import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
+import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.Entity;
 import me.jamboxman5.abnpgame.entity.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.entity.projectile.Projectile;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
-import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
 
 public class MapManager {
 	
@@ -28,12 +29,17 @@ public class MapManager {
 	public Array<Projectile> projectiles = new Array<>();
 	public Array<Projectile> disposingProjectiles = new Array<>();
 	public Array<Map> maps = new Array<>();
+
+	MapRenderer renderer;
 	
 	Map m;
+	private World world;
+	private Box2DDebugRenderer dbgRenderer;
 	
 	public MapManager(ABNPGame game) {
 		this.game = game;
-		
+		world = new World(new Vector2(0,0), true);
+		dbgRenderer = new Box2DDebugRenderer();
 		getMaps();
 	}
 
@@ -45,27 +51,17 @@ public class MapManager {
 		setup("Airbase");
 	}
 
-	public void draw() {
+	public void draw(SpriteBatch batch) {
 		
 //		if (game.getScreen().getClass() != GameScreen.class) return;
 //
-//        int screenX = (int) (0 - game.getPlayer().getWorldX() + game.getPlayer().getScreenX());
-//        int screenY = (int) (0 - game.getPlayer().getWorldY() + game.getPlayer().getScreenY());
-//
-////		int screenX = 0;
-////		int screenY = 0;
-//
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//                RenderingHints.VALUE_ANTIALIAS_ON);
-//		g2.setRenderingHint(RenderingHints.KEY_RENDERING,
-//                RenderingHints.VALUE_RENDER_QUALITY);
-//		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-//                RenderingHints.VALUE_STROKE_PURE);
-//
-//		g2.setColor(Color.black);
-//		g2.fillRect(0, 0, gp.getScreenWidth(), gp.getScreenHeight());
-//		g2.drawImage(m.getImage(), screenX, screenY,(int) (m.getImage().getWidth()*gp.getZoom()), (int)(m.getImage().getHeight()*gp.getZoom()), null);
-//
+        int screenX = (int) (0 - game.getPlayer().getAdjustedWorldX() + game.getPlayer().getScreenX());
+        int screenY = (int) (0 - game.getPlayer().getAdjustedWorldY() + game.getPlayer().getScreenY());
+
+//		int screenX = 0;
+//		int screenY = 0;
+		m.getImage().setScale(0);
+		batch.draw(m.getImage(), screenX,screenY);
 	}
 	
 	public void updateEntities() {
@@ -77,7 +73,7 @@ public class MapManager {
 	}
 	
 	public void drawEntities(Graphics2D g2) {
-		for (Entity e : entities) { e.draw(); }
+		for (Entity e : entities) { e.draw(game.batch); }
 	}
 	
 	public void updateProjectiles() {
@@ -156,8 +152,8 @@ public class MapManager {
 	public void movePlayer(String username, double x, double y, double rotation) {
 		int index = getConnectedPlayerIndex(username);
 		if (index < 0) return;
-		entities.get(index).setWorldX(x*game.getZoom());
-		entities.get(index).setWorldY(y*game.getZoom());
+		entities.get(index).setWorldX(x);
+		entities.get(index).setWorldY(y);
 		entities.get(index).setRotation(rotation);
 	}
 
@@ -185,4 +181,8 @@ public class MapManager {
 		((OnlinePlayer)entities.get(idx)).getWeaponLoadout().addWeapon(weapon, true);
 		((OnlinePlayer)entities.get(idx)).getWeaponLoadout().removeWeapon(oldWeapon);
 	}
+
+	public World getWorld() { return world; }
+
+	public Box2DDebugRenderer getDebugRenderer() { return dbgRenderer; }
 }

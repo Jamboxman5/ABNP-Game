@@ -26,13 +26,13 @@ public class WeaponLoadout {
 		if (!weapons.isEmpty()) activeWeapon = weapons.get(0);
 	}
 	public void nextWeapon() {
-		int idx = weapons.indexOf(activeWeapon) + 1;
-		if (idx >= weapons.size()) idx = 0;
+		int idx = weapons.indexOf(activeWeapon, false) + 1;
+		if (idx >= weapons.size) idx = 0;
 		activeWeapon = weapons.get(idx);
 	}
 	public void previousWeapon() {
-		int idx = weapons.indexOf(activeWeapon) - 1;
-		if (idx < 0) idx = weapons.size()-1;
+		int idx = weapons.indexOf(activeWeapon, false) - 1;
+		if (idx < 0) idx = weapons.size-1;
 		activeWeapon = weapons.get(idx);
 	}
 	public void addWeapon(Weapon newWeapon, boolean makeActive) {
@@ -42,18 +42,18 @@ public class WeaponLoadout {
 		}
 	}
 	public void removeWeapon(Weapon toRemove) {
-		if (!weapons.contains(toRemove)) return;
+		if (!weapons.contains(toRemove, false)) return;
 		if (activeWeapon.equals(toRemove)) {
 			previousWeapon();
 		}
-		weapons.remove(toRemove);
+		weapons.removeValue(toRemove, false);
 	}
 	public Weapon getActiveWeapon() { return activeWeapon; }
 	public Firearm getActiveFirearm() {
-		if (activeWeapon instanceof Firearm f) {
-			return f;
+		if (activeWeapon instanceof Firearm) {
+			return (Firearm) activeWeapon;
 		} else return null;
 	}
 
-    public List<Weapon> getWeapons() { return weapons; }
+    public Array<Weapon> getWeapons() { return weapons; }
 }

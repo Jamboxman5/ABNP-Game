@@ -1,6 +1,6 @@
 package me.jamboxman5.abnpgame.entity.projectile;
 
-import me.jamboxman5.abnpgame.main.GamePanel;
+import me.jamboxman5.abnpgame.main.ABNPGame;
 
 import java.awt.*;
 
@@ -18,7 +18,7 @@ public class Bullet extends Projectile{
 
 	@Override
 	public void update() {
-		if (traveled > range) GamePanel.getInstance().getMapManager().disposeProjectile(this);
+		if (traveled > range) ABNPGame.getInstance().getMapManager().disposeProjectile(this);
 		int xComp = (int) (speed * Math.cos(rotation));
 		int yComp = (int) (speed * Math.sin(rotation));
 		
@@ -33,7 +33,7 @@ public class Bullet extends Projectile{
 
 	@Override
 	public void draw(Graphics2D g2) {
-		GamePanel gp = GamePanel.getInstance();
+		ABNPGame gp = ABNPGame.getInstance();
 		int x = (int) (worldX - gp.getPlayer().getAdjustedWorldX() + gp.getPlayer().getAdjustedScreenX());
         int y = (int) (worldY - gp.getPlayer().getAdjustedWorldY() + gp.getPlayer().getAdjustedScreenY());
 //        x *= gp.getZoom();

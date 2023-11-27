@@ -1,5 +1,6 @@
 package me.jamboxman5.abnpgame.data;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.Array;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -17,10 +18,11 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Scanner;
 
 public class DataManager {
 
-    static private final int shiftKey = 6;
+    static private final int shiftKey = 1;
     static final String dataPath = FileSystemView.getFileSystemView().getDefaultDirectory().getPath() + "/ABNPGame/data/";
     static final String playerDataFile = "playerData.abnp";
     static final String localPlayerPath =  dataPath + playerDataFile;
@@ -72,7 +74,7 @@ public class DataManager {
     private static Player generateNewPlayerData() {
         try {
             Files.createDirectories(Paths.get(dataPath));
-            InputStream defaultInput = DataManager.class.getResourceAsStream("/me/jamboxman5/abnpgame/data/defaultPlayerData.json/");
+            InputStream defaultInput = Gdx.files.internal("data/player/defaultPlayerData.json/").read();
             assert defaultInput != null;
             String json = load(defaultInput);
             shiftSave(json, localPlayerPath);
@@ -91,7 +93,8 @@ public class DataManager {
         for (Weapon weapon : p.getWeaponLoadout().getWeapons()) {
             JsonObject weaponOBJ = new JsonObject();
             weaponOBJ.addProperty("type", weapon.getType().toString());
-            if (weapon instanceof Firearm firearm) {
+            if (weapon instanceof Firearm) {
+                Firearm firearm = (Firearm) weapon;
                 weaponOBJ.addProperty("ammo", firearm.getAmmoType().toString());
             }
             JsonArray modsArr = new JsonArray();
@@ -124,25 +127,17 @@ public class DataManager {
 
     }
     private static String shiftLoad(InputStream is) throws IOException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        for (int length; (length = is.read(buffer)) != -1; ) {
-            result.write(buffer, 0, length);
-        }
-        String contents = result.toString(StandardCharsets.UTF_8);
-        StringBuilder shiftedContents = new StringBuilder(contents);
+        Scanner s = new Scanner(is).useDelimiter("\\A");
+        String result = s.hasNext() ? s.next() : "";
+        StringBuilder shiftedContents = new StringBuilder(result);
         for (int i = 0; i < shiftedContents.length(); i ++) {
             shiftedContents.setCharAt(i, (char) (shiftedContents.charAt(i) - shiftKey));
         }
         return shiftedContents.toString();
     }
     private static String load(InputStream is) throws IOException {
-        ByteArrayOutputStream result = new ByteArrayOutputStream();
-        byte[] buffer = new byte[1024];
-        for (int length; (length = is.read(buffer)) != -1; ) {
-            result.write(buffer, 0, length);
-        }
-        return result.toString(StandardCharsets.UTF_8);
+        Scanner s = new Scanner(is).useDelimiter("\\A");
+        return s.hasNext() ? s.next() : "";
     }
     private static void shiftSave(String jsonString, String path) {
         StringBuilder fileContents = new StringBuilder(jsonString);

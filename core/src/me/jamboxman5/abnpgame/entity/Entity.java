@@ -4,13 +4,10 @@ package me.jamboxman5.abnpgame.entity;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 
 public abstract class Entity {
 	
@@ -41,7 +38,7 @@ public abstract class Entity {
 	public void setSpeed(double speed) { this.speed = speed; }
 
 	public abstract void update();
-	public abstract void draw();
+	public abstract void draw(SpriteBatch batch);
 	
 	public Sprite setup(String imagePath, float scale) {
 		Texture t = new Texture(Gdx.files.internal(imagePath));
@@ -83,11 +80,11 @@ public abstract class Entity {
 	
 	public void setSprite(Sprite img) { sprite = img; }
 	public Sprite getSprite() { return sprite; }
-	public double getSpeed() { return speed*gp.getZoom(); }
+	public double getSpeed() { return speed; }
 	public double getWorldX() { return worldX; }
 	public double getWorldY() { return worldY; }
-	public double getAdjustedWorldX() { return worldX/gp.getZoom(); }
-	public double getAdjustedWorldY() { return worldY/gp.getZoom(); }
+	public double getAdjustedWorldX() { return worldX; }
+	public double getAdjustedWorldY() { return worldY; }
 	public String getDirection() { return direction; }
 
 	public String getName() { return name; }
