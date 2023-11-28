@@ -37,8 +37,8 @@ public class Player extends Mob {
 		
 		gamerTag = name;
 		
-		screenX = ScreenInfo.WIDTH /2 - 50;
-		screenY = ScreenInfo.HEIGHT/2 - 50;
+		screenX = Gdx.graphics.getWidth()/2;
+		screenY = Gdx.graphics.getHeight()/2;
 		
 		setDefaults();
 	}
@@ -61,8 +61,9 @@ public class Player extends Mob {
 //			gp.zoomIn();
 //		}
 
-		System.out.println(worldX + ", " + worldY);
-		
+		screenX = Gdx.graphics.getWidth()/2;
+		screenY = Gdx.graphics.getHeight()/2;
+
 		animFrame -= 1;
 		
 		if (animFrame < 0) {
@@ -87,8 +88,8 @@ public class Player extends Mob {
                 || Gdx.input.isKeyPressed(InputKeys.LEFT)
                 || Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
 			
-			if (getAdjustedScreenX() == gp.getMousePointer().getX() &&
-				getAdjustedScreenY() == gp.getMousePointer().getY()) {
+			if (screenX == gp.getMousePointer().getX() &&
+				screenY == gp.getMousePointer().getY()) {
 				basicMove();
 				isMoving = true;
 				return;
@@ -195,6 +196,11 @@ public class Player extends Mob {
 
 		
 	}
+
+	public void updateScreenX() {
+		screenX = Gdx.graphics.getWidth()/2;
+		screenY = Gdx.graphics.getHeight()/2;
+	}
 	
 	@Override
 	public void draw(SpriteBatch batch) {
@@ -212,8 +218,8 @@ public class Player extends Mob {
 //
 //		//DRAW PLAYER
 //
-		int x = Gdx.graphics.getWidth()/2;
-		int y = Gdx.graphics.getHeight()/2;
+		int x = (int) (worldX - gp.getPlayer().getWorldX() + screenX);
+		int y = (int) (worldY - gp.getPlayer().getWorldY() + screenY);
 //
 //		g2.setColor(Color.red);
 //
@@ -234,8 +240,8 @@ public class Player extends Mob {
 //				drawRedDotSight(g2, x, y);
 //			}
 //
-//			if (gp.getMousePointer().getX() == getAdjustedScreenX() &&
-//				   	gp.getMousePointer().getY() == getAdjustedScreenY()) {
+//			if (gp.getMousePointer().getX() == screenX &&
+//				   	gp.getMousePointer().getY() == screenY) {
 //				tx.rotate(0);
 //			} else {
 //				tx.rotate(0);
@@ -255,8 +261,8 @@ public class Player extends Mob {
 
 //
 //		if (gp.isDebugMode()) {
-//			x = (int) (collision.x - gp.getPlayer().getWorldX() + gp.getPlayer().getAdjustedScreenX());
-//			y = (int) (collision.y - gp.getPlayer().getWorldY() + gp.getPlayer().getAdjustedScreenY());
+//			x = (int) (collision.x - gp.getPlayer().getWorldX() + gp.getPlayer().screenX);
+//			y = (int) (collision.y - gp.getPlayer().getWorldY() + gp.getPlayer().screenY);
 //
 //			g2.setColor(Color.red);
 //			g2.setStroke(new BasicStroke(3));
@@ -281,8 +287,8 @@ public class Player extends Mob {
 
 	public float getAngleToCursor() {
 		try {
-			double num = getAdjustedScreenY() - gp.getMousePointer().getY();
-			double denom = getAdjustedScreenX() - gp.getMousePointer().getX();
+			double num = screenY - gp.getMousePointer().getY();
+			double denom = screenX - gp.getMousePointer().getX();
 			return (float) Math.atan(num/denom);
 		} catch (NullPointerException e) {
 			return 0;
@@ -292,10 +298,10 @@ public class Player extends Mob {
 	
 	public float getDrawingAngle() {
 		try {
-			float num = (float) (getAdjustedScreenY() - gp.getMousePointer().getY());
-			float denom = (float) (getAdjustedScreenX() - gp.getMousePointer().getX());
+			float num = (float) (getScreenY() - gp.getMousePointer().getY());
+			float denom = (float) (getScreenX() - gp.getMousePointer().getX());
 			float angle = (float) Math.atan(num/denom);
-			if ((int)gp.getMousePointer().getX() <= getAdjustedScreenX()) {
+			if ((int)gp.getMousePointer().getX() <= screenX) {
 				   return (float) (angle - Math.toRadians(180));
 			   } else {
 				   return angle;

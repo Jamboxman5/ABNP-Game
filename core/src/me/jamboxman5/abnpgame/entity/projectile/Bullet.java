@@ -34,8 +34,8 @@ public class Bullet extends Projectile{
 	@Override
 	public void draw(Graphics2D g2) {
 		ABNPGame gp = ABNPGame.getInstance();
-		int x = (int) (worldX - gp.getPlayer().getAdjustedWorldX() + gp.getPlayer().getAdjustedScreenX());
-        int y = (int) (worldY - gp.getPlayer().getAdjustedWorldY() + gp.getPlayer().getAdjustedScreenY());
+		int x = (int) (worldX - gp.getPlayer().getAdjustedWorldX() + gp.getPlayer().getScreenX());
+        int y = (int) (worldY - gp.getPlayer().getAdjustedWorldY() + gp.getPlayer().getScreenY());
 //        x *= gp.getZoom();
 //        y *= gp.getZoom();
 		int xComp = (int) (speed * Math.cos(rotation));

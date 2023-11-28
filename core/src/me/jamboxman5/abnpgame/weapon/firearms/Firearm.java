@@ -22,6 +22,8 @@ public class Firearm extends Weapon {
 	protected int reloadSpeedMS;
 	protected int range;
 	protected int firingVelocity;
+
+	protected final static float playerSpriteScale = -.75f;
 	
 	protected Sound reloadSound;
 	
@@ -30,7 +32,7 @@ public class Firearm extends Weapon {
 	protected Sprite setup(String imagePath, float scale) {
 		Texture t = new Texture(Gdx.files.internal(imagePath + ".png/"));
 		Sprite s = new Sprite(t);
-		s.scale(scale);
+		s.scale(playerSpriteScale);
 		return s;
 //        BufferedImage image = null;
 //

@@ -50,28 +50,17 @@ public abstract class Mob extends Entity {
 		}
 	}
 	
-	public int getAdjustedScreenX() {
-		int rightOffset = ScreenInfo.WIDTH - screenX;
-		int x = rightOffset - 50;
-		return x;
-	}
-	public int getAdjustedScreenY() {
-		int bottomOffset = ScreenInfo.HEIGHT - screenY - 32;
-		int y = bottomOffset - 40;
-		return y;
-	}
-	
 	public void mfw(double xComp, double yComp) {
 
 		if (gp.getMousePointer() == null) return;
 
-		if (getAdjustedScreenX() < gp.getMousePointer().getX()) {
+		if (screenX < gp.getMousePointer().getX()) {
 			setWorldX(getWorldX() + xComp);
 			setWorldY(getWorldY() + yComp);
-		} else if (getAdjustedScreenX() > gp.getMousePointer().getX()) {
+		} else if (screenX > gp.getMousePointer().getX()) {
 			setWorldX(getWorldX() - xComp);
 			setWorldY(getWorldY() - yComp);
-		} else if (getAdjustedScreenY() < gp.getMousePointer().getY()) {
+		} else if (screenY < gp.getMousePointer().getY()) {
 			setWorldX(getWorldX() - xComp);
 			setWorldY(getWorldY() - yComp);
 		} else {
@@ -81,13 +70,13 @@ public abstract class Mob extends Entity {
 	}
 	public void mbk(double xComp, double yComp) {
 
-		if (getAdjustedScreenX() < gp.getMousePointer().getX()) {
+		if (screenX < gp.getMousePointer().getX()) {
 			setWorldX(getWorldX() - xComp);
 			setWorldY(getWorldY() - yComp);
-		} else if (getAdjustedScreenX() > gp.getMousePointer().getX()) {
+		} else if (screenX > gp.getMousePointer().getX()) {
 			setWorldX(getWorldX() + xComp);
 			setWorldY(getWorldY() + yComp);
-		} else if (getAdjustedScreenY() < gp.getMousePointer().getY()) {
+		} else if (screenY < gp.getMousePointer().getY()) {
 			setWorldX(getWorldX() + xComp);
 			setWorldY(getWorldY() + yComp);
 		} else {
@@ -98,13 +87,13 @@ public abstract class Mob extends Entity {
 	public void mrt(double xComp, double yComp) {
 		if (gp.getMousePointer() == null) return;
 
-		if (getAdjustedScreenX() < gp.getMousePointer().getX()) {
+		if (screenX < gp.getMousePointer().getX()) {
 			setWorldX(getWorldX() - xComp);
 			setWorldY(getWorldY() - yComp);
-		} else if (getAdjustedScreenX() > gp.getMousePointer().getX()) {
+		} else if (screenX > gp.getMousePointer().getX()) {
 			setWorldX(getWorldX() + xComp);
 			setWorldY(getWorldY() + yComp);
-		} else if (getAdjustedScreenY() < gp.getMousePointer().getY()) {
+		} else if (screenY < gp.getMousePointer().getY()) {
 			setWorldX(getWorldX() + xComp);
 			setWorldY(getWorldY() + yComp);
 		} else {
@@ -115,13 +104,13 @@ public abstract class Mob extends Entity {
 	public void mlt(double xComp, double yComp) {
 		if (gp.getMousePointer() == null) return;
 
-		if (getAdjustedScreenX() < gp.getMousePointer().getX()) {
+		if (screenX < gp.getMousePointer().getX()) {
 			setWorldX(getWorldX() - xComp);
 			setWorldY(getWorldY() - yComp);
-		} else if (getAdjustedScreenX() > gp.getMousePointer().getX()) {
+		} else if (screenX > gp.getMousePointer().getX()) {
 			setWorldX(getWorldX() + xComp);
 			setWorldY(getWorldY() + yComp);
-		} else if (getAdjustedScreenY() < gp.getMousePointer().getY()) {
+		} else if (screenY < gp.getMousePointer().getY()) {
 			setWorldX(getWorldX() + xComp);
 			setWorldY(getWorldY() + yComp);
 		} else {
