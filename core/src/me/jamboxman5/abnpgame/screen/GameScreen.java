@@ -12,15 +12,16 @@ import me.jamboxman5.abnpgame.util.Sounds;
 public class GameScreen implements Screen, InputProcessor {
     final ABNPGame game;
 
-    private OrthographicCamera camera;
+    private final OrthographicCamera camera;
 
-    private Vector3 touchPos = new Vector3();
+    private final Vector3 touchPos = new Vector3();
 
     public GameScreen(final ABNPGame game) {
         this.game = game;
 
 
         camera = new OrthographicCamera();
+
         camera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
         Gdx.input.setInputProcessor(this);
 
@@ -28,7 +29,9 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     @Override
-    public void show() { Sounds.AMBIENCE.stop(); }
+    public void show() {
+        Sounds.AMBIENCE.stop();
+    }
 
     @Override
     public void render(float delta) {
@@ -51,6 +54,8 @@ public class GameScreen implements Screen, InputProcessor {
         draw();
         game.batch.end();
 
+        if (camera.zoom >= .75f) camera.zoom -= .002f;
+
         update();
 
         // process user input
@@ -59,7 +64,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
         game.getMapManager().getDebugRenderer().render(game.getMapManager().getWorld(), camera.combined);
         game.getMapManager().getWorld().step(1/60f, 6, 2);
-
+        if (camera.zoom > .75f) camera.zoom = .75f;
     }
 
     private void draw() {
