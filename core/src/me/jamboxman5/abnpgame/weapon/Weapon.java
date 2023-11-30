@@ -2,7 +2,9 @@ package me.jamboxman5.abnpgame.weapon;
 
 
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
@@ -35,6 +37,7 @@ public abstract class Weapon {
 	protected String name;
 	protected WeaponType type;
 	protected int yOffset = 0;
+	protected final static float playerSpriteScale = .25f;
 
 	protected WeaponModLoadout equippedMods;
 	
@@ -78,5 +81,28 @@ public abstract class Weapon {
 			return new ShotgunWinchester12();
 		}
 		return new RifleM4A1();
+	}
+
+	protected Sprite setup(String imagePath, Float scale) {
+		Texture t = new Texture(Gdx.files.internal(imagePath + ".png/"));
+		Sprite s = new Sprite(t);
+		if (scale == null) {
+			s.setScale(playerSpriteScale);
+		} else {
+			s.setScale(scale);
+		}
+		return s;
+//        BufferedImage image = null;
+//
+//        try {
+//        	InputStream src = getClass().getResourceAsStream("/me/jamboxman5/abnpgame" + imagePath + ".png");
+//            image = ImageIO.read(src);
+//
+//        } catch (IOException | IllegalArgumentException e) {
+//            e.printStackTrace();
+//            System.out.println(imagePath);
+//        }
+//
+//        return Utilities.scaleImage(image, (int)(image.getWidth() * scale), (int)(image.getHeight() * scale));
 	}
 }

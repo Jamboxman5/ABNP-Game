@@ -17,15 +17,15 @@ public class ShotgunWinchester12 extends Firearm {
 	}
 	
 	public ShotgunWinchester12(WeaponModLoadout mods, Ammo ammo, int loadedAmmo) {
-		idleSprites = new Array<>(new Sprite[]{setup("entity/player/shotgun/Player_Shotgun", .33f)});
-		shootSprites = new Array<>(new Sprite[]{setup("entity/player/shotgun/Player_Shotgun_Shoot_2", .33f),
-									setup("entity/player/shotgun/Player_Shotgun_Shoot_2", .33f),
-									setup("entity/player/shotgun/Player_Shotgun_Shoot_1", .33f),
-									setup("entity/player/shotgun/Player_Shotgun_Shoot_1", .33f),
-									setup("entity/player/shotgun/Player_Shotgun_Shoot_0", .33f),
-									setup("entity/player/shotgun/Player_Shotgun_Shoot_0", .33f),
-									setup("entity/player/shotgun/Player_Shotgun_Shoot_0", .33f)});
-		reloadSprites = new Array<>(new Sprite[]{setup("entity/player/shotgun/Player_Shotgun", .33f)});
+		idleSprites = new Array<>(new Sprite[]{setup("entity/player/shotgun/Player_Shotgun", null)});
+		shootSprites = new Array<>(new Sprite[]{setup("entity/player/shotgun/Player_Shotgun_Shoot_2", null),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_2", null),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_1", null),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_1", null),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_0", null),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_0", null),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_0", null)});
+		reloadSprites = new Array<>(new Sprite[]{setup("entity/player/shotgun/Player_Shotgun", null)});
 		this.attackSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/shotgun/Shotgun_Shot.wav"));
 		this.reloadSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav"));
 		this.attackRateMS = 1100;
@@ -35,7 +35,7 @@ public class ShotgunWinchester12 extends Firearm {
 		this.magSize = 6;
 		this.range = 350;
 		this.activeSprites = idleSprites;
-		this.hudSprite = setup("weapon/shotgun/Winchester12", .27f);
+		this.hudSprite = setup("weapon/shotgun/Winchester12", .35f);
 		this.loaded = loadedAmmo;
 		this.currentAmmo = ammo;
 		this.name = "Winchester 12GA";

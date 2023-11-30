@@ -18,8 +18,9 @@ import java.awt.*;
 public class Player extends Mob {
 	
 	private final static int defaultSpeed = 5;
-	protected Weapon activeWeapon;
 	private String gamerTag;
+	protected int money;
+	protected int exp;
 	
 	protected WeaponLoadout weapons;
 		
@@ -55,11 +56,6 @@ public class Player extends Mob {
 	
 	@Override
 	public void update() {
-//		if (isMoving && gp.getZoom() >= .75) {
-//			gp.zoomOut();
-//		} else if (!isMoving && gp.getZoom() <= 1) {
-//			gp.zoomIn();
-//		}
 
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
@@ -165,11 +161,6 @@ public class Player extends Mob {
 		if (Gdx.input.isTouched()) {
 			weapons.getActiveWeapon().attack();
 		}
-		int adjustedWidth = (int) (collisionWidth);
-		collision = new Rectangle((int)(worldX-(adjustedWidth/2.5)), 
-				  (int)(worldY-(adjustedWidth/2.5)), 
-				  (int)(adjustedWidth) , 
-				  (int)(adjustedWidth));
 		
 	}
 	
@@ -300,6 +291,7 @@ public class Player extends Mob {
 		try {
 			float num = (float) (getScreenY() - gp.getMousePointer().getY());
 			float denom = (float) (getScreenX() - gp.getMousePointer().getX());
+			if (denom == 0 && num == 0) return (float) (-Math.PI/2);
 			float angle = (float) Math.atan(num/denom);
 			if ((int)gp.getMousePointer().getX() <= screenX) {
 				   return (float) (angle - Math.toRadians(180));
@@ -341,5 +333,10 @@ public class Player extends Mob {
 	public void setWeaponLoadout(WeaponLoadout newLoadout) {
 		weapons = newLoadout;
 	}
+
+	public void setMoney(int money) { this.money = money; }
+	public void setExp(int exp) { this.exp = exp; }
+	public int getExp() { return exp; }
+	public int getMoney() { return money; }
 
 }

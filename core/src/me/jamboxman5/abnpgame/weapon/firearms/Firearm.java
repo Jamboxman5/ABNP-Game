@@ -23,30 +23,12 @@ public class Firearm extends Weapon {
 	protected int range;
 	protected int firingVelocity;
 
-	protected final static float playerSpriteScale = -.75f;
-	
+
 	protected Sound reloadSound;
 	
 	protected Ammo currentAmmo;
 
-	protected Sprite setup(String imagePath, float scale) {
-		Texture t = new Texture(Gdx.files.internal(imagePath + ".png/"));
-		Sprite s = new Sprite(t);
-		s.scale(playerSpriteScale);
-		return s;
-//        BufferedImage image = null;
-//
-//        try {
-//        	InputStream src = getClass().getResourceAsStream("/me/jamboxman5/abnpgame" + imagePath + ".png");
-//            image = ImageIO.read(src);
-//
-//        } catch (IOException | IllegalArgumentException e) {
-//            e.printStackTrace();
-//            System.out.println(imagePath);
-//        }
-//
-//        return Utilities.scaleImage(image, (int)(image.getWidth() * scale), (int)(image.getHeight() * scale));
-    }
+
 	public int getLoadedAmmo() { return loaded; }
 	public int getAmmoCount() { return currentAmmo.getAmmoCount(); }
 	public void shoot() {

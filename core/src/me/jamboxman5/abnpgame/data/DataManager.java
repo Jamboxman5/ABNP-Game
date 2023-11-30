@@ -69,8 +69,11 @@ public class DataManager {
         WeaponLoadout loadout = new WeaponLoadout(weapons);
         Player player = new Player(ABNPGame.getInstance(), name);
         player.setWeaponLoadout(loadout);
+        player.setMoney(money);
+        player.setExp(exp);
         return player;
     }
+    @SuppressWarnings("NewApi")
     private static Player generateNewPlayerData() {
         try {
             Files.createDirectories(Paths.get(dataPath));

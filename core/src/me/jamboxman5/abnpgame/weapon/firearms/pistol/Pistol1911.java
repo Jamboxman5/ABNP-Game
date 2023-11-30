@@ -15,15 +15,15 @@ public class Pistol1911 extends Firearm {
 	}
 	
 	public Pistol1911(WeaponModLoadout mods, Ammo ammo, int loadedAmmo) {
-		idleSprites = new Array<>(new Sprite[]{setup("entity/player/handgun/Player_Handgun", -.75f)});
-		shootSprites = new Array<>(new Sprite[]{setup("entity/player/handgun/Player_Handgun_Shoot_2", -.75f),
-				setup("entity/player/handgun/Player_Handgun_Shoot_2", -.75f),
-				setup("entity/player/handgun/Player_Handgun_Shoot_1", -.75f),
-				setup("entity/player/handgun/Player_Handgun_Shoot_1", -.75f),
-				setup("entity/player/handgun/Player_Handgun_Shoot_0", -.75f),
-				setup("entity/player/handgun/Player_Handgun_Shoot_0", -.75f),
-				setup("entity/player/handgun/Player_Handgun_Shoot_0", -.75f)});
-		reloadSprites = new Array<>(new Sprite[]{setup("entity/player/handgun/Player_Handgun", -.75f)});
+		idleSprites = new Array<>(new Sprite[]{setup("entity/player/handgun/Player_Handgun", null)});
+		shootSprites = new Array<>(new Sprite[]{setup("entity/player/handgun/Player_Handgun_Shoot_2", null),
+				setup("entity/player/handgun/Player_Handgun_Shoot_2", null),
+				setup("entity/player/handgun/Player_Handgun_Shoot_1", null),
+				setup("entity/player/handgun/Player_Handgun_Shoot_1", null),
+				setup("entity/player/handgun/Player_Handgun_Shoot_0", null),
+				setup("entity/player/handgun/Player_Handgun_Shoot_0", null),
+				setup("entity/player/handgun/Player_Handgun_Shoot_0", null)});
+		reloadSprites = new Array<>(new Sprite[]{setup("entity/player/handgun/Player_Handgun", null)});
 		this.attackSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/pistol/Pistol_Shot.wav"));
 		this.reloadSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav"));
 		this.attackRateMS = 350;
@@ -33,7 +33,7 @@ public class Pistol1911 extends Firearm {
 		this.magSize = 8;
 		this.range = 480;
 		this.activeSprites = idleSprites;
-		this.hudSprite = setup("weapon/pistol/1911", .33f);
+		this.hudSprite = setup("weapon/pistol/1911", .35f);
 		this.loaded = loadedAmmo;
 		this.currentAmmo = ammo;
 		this.name = "M1911";

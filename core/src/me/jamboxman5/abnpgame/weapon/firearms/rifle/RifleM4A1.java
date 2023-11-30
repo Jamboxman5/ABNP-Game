@@ -17,13 +17,13 @@ public class RifleM4A1 extends Firearm {
 	}
 	
 	public RifleM4A1(WeaponModLoadout mods, Ammo ammo, int loadedAmmo) {
-		idleSprites = new Array<>(new Sprite[]{setup("entity/player/rifle/Player_Rifle", .33f)});
-		shootSprites = new Array<>(new Sprite[]{setup("entity/player/rifle/Player_Rifle_Shoot_2", .33f),
-									setup("entity/player/rifle/Player_Rifle_Shoot_1", .33f),
-									setup("entity/player/rifle/Player_Rifle_Shoot_0", .33f),
-									setup("entity/player/rifle/Player_Rifle_Shoot_0", .33f),
-									setup("entity/player/rifle/Player_Rifle_Shoot_0", .33f)});
-		reloadSprites = new Array<>(new Sprite[]{setup("entity/player/rifle/Player_Rifle", .33f)});
+		idleSprites = new Array<>(new Sprite[]{setup("entity/player/rifle/Player_Rifle", null)});
+		shootSprites = new Array<>(new Sprite[]{setup("entity/player/rifle/Player_Rifle_Shoot_2", null),
+									setup("entity/player/rifle/Player_Rifle_Shoot_1", null),
+									setup("entity/player/rifle/Player_Rifle_Shoot_0", null),
+									setup("entity/player/rifle/Player_Rifle_Shoot_0", null),
+									setup("entity/player/rifle/Player_Rifle_Shoot_0", null)});
+		reloadSprites = new Array<>(new Sprite[]{setup("entity/player/rifle/Player_Rifle", null)});
 		this.attackSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/rifle/Assault_Rifle_Shot.wav"));
 		this.reloadSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav"));
 		this.attackRateMS = 86;
@@ -33,7 +33,7 @@ public class RifleM4A1 extends Firearm {
 		this.magSize = 30;
 		this.range = 1000;
 		this.activeSprites = idleSprites;
-		this.hudSprite = setup("weapon/rifle/M4A1", .42f);
+		this.hudSprite = setup("weapon/rifle/M4A1", .35f);
 		this.loaded = loadedAmmo;
 		this.currentAmmo = ammo;
 		this.name = "M4A1";
