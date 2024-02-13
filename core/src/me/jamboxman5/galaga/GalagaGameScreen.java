@@ -76,7 +76,7 @@ public class GalagaGameScreen implements Screen {
     public GalagaGameScreen (final GalagaGame game) {
         this.game = game;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 600);
+        camera.setToOrtho(false, 800, 900);
         goodBulletImg = new Texture("galaga/goodbullet.png");
         badBulletImg = new Texture("galaga/badbullet.png");
         enemyImg = new Texture("galaga/enemy.png");
@@ -110,12 +110,12 @@ public class GalagaGameScreen implements Screen {
 //        enemy.width = 64;
 //        enemy.height = 64;
 //        enemy.x = 64;
-//        enemy.y = 600 -96;
+//        enemy.y = 900 -96;
 //        enemies.add(enemy);
 
         if (!enemies.isEmpty()) return;
 
-        for (int y = 600 - 128; y > 300; y -= 80) {
+        for (int y = 900 - 128; y > 600; y -= 80) {
             for (int x = 64; x < 800-96; x += 96) {
                 Rectangle enemy = new Rectangle();
                 enemy.width = 64;
@@ -184,7 +184,7 @@ public class GalagaGameScreen implements Screen {
         if (attacker.y > 250) {
             attackPosition = new Vector2(player.x, player.y);
         }
-        if (!attacker.overlaps(new Rectangle(0, 0, 800,600)))  {
+        if (!attacker.overlaps(new Rectangle(0, 0, 800,900)))  {
             attacker.setPosition(attackStartPosition);
             attacker = null;
             lastAttack = System.currentTimeMillis();
@@ -203,10 +203,10 @@ public class GalagaGameScreen implements Screen {
     }
 
     double getSpeedModifier() {
-        return (1.0+(level/15.0)) / 60.0;
+        return (1.0+(level/15.0)) / 100.0;
     }
     double getBulletSpeedModifier() {
-        return 1.3*(1.0+(level/15.0)) / 60.0;
+        return 1.3*(1.0+(level/15.0)) / 80.0;
     }
     boolean retarget() {
         return ((Math.random()*10) + level > 15);
@@ -218,7 +218,7 @@ public class GalagaGameScreen implements Screen {
         if (System.currentTimeMillis() - lastNewStar > 50) {
             lastNewStar = System.currentTimeMillis();
             int newX = (int) (Math.random()*800);
-            int newY = (int) (Math.random()*600);
+            int newY = (int) (Math.random()*900);
 
             stars.add(new Vector3(newX, newY, 1f));
         }
@@ -266,61 +266,38 @@ public class GalagaGameScreen implements Screen {
 
         camera.update();
 
+
+
+        game.batch.setProjectionMatrix(camera.combined);
+
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         renderStars();
         shapeRenderer.end();
 
-        game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
 
         enemyAttack();
         drawLives(game.batch);
 
-        game.font.draw(game.batch, "Score: "+ score, 360, 600-20);
+        game.font.draw(game.batch, "Score: "+ score, 360, 900-20);
         game.font.draw(game.batch, "Level "+ level, 800-64, 20);
-        for (Rectangle bullet : goodbullets) {
-            game.batch.draw(goodBulletImg, bullet.x, bullet.y);
-        }
-        for (Bullet bullet : badbullets) {
-            game.batch.draw(badBulletImg, bullet.x, bullet.y);
-        }
-        for (Rectangle enemy : enemies) {
-            game.batch.draw(enemyImg, enemy.x, enemy.y);
-        }
-        if (!isDead()) {
-            game.batch.draw(playerImg, player.x, player.y);
-        }
+        for (Rectangle bullet : goodbullets) game.batch.draw(goodBulletImg, bullet.x, bullet.y);
+        for (Bullet bullet : badbullets) game.batch.draw(badBulletImg, bullet.x, bullet.y);
+        for (Rectangle enemy : enemies) game.batch.draw(enemyImg, enemy.x, enemy.y);
+        if (!isDead()) game.batch.draw(playerImg, player.x, player.y);
         game.batch.end();
-
-        if (Gdx.input.isKeyPressed(Input.Keys.A) && !isDead()) {
-            player.x -= 300 * Gdx.graphics.getDeltaTime();
-        }
-
-        else if (Gdx.input.isKeyPressed(Input.Keys.D) && !isDead()) {
-            player.x += 300 * Gdx.graphics.getDeltaTime();
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            shoot();
-        }
-
-        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
-            spawnEnemies();
-        }
-
-
+        if (Gdx.input.isKeyPressed(Input.Keys.A) && !isDead()) player.x -= 300 * Gdx.graphics.getDeltaTime();
+        else if (Gdx.input.isKeyPressed(Input.Keys.D) && !isDead()) player.x += 300 * Gdx.graphics.getDeltaTime();
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) shoot();
+        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) spawnEnemies();
         if (player.x < 0) player.x = 0;
         if (player.x > 800 - player.width) player.x = 800 - player.width;
-
         Array<Rectangle> bulletsToRemove = new Array<>();
-
         Iterator<Rectangle> iter = goodbullets.iterator();
         while (iter.hasNext()) {
             Rectangle bullet = iter.next();
             bullet.y += bulletspeed * Gdx.graphics.getDeltaTime();
-            if (bullet.y > 800) {
-                bulletsToRemove.add(bullet);
-            }
+            if (bullet.y > 800) bulletsToRemove.add(bullet);
             Iterator<Rectangle> enemyiter = enemies.iterator();
             while (enemyiter.hasNext()) {
                 Rectangle enemy = enemyiter.next();
@@ -337,35 +314,22 @@ public class GalagaGameScreen implements Screen {
                     score += 100;
                 }
             }
-
         }
-
-        for (Rectangle r : bulletsToRemove) {
-            goodbullets.remove(r);
-        }
-
-
+        for (Rectangle r : bulletsToRemove) goodbullets.remove(r);
         Iterator<Bullet> badbulletiterator = badbullets.iterator();
         while (badbulletiterator.hasNext()) {
             Bullet bullet = badbulletiterator.next();
-
             bullet.update();
-
-            if (bullet.y < -64) {
-                badbulletiterator.remove();
-            }
+            if (bullet.y < -64) badbulletiterator.remove();
             if (bullet.overlaps(player)) {
                 die();
                 badbulletiterator.remove();
-
             }
         }
     }
-
     boolean isDead() {
         return (System.currentTimeMillis() - lastDeath < 2000);
     }
-
     private void die() {
         lives--;
         deathSound.play();
@@ -373,7 +337,6 @@ public class GalagaGameScreen implements Screen {
         lastDeath = System.currentTimeMillis();
         if (lives < 0) game.setScreen(new GalagaGameOverScreen(game));
     }
-
     private void shoot() {
         if (isDead()) return;
         if (System.currentTimeMillis() - lastShootTime < 350) return;
@@ -381,21 +344,14 @@ public class GalagaGameScreen implements Screen {
         shootSound.play();
         spawnGoodBullet();
     }
-
     @Override
     public void show() {
 
     }
-
     @Override
     public void dispose () {
         playerImg.dispose();
         goodBulletImg.dispose();
-
         shootSound.dispose();
-    }
-
-    private class Enemy extends Rectangle {
-
     }
 }

@@ -25,7 +25,7 @@ class GalagaGameOverScreen implements Screen {
     public GalagaGameOverScreen(final GalagaGame game) {
         this.game = game;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 800, 600);
+        camera.setToOrtho(false, 800, 900);
         shapeRenderer = new ShapeRenderer();
 
     }
@@ -36,7 +36,7 @@ class GalagaGameOverScreen implements Screen {
         if (System.currentTimeMillis() - lastNewStar > 50) {
             lastNewStar = System.currentTimeMillis();
             int newX = (int) (Math.random()*800);
-            int newY = (int) (Math.random()*600);
+            int newY = (int) (Math.random()*900);
 
             stars.add(new Vector3(newX, newY, 1f));
         }
@@ -67,11 +67,12 @@ class GalagaGameOverScreen implements Screen {
 
         camera.update();
 
+
+
+        game.batch.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         renderStars();
         shapeRenderer.end();
-
-        game.batch.setProjectionMatrix(camera.combined);
         game.batch.begin();
         game.font.draw(game.batch, "Game Over!", 100, 200);
         game.font.draw(game.batch, "Out of Lives!", 100, 150);
