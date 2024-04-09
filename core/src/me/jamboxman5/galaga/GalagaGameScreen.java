@@ -19,7 +19,7 @@ import java.util.Iterator;
 
 public class GalagaGameScreen implements Screen {
 
-    private float bulletspeed = 800;
+    private final float bulletspeed = 800;
     int level = 0;
     @Override
     public void resize(int width, int height) {}
@@ -170,6 +170,7 @@ public class GalagaGameScreen implements Screen {
             int newY = (int) (Math.random()*900);
             stars.add(new Vector3(newX, newY, 1f));
         }
+        //USE DIJKSTRA ALGORITHM PATHFINDING
         Iterator<Vector3> iter = stars.iterator();
         while (iter.hasNext()) {
             Vector3 star = iter.next();

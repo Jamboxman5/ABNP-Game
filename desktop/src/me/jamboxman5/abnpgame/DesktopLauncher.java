@@ -6,6 +6,7 @@ import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.drop.Drop;
 import me.jamboxman5.galaga.GalagaGame;
+import me.jamboxman5.pathfinder.PathfinderGame;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
@@ -14,7 +15,7 @@ public class DesktopLauncher {
 		config.setWindowedMode(800,900);
 		config.useVsync(true);
 		config.setForegroundFPS(60);
-		config.setTitle("Galaga");
+		config.setTitle("Pathfinder");
 		new Lwjgl3Application(new GalagaGame(), config);
 	}
 }
