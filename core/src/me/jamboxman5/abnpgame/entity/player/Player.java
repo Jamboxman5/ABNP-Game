@@ -224,7 +224,7 @@ public class Player extends Mob {
 		Sprite toDraw = weapons.getActiveWeapon().getPlayerSprite(animFrame);
 		if (gp.getPlayer().equals(this)) {
 			toDraw.setCenter(x,y);
-			toDraw.setRotation((float) Math.toDegrees(getDrawingAngle()) + 360);
+			toDraw.setRotation((float) ((float) Math.toDegrees(getDrawingAngle()) + 360 + getAngleDistanceModifier(x, y)));
 			toDraw.draw(batch);
 //
 //			if (weapons.getActiveWeapon().hasRedDotSight()) {
@@ -262,6 +262,17 @@ public class Player extends Mob {
 ////		   	g2.drawRect((int)(x), (int)(y), (int)(collision.width*gp.getZoom()),(int) (collision.height*gp.getZoom()));
 //		}
 
+	}
+
+	private double getAngleDistanceModifier(int x, int y) {
+		double ac = Math.abs(y - gp.getMousePointer().getY());
+		double cb = Math.abs(x - gp.getMousePointer().getX());
+
+		double distance = Math.hypot(ac, cb);
+//		if (distance < 40) return 30;
+		return 30/(distance/40);
+
+//		return Math.hypot(ac, cb);
 	}
 
 	public void drawRedDotSight(Graphics2D g2, int x, int y) {
