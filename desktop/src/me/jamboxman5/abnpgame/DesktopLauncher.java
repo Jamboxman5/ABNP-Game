@@ -8,6 +8,7 @@ import me.jamboxman5.drop.Drop;
 import me.jamboxman5.galaga.GalagaGame;
 import me.jamboxman5.legacyofgoku.LegacyGame;
 import me.jamboxman5.pathfinder.PathfinderGame;
+import me.jamboxman5.statemachine.StateMachineGame;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
@@ -16,7 +17,7 @@ public class DesktopLauncher {
 		config.setWindowedMode(1280,720);
 		config.useVsync(true);
 		config.setForegroundFPS(60);
-		config.setTitle("Pathfinder");
-		new Lwjgl3Application(new LegacyGame(), config);
+		config.setTitle("GuardGame");
+		new Lwjgl3Application(new ABNPGame(), config);
 	}
 }

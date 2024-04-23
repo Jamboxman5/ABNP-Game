@@ -73,7 +73,7 @@ public class MapManager {
 	}
 	
 	public void drawEntities(Graphics2D g2) {
-		for (Entity e : entities) { e.draw(game.batch); }
+		for (Entity e : entities) { e.draw(game.batch, game.shape); }
 	}
 	
 	public void updateProjectiles() {

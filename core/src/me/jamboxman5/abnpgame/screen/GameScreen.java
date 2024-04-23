@@ -53,7 +53,7 @@ public class GameScreen implements Screen, InputProcessor {
         // blue and alpha component in the range [0,1]
         // of the color to be used to clear the screen.
         if (camera.zoom > .75f) camera.zoom = .75f;
-        ScreenUtils.clear(0, 0, 0.2f, 1);
+        ScreenUtils.clear(.5f, 0, 0f, 1);
 
         // tell the camera to update its matrices.
         camera.update();
@@ -61,14 +61,12 @@ public class GameScreen implements Screen, InputProcessor {
         // tell the SpriteBatch to render in the
         // coordinate system specified by the camera.
         game.batch.setProjectionMatrix(camera.combined);
-        shape.setProjectionMatrix(camera.combined);
+        game.shape.setProjectionMatrix(camera.combined);
         // begin a new batch and draw the bucket and
         // all drops
-        game.batch.begin();
-        shape.begin(ShapeRenderer.ShapeType.Line);
+
         draw();
-        game.batch.end();
-        shape.end();
+
 
         update();
 
@@ -81,9 +79,11 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     private void draw() {
+        game.batch.begin();
         game.getMapManager().draw(game.batch);
-        game.getPlayer().draw(game.batch);
+        game.getPlayer().draw(game.batch, game.shape);
         drawUI();
+        game.batch.end();
     }
 
     private void drawUI() {

@@ -4,6 +4,8 @@ package me.jamboxman5.abnpgame.entity.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix4;
 import me.jamboxman5.abnpgame.entity.Mob;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
@@ -194,7 +196,7 @@ public class Player extends Mob {
 	}
 	
 	@Override
-	public void draw(SpriteBatch batch) {
+	public void draw(SpriteBatch batch, ShapeRenderer shape) {
 //		if (!(gp.getScreen().getClass().toString().contains("InGame"))) return;
 //
 //
@@ -211,6 +213,14 @@ public class Player extends Mob {
 //
 		int x = (int) (worldX - gp.getPlayer().getWorldX() + screenX);
 		int y = (int) (worldY - gp.getPlayer().getWorldY() + screenY);
+
+		if (weapons.getActiveWeapon().hasRedDotSight()) {
+			batch.end();
+			shape.begin(ShapeRenderer.ShapeType.Line);
+			drawRedDotSight(shape, gp.getMousePointer().getX(), gp.getMousePointer().getY());
+			shape.end();
+			batch.begin();
+		}
 //
 //		g2.setColor(Color.red);
 //
@@ -223,13 +233,15 @@ public class Player extends Mob {
 //		tx.setToTranslation(x, y);
 		Sprite toDraw = weapons.getActiveWeapon().getPlayerSprite(animFrame);
 		if (gp.getPlayer().equals(this)) {
-			toDraw.setCenter(x,y);
-			toDraw.setRotation((float) ((float) Math.toDegrees(getDrawingAngle()) + 360 + getAngleDistanceModifier(x, y)));
+			batch.setTransformMatrix(new Matrix4().translate(x, y, 0).rotate(0f, 0f,1f, (float) (Math.toDegrees(getDrawingAngle()) + 360)));
+			toDraw.setPosition((-toDraw.getWidth()/2) + weapons.getActiveWeapon().getYOffset(),(-toDraw.getHeight()/2) + 14);
+
+//			toDraw.setRotation((float) ((float) Math.toDegrees(getDrawingAngle()) + 360 + getAngleDistanceModifier(x, y)));
+//			toDraw.setRotation((float) ((float) Math.toDegrees(getDrawingAngle()) + 360));
 			toDraw.draw(batch);
+			batch.setTransformMatrix(new Matrix4());
 //
-//			if (weapons.getActiveWeapon().hasRedDotSight()) {
-//				drawRedDotSight(g2, x, y);
-//			}
+
 //
 //			if (gp.getMousePointer().getX() == screenX &&
 //				   	gp.getMousePointer().getY() == screenY) {
@@ -275,16 +287,20 @@ public class Player extends Mob {
 //		return Math.hypot(ac, cb);
 	}
 
-	public void drawRedDotSight(Graphics2D g2, int x, int y) {
+	public void drawRedDotSight(ShapeRenderer shape, double x, double y) {
 		Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .4f);
         Composite old = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
-        g2.setComposite(comp);
-		g2.setStroke(new BasicStroke(2));
-	    g2.drawLine(x, y, (int)gp.getMousePointer().getX(), (int)gp.getMousePointer().getY());
-	    g2.fillOval((int)gp.getMousePointer().getX()-2, (int)gp.getMousePointer().getY()-2, 4, 4);
-	    g2.setComposite(old);
-	    g2.setColor(new Color(255,200,200));
-	    g2.fillOval((int)gp.getMousePointer().getX()-1, (int)gp.getMousePointer().getY()-1, 1, 1);
+
+		shape.setColor(.8f, 0f, 0f, .5f);
+		shape.line(screenX, screenY, (int)x, (int)y);
+
+//        g2.setComposite(comp);
+//		g2.setStroke(new BasicStroke(2));
+//	    g2.drawLine(x, y, (int)gp.getMousePointer().getX(), (int)gp.getMousePointer().getY());
+//	    g2.fillOval((int)gp.getMousePointer().getX()-2, (int)gp.getMousePointer().getY()-2, 4, 4);
+//	    g2.setComposite(old);
+//	    g2.setColor(new Color(255,200,200));
+//	    g2.fillOval((int)gp.getMousePointer().getX()-1, (int)gp.getMousePointer().getY()-1, 1, 1);
 	}
 
 	public float getAngleToCursor() {
@@ -296,6 +312,16 @@ public class Player extends Mob {
 			return 0;
 		}
 		
+	}
+
+	public float getAngleX() {
+		return (float) (screenX - gp.getMousePointer().getX());
+
+	}
+
+	public float getAngleY() {
+		return (float) (screenY - gp.getMousePointer().getY());
+
 	}
 	
 	public float getDrawingAngle() {

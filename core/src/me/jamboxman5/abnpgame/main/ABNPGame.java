@@ -3,6 +3,7 @@ package me.jamboxman5.abnpgame.main;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.player.Player;
 import me.jamboxman5.abnpgame.entity.Entity;
@@ -19,6 +20,7 @@ public class ABNPGame extends Game {
 
     private static ABNPGame instance;
     public SpriteBatch batch;
+    public ShapeRenderer shape;
     private Player player;
     private MapManager mapManager;
     private float zoom = 1;
@@ -28,6 +30,7 @@ public class ABNPGame extends Game {
     public void create() {
         instance = this;
         batch = new SpriteBatch();
+        shape = new ShapeRenderer();
         mapManager = new MapManager(this);
         Fonts.initFonts();
         Sounds.initSounds();

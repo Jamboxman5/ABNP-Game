@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 
 import java.awt.*;
@@ -38,7 +39,7 @@ public abstract class Entity {
 	public void setSpeed(double speed) { this.speed = speed; }
 
 	public abstract void update();
-	public abstract void draw(SpriteBatch batch);
+	public abstract void draw(SpriteBatch batch, ShapeRenderer shape);
 	
 	public Sprite setup(String imagePath, float scale) {
 		Texture t = new Texture(Gdx.files.internal(imagePath));

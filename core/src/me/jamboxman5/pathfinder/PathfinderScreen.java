@@ -48,7 +48,9 @@ public class PathfinderScreen implements Screen {
                 weight = Integer.parseInt(nodeRaw.substring(1));
             }
             else {
-                weight = Integer.parseInt(nodeRaw);
+                try {
+                    weight = Integer.parseInt(nodeRaw);
+                } catch (NumberFormatException e) {}
             }
             bounds = new Rectangle();
         }
@@ -76,8 +78,8 @@ public class PathfinderScreen implements Screen {
     }
     @Override
     public void show() {
-        FileHandle inputFile = Gdx.files.internal("pathfinder/teleportinput.txt");
-//        FileHandle inputFile = Gdx.files.internal("pathfinder/input.txt");
+//        FileHandle inputFile = Gdx.files.internal("demos/pathfinder/teleportinput.txt");
+        FileHandle inputFile = Gdx.files.internal("demos/pathfinder/input.txt");
         String fullText = inputFile.readString();
         String[] rows = fullText.split("\\n");
         for(int i = 0; i < rows.length; i++) {

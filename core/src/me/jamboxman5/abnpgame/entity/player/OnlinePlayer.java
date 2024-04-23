@@ -1,6 +1,7 @@
 package me.jamboxman5.abnpgame.entity.player;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.net.packets.Packet02Move;
 
@@ -42,9 +43,9 @@ public class OnlinePlayer extends Player {
 	}
 	
 	@Override
-	public void draw(SpriteBatch batch) {
+	public void draw(SpriteBatch batch, ShapeRenderer shape) {
 		if (gp.getPlayer() == this) {
-			super.draw(batch);
+			super.draw(batch, shape);
 			return;
 		} 
 		

@@ -4,11 +4,13 @@
 	"experience": 0,
 	"weaponLoadout": {
 		"weapons": [
-		{
+			{
 			"type": "M1911",
 			"ammo": "StandardAmmo",
-			"mods": []
-		},
+			"mods": [
+				{"type": "RedDotSight"}
+			]
+			},
 			{
 				"type": "M4A1",
 				"ammo": "StandardAmmo",

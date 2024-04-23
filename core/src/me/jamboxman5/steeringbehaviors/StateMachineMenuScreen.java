@@ -1,4 +1,4 @@
-package me.jamboxman5.statemachine;
+package me.jamboxman5.steeringbehaviors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -9,8 +9,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import me.jamboxman5.galaga.GalagaGame;
-import me.jamboxman5.galaga.GalagaGameScreen;
 
 import java.util.Iterator;
 
