@@ -52,8 +52,8 @@ public class GameScreen implements Screen, InputProcessor {
         // arguments to clear are the red, green
         // blue and alpha component in the range [0,1]
         // of the color to be used to clear the screen.
-        if (camera.zoom > .75f) camera.zoom = .75f;
-        ScreenUtils.clear(.5f, 0, 0f, 1);
+//        if (camera.zoom > .75f) camera.zoom = .75f;
+        ScreenUtils.clear(.1f, 0, 0f, 1);
 
         // tell the camera to update its matrices.
         camera.update();
@@ -88,7 +88,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     private void drawUI() {
 
-        UIManager.drawWeaponHud(game.batch, game, camera);
+        UIManager.drawWeaponHud(game.batch, game.shape, game, camera);
 
     }
 

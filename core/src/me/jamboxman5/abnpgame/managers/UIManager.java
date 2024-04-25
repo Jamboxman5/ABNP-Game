@@ -9,10 +9,16 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import me.jamboxman5.abnpgame.main.ABNPGame;
+import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
+
+import javax.swing.plaf.ViewportUI;
 
 public class UIManager {
 
@@ -23,13 +29,13 @@ public class UIManager {
         WeaponHudOverlay = new Sprite(t);
     }
 
-    public static void drawWeaponHud(SpriteBatch batch, ABNPGame game, OrthographicCamera camera) {
+    public static void drawWeaponHud(SpriteBatch batch, ShapeRenderer shape, ABNPGame game, OrthographicCamera camera) {
         Weapon activeWeapon = game.getPlayer().getWeaponLoadout().getActiveWeapon();
 
-        float width = camera.viewportWidth;
-        float height = camera.viewportHeight;
-        float x = width - 300;
-        float y = height - 150;
+        float width = 300;
+        float height = 120;
+        float x = ScreenInfo.WIDTH - 20 - width;
+        float y = ScreenInfo.HEIGHT-20;
 
 //        Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .6f);
 //        Composite old = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
@@ -43,27 +49,55 @@ public class UIManager {
 
         Sprite weaponIMG = activeWeapon.getHudSprite();
 
-        ShapeRenderer shape = new ShapeRenderer();
-        shape.setAutoShapeType(true);
-        shape.begin();
+        shape.begin(ShapeRenderer.ShapeType.Filled);
 
-        shape.rect(width-10, height-10, 20,20);
-        weaponIMG.setCenter(x, y);
-        weaponIMG.draw(game.batch);
 
+        shape.setColor((float)(100.0/255.0), 0f, 0f, .6f);
+//        shape.rect(x, y-height ,  width, height);
+        drawRoundRect(shape, ShapeRenderer.ShapeType.Filled, new Color((float)(100.0/255.0), 0f, 0f,0.6f), new Rectangle(x, y-height, width, height), 8);
+
+        shape.end();
+
+        batch.end();
+        batch.begin();
         if (activeWeapon instanceof Firearm) {
 
             Firearm activeFirearm = (Firearm) activeWeapon;
             String ammo = activeFirearm.getLoadedAmmo() + " / " + activeFirearm.getAmmoCount();
-            x = (int) Fonts.getXForRightAlignedText(Gdx.graphics.getWidth() - 30, ammo, Fonts.INFOFONT, .75f);
-            y = height + 5;
-            shape.setColor(Color.RED);
-            shape.rect(x-200,y,20,20);
-            Fonts.drawScaled(Fonts.INFOFONT, .75f, ammo, game.batch,x-200, y);
-            x = Gdx.graphics.getWidth() - 10 - width;
-            Fonts.drawScaled(Fonts.INFOFONT, .75f, activeFirearm.getName(), game.batch,x, y);
 
+            x = Fonts.getXForRightAlignedText((int) (camera.viewportWidth - 30), ammo, Fonts.INFOFONT, .6f * camera.zoom);
+            y = y - height + 25;
+
+            Fonts.drawScaled(Fonts.INFOFONT, .6f * camera.zoom, ammo, game.batch,x + (x*(camera.zoom-1)/2), y*camera.zoom);
+            x = camera.viewportWidth - 10 - width;
+            Fonts.drawScaled(Fonts.INFOFONT, .6f * camera.zoom, activeFirearm.getName(), game.batch,x + (x*(camera.zoom-1))/2, y*camera.zoom);
         }
+
+
+
+        x = camera.viewportWidth - 20 - (width/2);
+        y = camera.viewportHeight - 75;
+        weaponIMG.setCenter(x, y);
+        weaponIMG.draw(game.batch);
+
+//        camera.zoom += .002f;
+//        System.out.println(camera.zoom);
+
     }
+
+    public static void drawRoundRect(ShapeRenderer shape, ShapeRenderer.ShapeType type, Color color, Rectangle bounds, int angle) {
+        shape.setColor(color);
+        shape.set(type);
+        shape.rect(bounds.x + angle, bounds.y, bounds.width - (angle*2), bounds.height);
+        shape.rect(bounds.x, bounds.y + angle, angle, bounds.height - (angle*2));
+        shape.rect(bounds.x + bounds.width - angle, bounds.y + angle, angle, bounds.height - (angle*2));
+        shape.arc(bounds.x + angle, bounds.y + angle, angle, 270, -90, 20);
+        shape.arc(bounds.x + bounds.width - angle, bounds.y + bounds.height - angle, angle, 90, -90, 20);
+        shape.arc(bounds.x + bounds.width - angle, bounds.y + angle, angle, 0, -90, 20);
+        shape.arc(bounds.x + angle, bounds.y + bounds.height - angle, angle, 90, 90, 20);
+
+
+    }
+
 
 }

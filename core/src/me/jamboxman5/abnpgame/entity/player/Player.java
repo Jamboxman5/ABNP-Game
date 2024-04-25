@@ -292,7 +292,7 @@ public class Player extends Mob {
         Composite old = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
 
 		shape.setColor(.8f, 0f, 0f, .5f);
-		shape.line(screenX, screenY, (int)x, (int)y);
+		shape.line(screenX, screenY, (int)gp.getMousePointer().getX(), (int)gp.getMousePointer().getY());
 
 //        g2.setComposite(comp);
 //		g2.setStroke(new BasicStroke(2));
