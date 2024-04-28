@@ -1,10 +1,10 @@
-package me.jamboxman5.steeringbehaviors;
+package me.jamboxman5.steering.statemachine;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class StateMachineGame extends Game {
+public class SteeringGame extends Game {
     SpriteBatch batch;
     BitmapFont font;
 
@@ -13,7 +13,7 @@ public class StateMachineGame extends Game {
         batch = new SpriteBatch();
         font = new BitmapFont();
 
-        setScreen(new StateMachineMenuScreen(this));
+        setScreen(new SteeringGameMenuScreen(this));
     }
 
     @Override

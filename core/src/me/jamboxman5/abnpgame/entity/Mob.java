@@ -9,7 +9,7 @@ public abstract class Mob extends Entity {
 	protected String name;
 	protected int speed;
 	protected int numSteps = 0;
-	protected boolean isMoving;
+	public boolean isMoving;
 	protected int scale = 1;
 	
 	protected int screenX;

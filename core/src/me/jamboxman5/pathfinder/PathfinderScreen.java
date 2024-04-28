@@ -78,8 +78,8 @@ public class PathfinderScreen implements Screen {
     }
     @Override
     public void show() {
-//        FileHandle inputFile = Gdx.files.internal("demos/pathfinder/teleportinput.txt");
-        FileHandle inputFile = Gdx.files.internal("demos/pathfinder/input.txt");
+        FileHandle inputFile = Gdx.files.internal("demos/pathfinder/teleportinput.txt");
+//        FileHandle inputFile = Gdx.files.internal("demos/pathfinder/input.txt");
         String fullText = inputFile.readString();
         String[] rows = fullText.split("\\n");
         for(int i = 0; i < rows.length; i++) {

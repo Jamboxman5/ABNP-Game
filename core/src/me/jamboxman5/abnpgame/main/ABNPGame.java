@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.player.Player;
-import me.jamboxman5.abnpgame.entity.Entity;
 import me.jamboxman5.abnpgame.managers.MapManager;
 import me.jamboxman5.abnpgame.net.GameClient;
 import me.jamboxman5.abnpgame.screen.MainMenuScreen;
@@ -20,7 +19,8 @@ public class ABNPGame extends Game {
 
     private static ABNPGame instance;
     public SpriteBatch batch;
-    public ShapeRenderer shape;
+    public SpriteBatch uiCanvas;
+    public ShapeRenderer uiShapeRenderer;
     private Player player;
     private MapManager mapManager;
     private float zoom = 1;
@@ -30,7 +30,8 @@ public class ABNPGame extends Game {
     public void create() {
         instance = this;
         batch = new SpriteBatch();
-        shape = new ShapeRenderer();
+        uiCanvas = new SpriteBatch();
+        uiShapeRenderer = new ShapeRenderer();
         mapManager = new MapManager(this);
         Fonts.initFonts();
         Sounds.initSounds();
@@ -68,4 +69,6 @@ public class ABNPGame extends Game {
     }
 
     public GameClient getClient() { return socketClient; }
+
+
 }

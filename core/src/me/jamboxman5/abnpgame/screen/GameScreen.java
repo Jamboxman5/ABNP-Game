@@ -3,9 +3,7 @@ package me.jamboxman5.abnpgame.screen;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -13,15 +11,13 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
-import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Sounds;
-import me.jamboxman5.abnpgame.weapon.Weapon;
-import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 
 public class GameScreen implements Screen, InputProcessor {
     final ABNPGame game;
 
-    private final OrthographicCamera camera;
+    private final OrthographicCamera gameCamera;
+    private final OrthographicCamera uiCamera;
     private Viewport viewport;
 
     private final Vector3 touchPos = new Vector3();
@@ -31,10 +27,12 @@ public class GameScreen implements Screen, InputProcessor {
         this.game = game;
 
         shape = new ShapeRenderer();
-        camera = new OrthographicCamera();
-        viewport = new FitViewport(ScreenInfo.WIDTH, ScreenInfo.HEIGHT, camera);
+        gameCamera = new OrthographicCamera();
+        uiCamera = new OrthographicCamera();
+        viewport = new FitViewport(ScreenInfo.WIDTH, ScreenInfo.HEIGHT, gameCamera);
 
-        camera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
+        gameCamera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
+        uiCamera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
         Gdx.input.setInputProcessor(this);
 
         game.getMapManager().setMap("Verdammtenstadt");
@@ -56,12 +54,14 @@ public class GameScreen implements Screen, InputProcessor {
         ScreenUtils.clear(.1f, 0, 0f, 1);
 
         // tell the camera to update its matrices.
-        camera.update();
+        gameCamera.update();
+        uiCamera.update();
 
         // tell the SpriteBatch to render in the
         // coordinate system specified by the camera.
-        game.batch.setProjectionMatrix(camera.combined);
-        game.shape.setProjectionMatrix(camera.combined);
+        game.batch.setProjectionMatrix(gameCamera.combined);
+        game.uiShapeRenderer.setProjectionMatrix(uiCamera.combined);
+        game.uiCanvas.setProjectionMatrix(uiCamera.combined);
         // begin a new batch and draw the bucket and
         // all drops
 
@@ -74,33 +74,45 @@ public class GameScreen implements Screen, InputProcessor {
         if (Gdx.input.isTouched()) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         }
-        game.getMapManager().getDebugRenderer().render(game.getMapManager().getWorld(), camera.combined);
+        game.getMapManager().getDebugRenderer().render(game.getMapManager().getWorld(), gameCamera.combined);
         game.getMapManager().getWorld().step(1/60f, 6, 2);
     }
 
     private void draw() {
         game.batch.begin();
         game.getMapManager().draw(game.batch);
-        game.getPlayer().draw(game.batch, game.shape);
-        drawUI();
+        game.getPlayer().draw(game.batch, game.uiShapeRenderer);
         game.batch.end();
+
+        game.uiCanvas.begin();
+        drawUI();
+        game.uiCanvas.end();
+
     }
 
     private void drawUI() {
 
-        UIManager.drawWeaponHud(game.batch, game.shape, game, camera);
+
+        UIManager.drawWeaponHud(game.uiCanvas, game.uiShapeRenderer, game, gameCamera);
 
     }
 
     private void update() {
+
+
         game.getPlayer().update();
+        if (game.getPlayer().isMoving && getZoom() <= 1.25) {
+            zoomOut();
+        } else if (!game.getPlayer().isMoving && getZoom() > 1) {
+            zoomIn();
+        }
     }
 
     @Override
     public void resize(int width, int height) {
         ScreenInfo.WIDTH = width;
         ScreenInfo.HEIGHT = height;
-        game.batch.setProjectionMatrix(camera.combined);
+        game.batch.setProjectionMatrix(gameCamera.combined);
 
 //        viewport.update(width, height);
     }
@@ -124,14 +136,14 @@ public class GameScreen implements Screen, InputProcessor {
     public void dispose() {
     }
 
-    public void setZoom(float newZoom) { camera.zoom = newZoom; }
-    public float getZoom() { return camera.zoom; }
+    public void setZoom(float newZoom) { gameCamera.zoom = newZoom; }
+    public float getZoom() { return gameCamera.zoom; }
 
     public void zoomIn() {
-        setZoom(getZoom()+.002f);
+        setZoom(getZoom()-.002f);
     }
     public void zoomOut() {
-        setZoom(getZoom()-.005f);
+        setZoom(getZoom()+.005f);
     }
 
     @Override

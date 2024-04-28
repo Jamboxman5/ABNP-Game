@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import me.jamboxman5.abnpgame.entity.Mob;
 import me.jamboxman5.abnpgame.main.ABNPGame;
+import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.util.InputKeys;
 import me.jamboxman5.abnpgame.weapon.Weapon;
@@ -58,6 +59,8 @@ public class Player extends Mob {
 	
 	@Override
 	public void update() {
+
+
 
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;

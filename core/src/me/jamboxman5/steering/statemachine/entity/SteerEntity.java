@@ -1,29 +1,46 @@
-package me.jamboxman5.statemachine.entity;
+package me.jamboxman5.steering.statemachine.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import jogamp.opengl.glu.nurbs.Arc;
-import me.jamboxman5.statemachine.StateMachineGameScreen;
+import me.jamboxman5.steering.statemachine.SteeringGameScreen;
 
-public class SMEntity {
+public class SteerEntity {
 
-    protected Rectangle bounds;
+    public Rectangle bounds;
     protected Vector2 target;
-    protected Vector2 orientation;
-    protected Vector2 velocity;
-    protected int speed;
-    protected StateMachineGameScreen screen;
+    public Vector2 orientation;
+    public Vector2 velocity;
+    public Vector2 acceleration;
+    public Rectangle deadSpace;
 
-    protected SMEntity(Rectangle bounds, StateMachineGameScreen screen) {
+
+    protected int speed;
+    protected SteeringGameScreen screen;
+
+    protected SteerEntity(Rectangle bounds, SteeringGameScreen screen) {
         this.bounds = bounds;
         this.screen = screen;
+        velocity = new Vector2(0,0);
+        acceleration = new Vector2(0,0);
+        deadSpace = new Rectangle(1280/2 - 280, 720/2-180, 520, 320);
+
     }
 
     public void update() {
+
+        orientation = velocity.nor();
+        velocity.add(acceleration);
+        velocity.limit(speed);
+
+        if (!deadSpace.contains(new Vector2(bounds.x + velocity.x, bounds.y))) bounds.x += velocity.x;
+        else bounds.x += velocity.y;
+        if (!deadSpace.contains(new Vector2(bounds.x, bounds.y + velocity.y))) bounds.y += velocity.y;
+        else bounds.y += velocity.x;
+
+//        bounds.setPosition(new Vector2(bounds.x, bounds.y).add(velocity));
 
         if (bounds.x < 0-bounds.width) {
             bounds.x = Gdx.graphics.getWidth() + bounds.width;

@@ -57,20 +57,20 @@ public class UIManager {
         drawRoundRect(shape, ShapeRenderer.ShapeType.Filled, new Color((float)(100.0/255.0), 0f, 0f,0.6f), new Rectangle(x, y-height, width, height), 8);
 
         shape.end();
-
         batch.end();
         batch.begin();
+
         if (activeWeapon instanceof Firearm) {
 
             Firearm activeFirearm = (Firearm) activeWeapon;
             String ammo = activeFirearm.getLoadedAmmo() + " / " + activeFirearm.getAmmoCount();
 
-            x = Fonts.getXForRightAlignedText((int) (camera.viewportWidth - 30), ammo, Fonts.INFOFONT, .6f * camera.zoom);
+            x = Fonts.getXForRightAlignedText((int) (camera.viewportWidth - 30), ammo, Fonts.INFOFONT, .6f);
             y = y - height + 25;
 
-            Fonts.drawScaled(Fonts.INFOFONT, .6f * camera.zoom, ammo, game.batch,x + (x*(camera.zoom-1)/2), y*camera.zoom);
+            Fonts.drawScaled(Fonts.INFOFONT, .6f, ammo, batch,x, y);
             x = camera.viewportWidth - 10 - width;
-            Fonts.drawScaled(Fonts.INFOFONT, .6f * camera.zoom, activeFirearm.getName(), game.batch,x + (x*(camera.zoom-1))/2, y*camera.zoom);
+            Fonts.drawScaled(Fonts.INFOFONT, .6f, activeFirearm.getName(), batch,x, y);
         }
 
 
@@ -78,10 +78,8 @@ public class UIManager {
         x = camera.viewportWidth - 20 - (width/2);
         y = camera.viewportHeight - 75;
         weaponIMG.setCenter(x, y);
-        weaponIMG.draw(game.batch);
+        weaponIMG.draw(batch);
 
-//        camera.zoom += .002f;
-//        System.out.println(camera.zoom);
 
     }
 

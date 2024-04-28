@@ -1,12 +1,10 @@
 package me.jamboxman5.abnpgame.managers;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
-import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
@@ -73,7 +71,7 @@ public class MapManager {
 	}
 	
 	public void drawEntities(Graphics2D g2) {
-		for (Entity e : entities) { e.draw(game.batch, game.shape); }
+		for (Entity e : entities) { e.draw(game.batch, game.uiShapeRenderer); }
 	}
 	
 	public void updateProjectiles() {

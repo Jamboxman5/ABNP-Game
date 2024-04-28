@@ -1,17 +1,14 @@
-package me.jamboxman5.statemachine.entity;
+package me.jamboxman5.steering.statemachine.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
-import me.jamboxman5.statemachine.StateMachineGame;
-import me.jamboxman5.statemachine.StateMachineGameScreen;
-import sun.security.util.PolicyUtil;
+import me.jamboxman5.steering.statemachine.SteeringGameScreen;
 
-import javax.sound.sampled.Line;
 import java.util.ArrayList;
 
-public class SMGuard extends SMEntity {
+public class SteerGuard extends SteerEntity {
 
     private Rectangle catchCollision;
     public GuardState state;
@@ -19,17 +16,76 @@ public class SMGuard extends SMEntity {
     public Circle sightRadius;
     public Polygon arc;
     public PathFinder finder = new PathFinder();
-    public Rectangle deadSpace;
+    public Vector2 target;
+    float maxForce;
+    Vector2 startPosition;
 
-    public SMGuard(StateMachineGameScreen screen) {
+    public SteerGuard(SteeringGameScreen screen) {
         super(new Rectangle(screen.building.x - 40, screen.building.y - 40, 40, 40), screen);
         catchCollision = new Rectangle( bounds.x + 10, bounds.y + 10, 20, 20);
         sightRadius = new Circle(bounds.x + bounds.width/2, bounds.y + bounds.height/2, 200);
         arc = new Polygon();
         state = GuardState.LOOKINGLEFT;
-        speed = 5;
-        deadSpace = new Rectangle(1280/2 - 280, 720/2-180, 520, 320);
+        speed = 4;
+        velocity = new Vector2(0,0);
+        maxForce = .1f;
+        startPosition = new Vector2(screen.building.x - 40, screen.building.y - 40);
+    }
 
+    public void pursue() {
+        target = new Vector2(screen.player.bounds.x, screen.player.bounds.y);
+        Vector2 prediction = screen.player.velocity.cpy();
+        prediction.scl(10);
+        target.add(prediction);
+
+        seek(target);
+
+//        if (!pathFind((int) target.x, (int) target.y)) pathFind((int) screen.player.bounds.x, (int) screen.player.bounds.y);
+    }
+
+    public void seek(Vector2 target) {
+        Vector2 force = target.sub(new Vector2(bounds.x, bounds.y));
+        force.setLength(speed);
+        Vector2 steer = force.sub(velocity);
+        steer.limit(maxForce);
+
+        acceleration.add(steer);
+        acceleration.limit(speed);
+
+        System.out.println(acceleration);
+
+//        if (!deadSpace.contains(new Vector2(bounds.x + steer.x, bounds.y))) bounds.x += steer.x;
+//        else bounds.x += steer.y;
+//        if (!deadSpace.contains(new Vector2(bounds.x, bounds.y + steer.y))) bounds.y += steer.y;
+//        else bounds.y += steer.x;
+    }
+
+    public void arrive(Vector2 target) {
+        Vector2 force = target.sub(new Vector2(bounds.x, bounds.y));
+
+        int radius = 200;
+        float distance = force.len();
+        if (distance < radius) {
+            float m = map(distance, 0, radius, 0, speed);
+            force.setLength(m);
+        }
+        else {
+            force.setLength(speed);
+        }
+
+        force.sub(velocity);
+        force.limit(maxForce);
+
+
+
+        acceleration.add(force);
+        acceleration.limit(speed);
+    }
+
+    public static float map(float val, float oldmax, float max, float newMin, float newMax)
+    {
+        val = (val - oldmax)/(max - oldmax);
+        return newMin + val * (newMax - newMin);
     }
 
     private class Node {
@@ -205,8 +261,7 @@ public class SMGuard extends SMEntity {
                 if (openList.isEmpty()) break;
 
                 currentNode = openList.get(bestNodeIndex);
-                if (currentNode == goalNode) {                System.out.println(currentNode.x + ", " + currentNode.y);
-                    System.out.println(currentNode.x + ", " + currentNode.y);
+                if (currentNode == goalNode) {
 
                     goalReached = true;
                     trackThePath();
@@ -310,24 +365,33 @@ public class SMGuard extends SMEntity {
                 break;
             case CHASING:
                 if (!arc.contains(screen.player.bounds.x, screen.player.bounds.y)) {
-                    state = GuardState.RETURNING;
+                    state = GuardState.ARRIVING;
+                    acceleration.setLength(0);
+                    velocity.setLength(0);
 
                 } else {
                     angle = getDrawingAngle(true);
 
-                    int targetX = (int) screen.player.bounds.x+5;
-                    int targetY = (int) screen.player.bounds.y+5;
+                    pursue();
 
-                    pathFind(targetX, targetY);
+//                    int targetX = (int) screen.player.bounds.x+5;
+//                    int targetY = (int) screen.player.bounds.y+5;
+//
+//                    pathFind(targetX, targetY);
 
                 }
                 break;
-            case RETURNING:
+            case ARRIVING:
                 if (arc.contains(screen.player.bounds.x, screen.player.bounds.y)) {
+                    acceleration.setLength(0);
+                    velocity.setLength(0);
                     state = GuardState.CHASING;
                 }
-                else if (bounds.x == deadSpace.x-10 && bounds.y == deadSpace.y-10) {
+                else if (Math.abs(bounds.x - deadSpace.x) < 20 && Math.abs(bounds.y - deadSpace.y) < 20) {
+                    acceleration.setLength(0);
+                    velocity.setLength(0);
                     state = GuardState.LOOKINGRIGHT;
+
                     angle = 180;
                 } else {
 
@@ -336,7 +400,7 @@ public class SMGuard extends SMEntity {
                     int targetX = (int) deadSpace.x-10;
                     int targetY = (int) deadSpace.y-10;
 
-                    pathFind(targetX, targetY);
+                    arrive(new Vector2(targetX, targetY));
 
                 }
                 break;
@@ -346,7 +410,7 @@ public class SMGuard extends SMEntity {
 
     }
 
-    public void pathFind(int targetX, int targetY) {
+    public boolean pathFind(int targetX, int targetY) {
         int startX = (int) bounds.x;
         int startY = (int) bounds.y;
 
@@ -356,7 +420,6 @@ public class SMGuard extends SMEntity {
             int nextX = 0;
             int nextY = 0;
 
-            System.out.println("SEARCHING");
 
             if (finder.pathList.size() < speed) {
                 nextX = finder.pathList.get(0).x;
@@ -371,7 +434,9 @@ public class SMGuard extends SMEntity {
             if (!screen.building.contains(nextX, bounds.y)) bounds.x = nextX;
             if (!screen.building.contains(bounds.x, nextY)) bounds.y = nextY;
 
+            return true;
         }
+        return false;
 
     }
 
@@ -379,8 +444,8 @@ public class SMGuard extends SMEntity {
 
         if (toPlayer) {
             float degrees = (float) (Math.atan2(
-                    screen.player.bounds.getY() - bounds.getY(),
-                    screen.player.bounds.getX() - bounds.getX()
+                    screen.player.bounds.getY() + screen.player.velocity.scl(10).y - bounds.getY(),
+                    screen.player.bounds.getX() + screen.player.velocity.scl(10).x - bounds.getX()
             ) * 180.0d / Math.PI);
 
             return degrees;
@@ -413,6 +478,13 @@ public class SMGuard extends SMEntity {
             renderer.rect(finder.pathList.get(i).x, finder.pathList.get(i).y, 2, 2);
         }
 
+        if (target != null) {
+//            System.out.println(target.x + ", " + target.y);
+            renderer.set(ShapeRenderer.ShapeType.Filled);
+            renderer.setColor(Color.WHITE);
+            renderer.circle(target.x, target.y, 5);
+        }
+
         renderer.set(ShapeRenderer.ShapeType.Filled);
 
     }
@@ -428,7 +500,7 @@ public class SMGuard extends SMEntity {
     }
 
     public enum GuardState {
-        LOOKINGLEFT, LOOKINGRIGHT, CHASING, RETURNING
+        LOOKINGLEFT, LOOKINGRIGHT, CHASING, ARRIVING
     }
 
 }

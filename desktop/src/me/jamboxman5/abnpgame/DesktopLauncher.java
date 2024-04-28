@@ -9,15 +9,16 @@ import me.jamboxman5.galaga.GalagaGame;
 import me.jamboxman5.legacyofgoku.LegacyGame;
 import me.jamboxman5.pathfinder.PathfinderGame;
 import me.jamboxman5.statemachine.StateMachineGame;
+import me.jamboxman5.steering.statemachine.SteeringGame;
 
 // Please note that on macOS your application needs to be started with the -XstartOnFirstThread JVM argument
 public class DesktopLauncher {
-	public static void main (String[] arg) {
+	public static void main(String[] arg) {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setWindowedMode(ScreenInfo.WIDTH,ScreenInfo.HEIGHT);
 		config.useVsync(true);
 		config.setForegroundFPS(60);
-		config.setTitle("GuardGame");
+		config.setTitle("ABNPGame");
 		new Lwjgl3Application(new ABNPGame(), config);
 	}
 }

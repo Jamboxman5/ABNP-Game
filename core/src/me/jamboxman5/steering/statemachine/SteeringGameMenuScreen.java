@@ -1,4 +1,4 @@
-package me.jamboxman5.statemachine;
+package me.jamboxman5.steering.statemachine;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -9,18 +9,16 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
-import me.jamboxman5.galaga.GalagaGame;
-import me.jamboxman5.galaga.GalagaGameScreen;
 
 import java.util.Iterator;
 
-class StateMachineMenuScreen implements Screen {
-    final StateMachineGame game;
+class SteeringGameMenuScreen implements Screen {
+    final SteeringGame game;
     OrthographicCamera camera;
     long lastNewStar;
     Array<Vector3> stars = new Array<>();
     ShapeRenderer shapeRenderer;
-    public StateMachineMenuScreen(final StateMachineGame game) {
+    public SteeringGameMenuScreen(final SteeringGame game) {
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 1280, 720);
@@ -76,7 +74,7 @@ class StateMachineMenuScreen implements Screen {
         game.batch.end();
 
         if (Gdx.input.isTouched()) {
-            game.setScreen(new StateMachineGameScreen(game));
+            game.setScreen(new SteeringGameScreen(game));
             dispose();
         }
 
