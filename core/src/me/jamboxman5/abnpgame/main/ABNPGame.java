@@ -4,6 +4,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.player.Player;
 import me.jamboxman5.abnpgame.managers.MapManager;
@@ -21,9 +22,11 @@ public class ABNPGame extends Game {
     public SpriteBatch batch;
     public SpriteBatch uiCanvas;
     public ShapeRenderer uiShapeRenderer;
+    public ShapeRenderer shapeRenderer;
     private Player player;
     private MapManager mapManager;
     private float zoom = 1;
+    public boolean debugMode = false;
 
     private GameClient socketClient;
 
@@ -32,6 +35,7 @@ public class ABNPGame extends Game {
         batch = new SpriteBatch();
         uiCanvas = new SpriteBatch();
         uiShapeRenderer = new ShapeRenderer();
+        shapeRenderer = new ShapeRenderer();
         mapManager = new MapManager(this);
         Fonts.initFonts();
         Sounds.initSounds();
@@ -64,9 +68,15 @@ public class ABNPGame extends Game {
 
     public MapManager getMapManager() { return mapManager; }
 
-    public Point getMousePointer() {
-        return new Point(Gdx.input.getX(), ScreenInfo.HEIGHT - Gdx.input.getY());
+    public Vector2 getMousePointer() {
+        return new Vector2(Gdx.input.getX(), ScreenInfo.HEIGHT - Gdx.input.getY());
     }
+
+    public Vector2 getWorldMousePointer() {
+        return new Vector2((float) (player.getWorldX() - (Gdx.graphics.getWidth()/2) + Gdx.input.getX()), (float) (player.getWorldY() - (Gdx.graphics.getHeight()/2) + (ScreenInfo.HEIGHT - Gdx.input.getY())));
+//        return new Vector2(Gdx.input.getX(), ScreenInfo.HEIGHT - Gdx.input.getY());
+    }
+
 
     public GameClient getClient() { return socketClient; }
 

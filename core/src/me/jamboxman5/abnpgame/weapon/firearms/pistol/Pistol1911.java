@@ -39,7 +39,8 @@ public class Pistol1911 extends Firearm {
 		this.name = "M1911";
 		this.firingVelocity = 150;
 		this.type = WeaponType.M1911;
-		this.yOffset = 13;
+		this.xOffset = 13;
+		this.yOffset = 15;
 
 	}
 	

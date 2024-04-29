@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
@@ -49,17 +50,22 @@ public class MapManager {
 		setup("Airbase");
 	}
 
-	public void draw(SpriteBatch batch) {
+	public void draw(SpriteBatch batch, ShapeRenderer renderer) {
 		
 //		if (game.getScreen().getClass() != GameScreen.class) return;
 //
-        int screenX = (int) (0 - game.getPlayer().getAdjustedWorldX() + game.getPlayer().getScreenX());
-        int screenY = (int) (0 - game.getPlayer().getAdjustedWorldY() + game.getPlayer().getScreenY());
+        int screenX = (int) (0 - game.getPlayer().getWorldX());
+        int screenY = (int) (0 - game.getPlayer().getWorldY());
 
 //		int screenX = 0;
 //		int screenY = 0;
-		m.getImage().setScale(0);
-		batch.draw(m.getImage(), screenX,screenY);
+
+		batch.begin();
+		m.getImage().draw(batch);
+		m.getImage().setScale(.5f);
+		m.getImage().setOrigin(screenX, screenY);
+		batch.end();
+		drawProjectiles(renderer);
 	}
 	
 	public void updateEntities() {
@@ -82,8 +88,8 @@ public class MapManager {
 		disposingEntities = new Array<>();
 	}
 	
-	public void drawProjectiles(Graphics2D g2) {
-		for (Projectile p : projectiles) { p.draw(g2); }
+	public void drawProjectiles(ShapeRenderer renderer) {
+		for (Projectile p : projectiles) { p.draw(renderer); }
 	}
 	
 	public void addProjectile(Projectile p) {

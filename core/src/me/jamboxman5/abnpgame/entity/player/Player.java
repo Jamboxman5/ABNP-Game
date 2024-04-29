@@ -2,17 +2,18 @@ package me.jamboxman5.abnpgame.entity.player;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.entity.Mob;
 import me.jamboxman5.abnpgame.main.ABNPGame;
-import me.jamboxman5.abnpgame.screen.GameScreen;
-import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.util.InputKeys;
-import me.jamboxman5.abnpgame.weapon.Weapon;
 import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
+import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 import me.jamboxman5.abnpgame.weapon.mods.RedDotSight;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
@@ -20,7 +21,7 @@ import java.awt.*;
 
 public class Player extends Mob {
 	
-	private final static int defaultSpeed = 5;
+	private final static int defaultSpeed = 10;
 	private String gamerTag;
 	protected int money;
 	protected int exp;
@@ -43,7 +44,9 @@ public class Player extends Mob {
 		
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
-		
+
+		footstep1 = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/entity/player/footsteps/Player_Footstep_1.wav"));
+		footstep2 = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/entity/player/footsteps/Player_Footstep_2.wav"));
 		setDefaults();
 	}
 
@@ -51,16 +54,14 @@ public class Player extends Mob {
 		setSpeed(6.5);
 		setRotation(0);
 		collisionWidth = 50;
-		collision = new Rectangle((int)(getAdjustedWorldX())-(collisionWidth/4), 
-				  (int)(getAdjustedWorldY())-(collisionWidth/2), 
+		collision = new Rectangle((int)(getWorldX())-(collisionWidth/4),
+				  (int)(getWorldY())-(collisionWidth/2),
 				  (int)(collisionWidth*1.5) , 
 				  (int)(collisionWidth));
 	}
 	
 	@Override
 	public void update() {
-
-
 
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
@@ -83,85 +84,90 @@ public class Player extends Mob {
         } else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
             setDirection("right");
         }
+
+		if (Gdx.input.isKeyPressed(Input.Keys.R)) {
+			if (weapons.getActiveWeapon() instanceof Firearm) {
+				Firearm arm = (Firearm) weapons.getActiveWeapon();
+				if (arm.canReload()) arm.reload();
+			}
+		}
 		
 		if (Gdx.input.isKeyPressed(InputKeys.FORWARD)
                 || Gdx.input.isKeyPressed(InputKeys.BACK)
                 || Gdx.input.isKeyPressed(InputKeys.LEFT)
                 || Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
 			
-			if (screenX == gp.getMousePointer().getX() &&
-				screenY == gp.getMousePointer().getY()) {
+			if (screenX == gp.getMousePointer().x &&
+				screenY == gp.getMousePointer().y) {
 				basicMove();
 				isMoving = true;
-				return;
 			}
-            
-			double xComp = 0;
-			double yComp = 0;
 			
-			if (Gdx.input.isKeyPressed(InputKeys.FORWARD)) {
-				if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
-	            	xComp = getStrafeSpeed() * Math.cos(rotation);
-					yComp = getStrafeSpeed() * Math.sin(rotation);
-					xComp += (getStrafeSpeed() * Math.cos(rotation - Math.toRadians(90)));
-					yComp += (getStrafeSpeed() * Math.sin(rotation - Math.toRadians(90)));
-					move(xComp, yComp);
-		            isMoving = true;
-				} else if (Gdx.input.isKeyPressed(InputKeys.LEFT)) {
-					xComp = getStrafeSpeed() * Math.cos(rotation);
-					yComp = getStrafeSpeed() * Math.sin(rotation);
-					xComp += (getStrafeSpeed() * Math.cos(rotation + Math.toRadians(90)));
-					yComp += (getStrafeSpeed() * Math.sin(rotation + Math.toRadians(90)));
-					move(xComp, yComp);
-		            isMoving = true;
-				} else {
-					xComp = getSpeed() * Math.cos(rotation);
-					yComp = getSpeed() * Math.sin(rotation);
-					move(xComp, yComp);
-		            isMoving = true;
-				}
-			} else if (Gdx.input.isKeyPressed(InputKeys.BACK)) {
+			else if (Gdx.input.isKeyPressed(InputKeys.FORWARD)) {
+
 				if (Gdx.input.isKeyPressed(InputKeys.LEFT)) {
-					xComp = (getStrafeSpeed() * Math.cos(rotation));
-					yComp = (getStrafeSpeed() * Math.sin(rotation));
-					xComp += (getStrafeSpeed() * Math.cos(rotation - Math.toRadians(90)))/2;
-					yComp += (getStrafeSpeed() * Math.sin(rotation - Math.toRadians(90)))/2;
-					move(xComp, yComp);
-		            isMoving = true;
+					move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, 45));
+
 				} else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
-					xComp = (getStrafeSpeed() * Math.cos(rotation));
-					yComp = (getStrafeSpeed() * Math.sin(rotation));
-					xComp += (getStrafeSpeed() * Math.cos(rotation + Math.toRadians(90)))/2;
-					yComp += (getStrafeSpeed() * Math.sin(rotation + Math.toRadians(90)))/2;
-					move(xComp, yComp);
-		            isMoving = true;
+					move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, -45));
+
 				} else {
-					xComp = getStrafeSpeed() * Math.cos(rotation);
-					yComp = getStrafeSpeed() * Math.sin(rotation);
-					move(xComp, yComp);
-		            isMoving = true;
+					move(gp.getWorldMousePointer().cpy());
 				}
+
+				isMoving = true;
+
+			} else if (Gdx.input.isKeyPressed(InputKeys.BACK)) {
+
+				if (Gdx.input.isKeyPressed(InputKeys.LEFT)) {
+					move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, 180-45));
+
+				} else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
+					move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, 180+45));
+
+				} else {
+					move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, 180));
+				}
+
+				isMoving = true;
+
 			} else if (Gdx.input.isKeyPressed(InputKeys.LEFT)) {
-				xComp = getStrafeSpeed() * Math.cos(rotation - Math.toRadians(90));
-				yComp = getStrafeSpeed() * Math.sin(rotation - Math.toRadians(90));
-				move(xComp, yComp);
-	            isMoving = true;
+
+				move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, 90));
+				isMoving = true;
 			} else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
-				xComp = getStrafeSpeed() * Math.cos(rotation + Math.toRadians(90));
-				yComp = getStrafeSpeed() * Math.sin(rotation + Math.toRadians(90));
-				move(xComp, yComp);
-	            isMoving = true;
-			} 
-			
-			if (xComp != 0.0 || yComp != 0.0) {
-				
-			} else {
-				isMoving = false;
+
+				move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, 270));
+				isMoving = true;
+			}
+
+			if (stepCounter == 1) {
+				footstep1.play();
+			} else if (stepCounter == 20) {
+				footstep2.play();
+			} else if (stepCounter == 40) {
+				stepCounter = 0;
 			}
 
 		} else {
 			isMoving = false;
+			velocity = new Vector2();
+			acceleration = new Vector2();
+			stepCounter = 0;
 		}
+
+		velocity.add(acceleration);
+
+		switch(direction) {
+			case "forward":
+				velocity.limit(speed);
+				break;
+			default:
+				velocity.limit(speed/1.75f);
+				break;
+		}
+
+		position.add(velocity);
 		
 		if (Gdx.input.isTouched()) {
 			weapons.getActiveWeapon().attack();
@@ -214,15 +220,15 @@ public class Player extends Mob {
 //
 //		//DRAW PLAYER
 //
-		int x = (int) (worldX - gp.getPlayer().getWorldX() + screenX);
-		int y = (int) (worldY - gp.getPlayer().getWorldY() + screenY);
+		int x = (int) (position.x - gp.getPlayer().getWorldX() + screenX);
+		int y = (int) (position.y - gp.getPlayer().getWorldY() + screenY);
 
 		if (weapons.getActiveWeapon().hasRedDotSight()) {
-			batch.end();
-			shape.begin(ShapeRenderer.ShapeType.Line);
-			drawRedDotSight(shape, gp.getMousePointer().getX(), gp.getMousePointer().getY());
+			Gdx.gl.glEnable(GL30.GL_BLEND);
+			Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+			shape.begin(ShapeRenderer.ShapeType.Filled);
+			drawRedDotSight(shape, gp.getMousePointer().x, gp.getMousePointer().y);
 			shape.end();
-			batch.begin();
 		}
 //
 //		g2.setColor(Color.red);
@@ -234,54 +240,23 @@ public class Player extends Mob {
 //		AffineTransform oldTrans = g2.getTransform();
 //
 //		tx.setToTranslation(x, y);
+		batch.begin();
 		Sprite toDraw = weapons.getActiveWeapon().getPlayerSprite(animFrame);
 		if (gp.getPlayer().equals(this)) {
-			batch.setTransformMatrix(new Matrix4().translate(x, y, 0).rotate(0f, 0f,1f, (float) (Math.toDegrees(getDrawingAngle()) + 360)));
-			toDraw.setPosition((-toDraw.getWidth()/2) + weapons.getActiveWeapon().getYOffset(),(-toDraw.getHeight()/2) + 14);
+			batch.setTransformMatrix(new Matrix4().translate(x, y, 0).rotate(0f, 0f, 1f, (float) (Math.toDegrees(getDrawingAngle()) + 360)));
+			toDraw.setPosition((-toDraw.getWidth() / 2) + weapons.getActiveWeapon().getXOffset(), (-toDraw.getHeight() / 2) + weapons.getActiveWeapon().getYOffset());
 
-//			toDraw.setRotation((float) ((float) Math.toDegrees(getDrawingAngle()) + 360 + getAngleDistanceModifier(x, y)));
-//			toDraw.setRotation((float) ((float) Math.toDegrees(getDrawingAngle()) + 360));
 			toDraw.draw(batch);
 			batch.setTransformMatrix(new Matrix4());
-//
 
-//
-//			if (gp.getMousePointer().getX() == screenX &&
-//				   	gp.getMousePointer().getY() == screenY) {
-//				tx.rotate(0);
-//			} else {
-//				tx.rotate(0);
-//				tx.rotate(getDrawingAngle());
-//			}
 		}
-//
-//
-//		g2.transform(tx);
-//
-//		BufferedImage sprite = weapons.getActiveWeapon().getPlayerSprite(animFrame);
-//		g2.drawImage(sprite, (int)(-sprite.getWidth()+(85*gp.getZoom())), (int)(-sprite.getHeight()+(weapons.getActiveWeapon().getYOffset()*gp.getZoom())), null);
-//		g2.setTransform(new AffineTransform());
-//		g2.setTransform(oldTrans);
-
-//		batch.draw(toDraw, x, y);
-
-//
-//		if (gp.isDebugMode()) {
-//			x = (int) (collision.x - gp.getPlayer().getWorldX() + gp.getPlayer().screenX);
-//			y = (int) (collision.y - gp.getPlayer().getWorldY() + gp.getPlayer().screenY);
-//
-//			g2.setColor(Color.red);
-//			g2.setStroke(new BasicStroke(3));
-//			g2.drawRect(x, y, collision.width, collision.height);
-//
-////		   	g2.drawRect((int)(x), (int)(y), (int)(collision.width*gp.getZoom()),(int) (collision.height*gp.getZoom()));
-//		}
+		batch.end();
 
 	}
 
 	private double getAngleDistanceModifier(int x, int y) {
-		double ac = Math.abs(y - gp.getMousePointer().getY());
-		double cb = Math.abs(x - gp.getMousePointer().getX());
+		double ac = Math.abs(y - gp.getMousePointer().y);
+		double cb = Math.abs(x - gp.getMousePointer().x);
 
 		double distance = Math.hypot(ac, cb);
 //		if (distance < 40) return 30;
@@ -291,11 +266,12 @@ public class Player extends Mob {
 	}
 
 	public void drawRedDotSight(ShapeRenderer shape, double x, double y) {
-		Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .4f);
-        Composite old = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
 
 		shape.setColor(.8f, 0f, 0f, .5f);
-		shape.line(screenX, screenY, (int)gp.getMousePointer().getX(), (int)gp.getMousePointer().getY());
+		shape.rectLine(new Vector2(screenX, screenY), new Vector2(gp.getMousePointer().x, gp.getMousePointer().y), 2);
+		shape.circle(gp.getMousePointer().x, gp.getMousePointer().y, 3, 4);
+		shape.setColor((float) (255.0/255.0), (float) (200.0/255.0), (float) (200.0/255.0), 1f);
+		shape.circle(gp.getMousePointer().x, gp.getMousePointer().y, 1, 4);
 
 //        g2.setComposite(comp);
 //		g2.setStroke(new BasicStroke(2));
@@ -308,8 +284,8 @@ public class Player extends Mob {
 
 	public float getAngleToCursor() {
 		try {
-			double num = screenY - gp.getMousePointer().getY();
-			double denom = screenX - gp.getMousePointer().getX();
+			double num = screenY - gp.getMousePointer().y;
+			double denom = screenX - gp.getMousePointer().x;
 			return (float) Math.atan(num/denom);
 		} catch (NullPointerException e) {
 			return 0;
@@ -318,22 +294,22 @@ public class Player extends Mob {
 	}
 
 	public float getAngleX() {
-		return (float) (screenX - gp.getMousePointer().getX());
+		return (float) (screenX - gp.getMousePointer().x);
 
 	}
 
 	public float getAngleY() {
-		return (float) (screenY - gp.getMousePointer().getY());
+		return (float) (screenY - gp.getMousePointer().y);
 
 	}
 	
 	public float getDrawingAngle() {
 		try {
-			float num = (float) (getScreenY() - gp.getMousePointer().getY());
-			float denom = (float) (getScreenX() - gp.getMousePointer().getX());
+			float num = (float) (getScreenY() - gp.getMousePointer().y);
+			float denom = (float) (getScreenX() - gp.getMousePointer().x);
 			if (denom == 0 && num == 0) return (float) (-Math.PI/2);
 			float angle = (float) Math.atan(num/denom);
-			if ((int)gp.getMousePointer().getX() <= screenX) {
+			if ((int)gp.getMousePointer().x <= screenX) {
 				   return (float) (angle - Math.toRadians(180));
 			   } else {
 				   return angle;

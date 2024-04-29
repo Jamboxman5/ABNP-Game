@@ -1,9 +1,12 @@
 package me.jamboxman5.abnpgame.screen;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -20,23 +23,38 @@ public class GameScreen implements Screen, InputProcessor {
     private final OrthographicCamera uiCamera;
     private Viewport viewport;
 
+    private float minZoom;
+    private float maxZoom;
+
+    long debugToggleTime;
+
     private final Vector3 touchPos = new Vector3();
     ShapeRenderer shape;
 
     public GameScreen(final ABNPGame game) {
         this.game = game;
 
+        minZoom = .75f;
+        maxZoom = .5f;
         shape = new ShapeRenderer();
         gameCamera = new OrthographicCamera();
         uiCamera = new OrthographicCamera();
         viewport = new FitViewport(ScreenInfo.WIDTH, ScreenInfo.HEIGHT, gameCamera);
+        debugToggleTime = System.currentTimeMillis();
 
         gameCamera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
+        gameCamera.zoom = .5f;
         uiCamera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
         Gdx.input.setInputProcessor(this);
 
         game.getMapManager().setMap("Verdammtenstadt");
         UIManager.setupElements();
+
+        Pixmap pixmap = new Pixmap(Gdx.files.internal("ui/cursor/Cursor_Reticle_Large.png"));
+        Cursor cursor = Gdx.graphics.newCursor(pixmap, 64, 64);
+        Gdx.graphics.setCursor(cursor);
+
+//        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Crosshair);
     }
 
     @Override
@@ -60,6 +78,7 @@ public class GameScreen implements Screen, InputProcessor {
         // tell the SpriteBatch to render in the
         // coordinate system specified by the camera.
         game.batch.setProjectionMatrix(gameCamera.combined);
+        game.shapeRenderer.setProjectionMatrix(gameCamera.combined);
         game.uiShapeRenderer.setProjectionMatrix(uiCamera.combined);
         game.uiCanvas.setProjectionMatrix(uiCamera.combined);
         // begin a new batch and draw the bucket and
@@ -74,19 +93,19 @@ public class GameScreen implements Screen, InputProcessor {
         if (Gdx.input.isTouched()) {
             touchPos.set(Gdx.input.getX(), Gdx.input.getY(), 0);
         }
+        if (Gdx.input.isKeyPressed(Input.Keys.BACKSLASH) && System.currentTimeMillis() - debugToggleTime > 100) {
+            game.debugMode = !game.debugMode;
+            debugToggleTime = System.currentTimeMillis();
+        }
         game.getMapManager().getDebugRenderer().render(game.getMapManager().getWorld(), gameCamera.combined);
         game.getMapManager().getWorld().step(1/60f, 6, 2);
     }
 
     private void draw() {
-        game.batch.begin();
-        game.getMapManager().draw(game.batch);
+        game.getMapManager().draw(game.batch, game.shapeRenderer);
         game.getPlayer().draw(game.batch, game.uiShapeRenderer);
-        game.batch.end();
 
-        game.uiCanvas.begin();
         drawUI();
-        game.uiCanvas.end();
 
     }
 
@@ -94,6 +113,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         UIManager.drawWeaponHud(game.uiCanvas, game.uiShapeRenderer, game, gameCamera);
+        if (game.debugMode) UIManager.drawDebugInfo(game, game.uiShapeRenderer, game.uiCanvas, Gdx.graphics.getDeltaTime());
 
     }
 
@@ -101,11 +121,13 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         game.getPlayer().update();
-        if (game.getPlayer().isMoving && getZoom() <= 1.25) {
+        if (game.getPlayer().isMoving && getZoom() <= minZoom) {
             zoomOut();
-        } else if (!game.getPlayer().isMoving && getZoom() > 1) {
+        } else if (!game.getPlayer().isMoving && getZoom() > maxZoom) {
             zoomIn();
         }
+
+        game.getMapManager().updateProjectiles();
     }
 
     @Override
@@ -136,14 +158,16 @@ public class GameScreen implements Screen, InputProcessor {
     public void dispose() {
     }
 
-    public void setZoom(float newZoom) { gameCamera.zoom = newZoom; }
+    public void setZoom(float newZoom) {
+        gameCamera.zoom = newZoom;
+    }
     public float getZoom() { return gameCamera.zoom; }
 
     public void zoomIn() {
-        setZoom(getZoom()-.002f);
+        setZoom(getZoom()-.001f);
     }
     public void zoomOut() {
-        setZoom(getZoom()+.005f);
+        setZoom(getZoom()+.002f);
     }
 
     @Override

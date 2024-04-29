@@ -14,8 +14,6 @@ import me.jamboxman5.abnpgame.weapon.mods.RedDotSight;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponMod;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
-import java.awt.image.BufferedImage;
-
 public abstract class Weapon {
 
 	protected double damage;
@@ -36,6 +34,7 @@ public abstract class Weapon {
 	protected Sound attackSound;
 	protected String name;
 	protected WeaponType type;
+	protected int xOffset = 0;
 	protected int yOffset = 0;
 	protected final static float playerSpriteScale = .25f;
 
@@ -65,7 +64,10 @@ public abstract class Weapon {
 
 	public WeaponModLoadout getModLoadout() { return equippedMods; }
 
-	public int getYOffset() { return yOffset; }
+	public int getXOffset() { return xOffset; }
+
+	public float getYOffset() { return yOffset; }
+
 
 	public enum WeaponType {
 		M1911, M4A1, WINCHESTER12;

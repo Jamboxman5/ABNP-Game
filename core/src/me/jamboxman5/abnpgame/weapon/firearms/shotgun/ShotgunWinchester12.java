@@ -8,8 +8,6 @@ import me.jamboxman5.abnpgame.entity.projectile.ammo.ShellAmmo;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
-import java.awt.image.BufferedImage;
-
 public class ShotgunWinchester12 extends Firearm {
 
 	public ShotgunWinchester12() {
@@ -41,7 +39,8 @@ public class ShotgunWinchester12 extends Firearm {
 		this.name = "Winchester 12GA";
 		this.firingVelocity = 150;
 		this.type = WeaponType.WINCHESTER12;
-		this.yOffset = 18;
+		this.xOffset = 18;
+		this.yOffset = 12;
 	}
 
 }

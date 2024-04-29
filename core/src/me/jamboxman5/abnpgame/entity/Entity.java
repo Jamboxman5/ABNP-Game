@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 
 import java.awt.*;
@@ -15,8 +16,8 @@ public abstract class Entity {
 	protected final ABNPGame gp;
 	
 	private Sprite sprite;
-	
-	protected double worldX, worldY;
+
+	protected Vector2 position;
 	protected String name;
 	protected double speed;
 	protected double rotation;
@@ -34,8 +35,10 @@ public abstract class Entity {
 	}
 
 	public void setDirection(String dir) { direction = dir; }
-	public void setWorldX(double x) { worldX = x; }
-	public void setWorldY(double y) { worldY = y; }
+	public void setWorldX(double x) { position.x = (float) x; }
+	public void setWorldY(double y) { position.y = (float) y; }
+	public void setPosition(float x, float y) { position = new Vector2(x, y); }
+	public void setPosition(Vector2 newPosition) { position = newPosition; }
 	public void setSpeed(double speed) { this.speed = speed; }
 
 	public abstract void update();
@@ -82,18 +85,17 @@ public abstract class Entity {
 	public void setSprite(Sprite img) { sprite = img; }
 	public Sprite getSprite() { return sprite; }
 	public double getSpeed() { return speed; }
-	public double getWorldX() { return worldX; }
-	public double getWorldY() { return worldY; }
-	public double getAdjustedWorldX() { return worldX; }
-	public double getAdjustedWorldY() { return worldY; }
+	public double getWorldX() { return position.x; }
+	public double getWorldY() { return position.y; }
+	public Vector2 getPosition() { return position; }
 	public String getDirection() { return direction; }
 
 	public String getName() { return name; }
 	public int getScreenY() {
-		return (int) (worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX());
+		return (int) (position.x - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX());
 	}
 	public int getScreenX() {
-		return (int) (worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY());
+		return (int) (position.y - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY());
 	}
 
 	public void setRotation(double rotation) {

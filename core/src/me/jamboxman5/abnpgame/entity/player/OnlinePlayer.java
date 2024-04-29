@@ -32,12 +32,12 @@ public class OnlinePlayer extends Player {
 		if (gp.getPlayer() == this) {
 			super.update();
 			if (isMoving || (rotation != lastRotation)) {
-				Packet02Move packet = new Packet02Move(getUsername(), worldX, worldY, getDrawingAngle());
+				Packet02Move packet = new Packet02Move(getUsername(), position.x, position.y, getDrawingAngle());
 				packet.writeData(gp.getClient());
 			}
 			lastRotation = rotation;
 
-			Packet02Move packetMove = new Packet02Move(getUsername(), getAdjustedWorldX(), getAdjustedWorldY(), getAdjustedRotation());
+			Packet02Move packetMove = new Packet02Move(getUsername(), getWorldX(), getWorldY(), getAdjustedRotation());
 			packetMove.writeData(gp.getClient());
 		}
 	}

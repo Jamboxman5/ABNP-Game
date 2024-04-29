@@ -5,6 +5,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.utils.ScreenUtils;
 import me.jamboxman5.abnpgame.main.ABNPGame;
+import me.jamboxman5.abnpgame.managers.MenuManager;
 import me.jamboxman5.abnpgame.util.Fonts;
 
 public class MainMenuScreen implements Screen {
@@ -12,12 +13,14 @@ public class MainMenuScreen implements Screen {
     final ABNPGame game;
 
     OrthographicCamera camera;
+    MenuManager manager;
 
     public MainMenuScreen(final ABNPGame game) {
         this.game = game;
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, 1280, 720);
+        camera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
+        manager = new MenuManager(game);
     }
 
     @Override
@@ -30,12 +33,15 @@ public class MainMenuScreen implements Screen {
         ScreenUtils.clear(0.2f, 0, 0f, 1);
 
         camera.update();
-        game.batch.setProjectionMatrix(camera.combined);
+        game.uiCanvas.setProjectionMatrix(camera.combined);
 
-        game.batch.begin();
-        Fonts.TITLEFONT.draw(game.batch, "ABNP:", 20, ScreenInfo.HEIGHT - 20);
-        Fonts.drawScaled(Fonts.SUBTITLEFONT, .85f, "Zombie Assault", game.batch,20, ScreenInfo.HEIGHT - Fonts.TITLEFONT.getScaleY() - Fonts.SUBTITLEFONT.getScaleY() - 220);
-        game.batch.end();
+        game.uiCanvas.begin();
+//        Fonts.TITLEFONT.draw(game.batch, "ABNP:", 20, ScreenInfo.HEIGHT - 20);
+//        Fonts.drawScaled(Fonts.SUBTITLEFONT, .85f, "Zombie Assault", game.batch,20, ScreenInfo.HEIGHT - Fonts.TITLEFONT.getScaleY() - Fonts.SUBTITLEFONT.getScaleY() - 220);
+
+        manager.draw();
+
+        game.uiCanvas.end();
 
         if (Gdx.input.isTouched()) {
             game.setScreen(new GameScreen(game));

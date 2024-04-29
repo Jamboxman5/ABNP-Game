@@ -44,8 +44,8 @@ public class Firearm extends Weapon {
 		loaded -= 1;
 		currentAmmo.shoot(gp.getPlayer().getAdjustedRotation(), 
 						  this, 
-						  (int)gp.getPlayer().getAdjustedWorldX(), 
-						  (int)gp.getPlayer().getAdjustedWorldY());
+						  (int)gp.getPlayer().getWorldX(),
+						  (int)gp.getPlayer().getWorldY());
 //		Bullet bullet = new Bullet(gp.getPlayer().getAdjustedRotation(), 
 //				150, 
 //				gp.getPlayer().getAdjustedWorldX(), 
@@ -53,6 +53,11 @@ public class Firearm extends Weapon {
 //				150);
 //		bullet.shoot();
 	}
+
+	public boolean canReload() {
+		return (!reloading && (loaded < magSize));
+	}
+
 	public void reload() {
 		reloading = true;
 		activeSprites = reloadSprites;
@@ -63,8 +68,9 @@ public class Firearm extends Weapon {
 			public void run() {
 				try {
 					Thread.sleep(reloadSpeedMS);
+					int delta = magSize - loaded;
 					loaded = magSize;
-					currentAmmo.remove(magSize);
+					currentAmmo.remove(delta);
 					reloading = false;
 				} catch (InterruptedException e) {
 					e.printStackTrace();

@@ -1,8 +1,11 @@
 package me.jamboxman5.abnpgame.entity.projectile;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.Color;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 
 import java.awt.*;
+
 
 public class Bullet extends Projectile{
 
@@ -32,17 +35,20 @@ public class Bullet extends Projectile{
 	}
 
 	@Override
-	public void draw(Graphics2D g2) {
+	public void draw(ShapeRenderer renderer) {
 		ABNPGame gp = ABNPGame.getInstance();
-		int x = (int) (worldX - gp.getPlayer().getAdjustedWorldX() + gp.getPlayer().getScreenX());
-        int y = (int) (worldY - gp.getPlayer().getAdjustedWorldY() + gp.getPlayer().getScreenY());
+		renderer.begin(ShapeRenderer.ShapeType.Filled);
+		int x = (int) (worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX());
+        int y = (int) (worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY());
 //        x *= gp.getZoom();
 //        y *= gp.getZoom();
 		int xComp = (int) (speed * Math.cos(rotation));
 		int yComp = (int) (speed * Math.sin(rotation));
-		g2.setColor(new Color(255,255,180));
-		g2.setStroke(new BasicStroke(2));
-		g2.drawLine(x-(xComp/2), y-(yComp/2), (int)x+xComp*2, (int)y+yComp*2);
+		renderer.setColor(new Color((255f/255f),(255f/255f),(180f/255f), 1f));
+//		g2.setStroke(new BasicStroke(2));
+		renderer.line(x-(xComp/2), y-(yComp/2), (int)x+xComp*2, (int)y+yComp*2);
+		renderer.end();
+
 	}
 	
 	public void shoot() {

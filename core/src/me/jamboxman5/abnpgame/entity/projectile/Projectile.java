@@ -1,5 +1,7 @@
 package me.jamboxman5.abnpgame.entity.projectile;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
 import java.awt.*;
 
 public abstract class Projectile {
@@ -13,6 +15,6 @@ public abstract class Projectile {
 
 	public abstract void update();
 
-	public abstract void draw(Graphics2D g2);
+	public abstract void draw(ShapeRenderer renderer);
 	
 }
