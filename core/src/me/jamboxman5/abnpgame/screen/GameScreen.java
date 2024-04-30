@@ -21,7 +21,6 @@ public class GameScreen implements Screen, InputProcessor {
 
     private final OrthographicCamera gameCamera;
     private final OrthographicCamera uiCamera;
-    private Viewport viewport;
 
     private float minZoom;
     private float maxZoom;
@@ -34,25 +33,32 @@ public class GameScreen implements Screen, InputProcessor {
     public GameScreen(final ABNPGame game) {
         this.game = game;
 
-        minZoom = .75f;
-        maxZoom = .5f;
+        minZoom = .65f * (1920f/Gdx.graphics.getWidth());
+        maxZoom = minZoom - .25f;
         shape = new ShapeRenderer();
         gameCamera = new OrthographicCamera();
         uiCamera = new OrthographicCamera();
-        viewport = new FitViewport(ScreenInfo.WIDTH, ScreenInfo.HEIGHT, gameCamera);
         debugToggleTime = System.currentTimeMillis();
 
         gameCamera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
-        gameCamera.zoom = .5f;
+        gameCamera.zoom = maxZoom;
         uiCamera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
         Gdx.input.setInputProcessor(this);
 
         game.getMapManager().setMap("Verdammtenstadt");
         UIManager.setupElements();
 
-        Pixmap pixmap = new Pixmap(Gdx.files.internal("ui/cursor/Cursor_Reticle_Large.png"));
-        Cursor cursor = Gdx.graphics.newCursor(pixmap, 64, 64);
-        Gdx.graphics.setCursor(cursor);
+        Pixmap pixmap;
+        if (ScreenInfo.WIDTH > 1366) {
+            pixmap = new Pixmap(Gdx.files.internal("ui/cursor/Cursor_Reticle_Large.png"));
+            Cursor cursor = Gdx.graphics.newCursor(pixmap, 64, 64);
+            Gdx.graphics.setCursor(cursor);
+        } else {
+            pixmap = new Pixmap(Gdx.files.internal("ui/cursor/Cursor_Reticle_Small.png"));
+            Cursor cursor = Gdx.graphics.newCursor(pixmap, 32, 32);
+            Gdx.graphics.setCursor(cursor);
+
+        }
 
 //        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Crosshair);
     }
@@ -113,6 +119,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         UIManager.drawWeaponHud(game.uiCanvas, game.uiShapeRenderer, game, gameCamera);
+        UIManager.drawHealthBar(game.uiCanvas, game.uiShapeRenderer, game.getPlayer());
         if (game.debugMode) UIManager.drawDebugInfo(game, game.uiShapeRenderer, game.uiCanvas, Gdx.graphics.getDeltaTime());
 
     }

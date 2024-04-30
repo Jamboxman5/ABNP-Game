@@ -6,7 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
 
-public abstract class Mob extends Entity {
+public abstract class Mob extends LivingEntity {
 	
 	protected String name;
 	protected int speed;
@@ -24,8 +24,8 @@ public abstract class Mob extends Entity {
 	protected Sound footstep2;
 	protected int stepCounter = 0;
 
-	public Mob(ABNPGame gamePanel, String type, int x, int y, int speed) {
-		super(gamePanel);
+	public Mob(ABNPGame gamePanel, String type, int x, int y, int health, int maxHealth, int speed) {
+		super(gamePanel, health, maxHealth);
 		this.name = type;
 //		this.worldX = x;
 //		this.worldY = y;

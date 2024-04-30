@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import me.jamboxman5.abnpgame.entity.player.Player;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
@@ -25,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 public class UIManager {
 
     static Sprite WeaponHudOverlay;
-    static float guiScale = 1.5f;
+    static float guiScale = (1920f/(Gdx.graphics.getWidth()/.9f));
 
     public static void setupElements() {
         Texture t = new Texture(Gdx.files.internal("ui/elements/WeaponHudOverlay.PNG"));
@@ -87,6 +88,34 @@ public class UIManager {
         weaponIMG.draw(batch);
         weaponIMG.setScale(nativeScale);
 
+        batch.end();
+
+    }
+
+    public static void drawHealthBar(SpriteBatch batch, ShapeRenderer renderer, Player player) {
+
+        int width = 300;
+        int height = 40;
+        int margin = 30;
+        int weight = 2;
+
+        renderer.begin(ShapeRenderer.ShapeType.Filled);
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+        renderer.setColor((float)(100.0/255.0), 0f, 0f, .6f);
+        renderer.rect(margin, Gdx.graphics.getHeight()-margin-height, width, height);
+        renderer.setColor(Color.RED);
+        renderer.rect(margin, Gdx.graphics.getHeight()-margin-height, width * player.getHealthRatio(), height);
+        renderer.setColor(Color.WHITE);
+        renderer.setAutoShapeType(true);
+        Gdx.gl.glLineWidth(weight);
+        renderer.set(ShapeRenderer.ShapeType.Line);
+        renderer.rect(margin, Gdx.graphics.getHeight()-margin-height, width, height);
+
+        renderer.end();
+
+        batch.begin();
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "HP: " + player.getHealth() + "/" + player.getMaxHealth(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-margin-height + (5*guiScale) + Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
         batch.end();
 
     }

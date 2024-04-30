@@ -42,11 +42,11 @@ public class MenuManager {
         int y = Gdx.graphics.getHeight() - 220;
 
 
-        Fonts.drawScaled(Fonts.TITLEFONT, 1f, title, batch, x, y + Fonts.getTextHeight(title, Fonts.TITLEFONT));
+        Fonts.drawScaled(Fonts.TITLEFONT, 1f, title, batch, x, y + Fonts.getTextHeight(title, Fonts.TITLEFONT, 1f));
 
         y -= 90;
 
-        Fonts.drawScaled(Fonts.SUBTITLEFONT, .841f, subTitle, batch, x, y+ Fonts.getTextHeight(title, Fonts.SUBTITLEFONT));
+        Fonts.drawScaled(Fonts.SUBTITLEFONT, .841f, subTitle, batch, x, y+ Fonts.getTextHeight(title, Fonts.SUBTITLEFONT, 1f));
 
 
         x = (int) Fonts.getXForRightAlignedText(Gdx.graphics.getWidth() - 40,"Singleplayer", Fonts.SELECTIONFONT, .5f);

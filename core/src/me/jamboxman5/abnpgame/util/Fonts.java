@@ -62,9 +62,12 @@ public class Fonts {
         }
 
     }
-    public static float getTextHeight(String text, BitmapFont font) {
+    public static float getTextHeight(String text, BitmapFont font, float scale) {
+        font.getData().setScale(scale);
         layout.setText(font, text);
-        return layout.height;
+        float height = layout.height;
+        font.getData().setScale(1f);
+        return height;
     }
 
     public static float getTextWidth(String text, BitmapFont font) {

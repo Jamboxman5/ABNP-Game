@@ -32,7 +32,8 @@ public class Player extends Mob {
 		super(gamePanel, 
 			  name, 
 			  gamePanel.getMapManager().getActiveMap().getDefaultX(), 
-			  gamePanel.getMapManager().getActiveMap().getDefaultY(), 
+			  gamePanel.getMapManager().getActiveMap().getDefaultY(),
+			  10, 100,
 			  defaultSpeed);
 
 		WeaponModLoadout mods = new WeaponModLoadout();
@@ -72,7 +73,7 @@ public class Player extends Mob {
 			weapons.getActiveWeapon().idle();
 			animFrame = weapons.getActiveWeapon().idleSprites.size-1;
 		}
-		
+
 		setRotation(getAngleToCursor());
 		
 		if (Gdx.input.isKeyPressed(InputKeys.FORWARD)) {
