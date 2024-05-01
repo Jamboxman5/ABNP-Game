@@ -7,17 +7,21 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.Entity;
 import me.jamboxman5.abnpgame.entity.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.entity.projectile.Projectile;
+import me.jamboxman5.abnpgame.entity.zombie.Zombie;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
+import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 
 import java.awt.*;
+import java.util.HashMap;
 
 public class MapManager {
 	
@@ -27,7 +31,12 @@ public class MapManager {
 	public Array<Entity> disposingEntities = new Array<>();
 	public Array<Projectile> projectiles = new Array<>();
 	public Array<Projectile> disposingProjectiles = new Array<>();
+	public Array<Sprite> splatters = new Array<>();
 	public Array<Map> maps = new Array<>();
+
+	public HashMap<Sprite, Vector3> splatterLocs = new HashMap<>();
+
+	int splatterTimer = 0;
 
 	MapRenderer renderer;
 	
@@ -61,11 +70,14 @@ public class MapManager {
 //		int screenY = 0;
 
 		batch.begin();
-		m.getImage().draw(batch);
 		m.getImage().setScale(.5f);
 		m.getImage().setOrigin(screenX, screenY);
+		m.getImage().draw(batch);
+
 		batch.end();
+		drawSplatters(game.batch);
 		drawProjectiles(renderer);
+		drawEntities();
 	}
 	
 	public void updateEntities() {
@@ -76,8 +88,13 @@ public class MapManager {
 		disposingEntities = new Array<>();
 	}
 	
-	public void drawEntities(Graphics2D g2) {
-		for (Entity e : entities) { e.draw(game.batch, game.uiShapeRenderer); }
+	public void drawEntities() {
+		for (Entity e : entities) {
+			e.draw(game.batch, game.shapeRenderer);
+			if (game.debugMode) {
+				e.drawCollision(game.shapeRenderer);
+			}
+		}
 	}
 	
 	public void updateProjectiles() {
@@ -94,6 +111,35 @@ public class MapManager {
 	
 	public void addProjectile(Projectile p) {
 		projectiles.add(p);
+	}
+	public void drawSplatters(SpriteBatch batch) {
+		if (splatters.size == 0) return;
+		splatterTimer++;
+
+
+		batch.begin();
+
+		for (int i = 0; i < splatters.size; i++) {
+			Vector3 position = splatterLocs.get(splatters.get(i));
+
+			int x = (int) (((position.x - game.getPlayer().getWorldX())*.5) + game.getPlayer().getScreenX());
+			int y = (int) (((position.y - game.getPlayer().getWorldY())*.5) + game.getPlayer().getScreenY());
+			float opacity = position.z;
+
+			splatters.get(i).setAlpha(opacity);
+			splatters.get(i).setCenter(x, y);
+			splatters.get(i).draw(batch);
+
+			if (position.z > 0) position.z -= .002;
+
+		}
+		if (splatterTimer > 600) {
+			splatterLocs.remove(splatters.get(splatters.size-1));
+			splatters.removeIndex(splatters.size-1);
+			splatterTimer = 0;
+		}
+
+		batch.end();
 	}
 	
 	public void disposeProjectile(Projectile p) {
@@ -189,4 +235,17 @@ public class MapManager {
 	public World getWorld() { return world; }
 
 	public Box2DDebugRenderer getDebugRenderer() { return dbgRenderer; }
+
+	public void clearMap() {
+		entities = new Array<>();
+		projectiles = new Array<>();
+	}
+
+	public void addSplatter(Vector2 position) {
+		Sprite splatter = new Sprite(Zombie.deadSprite);
+		splatter.setCenter(position.x, position.y);
+		splatter.setRotation((float) (Math.random() * 360));
+		splatters.insert(0, splatter);
+		splatterLocs.put(splatter, new Vector3(position.x, position.y, 1f));
+	}
 }

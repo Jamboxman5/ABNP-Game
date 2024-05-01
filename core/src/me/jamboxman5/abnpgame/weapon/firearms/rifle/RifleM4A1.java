@@ -41,6 +41,7 @@ public class RifleM4A1 extends Firearm {
 		this.type = WeaponType.M4A1;
 		this.xOffset = 18;
 		this.yOffset = 12;
+		this.recoil = 1;
 	}
 
 }

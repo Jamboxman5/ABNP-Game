@@ -2,10 +2,12 @@ package me.jamboxman5.abnpgame.entity;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 
@@ -21,11 +23,12 @@ public abstract class Entity {
 	protected String name;
 	protected double speed;
 	protected double rotation;
-	protected Rectangle collision;
-	protected int collisionWidth;
+	protected Circle collision;
 	protected int animFrame;
 	
 	protected String direction;
+	protected final static float defaultSpriteScale = .25f;
+
 //	private int spriteCounter = 0;
 //	private int spriteNumber = 1;
 	
@@ -80,7 +83,24 @@ public abstract class Entity {
                 	break;
             }
         }
-	
+
+	public float getAngleToPoint(Vector2 target) {
+		try {
+			float num = (float) (position.y - target.y);
+			float denom = (float) (position.x - target.x);
+			if (denom == 0 && num == 0) return (float) (-Math.PI/2);
+			float angle = (float) Math.atan(num/denom);
+			if ((int)target.x <= position.x) {
+				return (float) (angle - Math.toRadians(180));
+			} else {
+				return angle;
+			}
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			return 0;
+		}
+
+	}
 	
 	public void setSprite(Sprite img) { sprite = img; }
 	public Sprite getSprite() { return sprite; }
@@ -101,6 +121,36 @@ public abstract class Entity {
 	public void setRotation(double rotation) {
 		this.rotation = rotation;
 	}
-	public Shape getCollision() { return collision; }
+	public Circle getCollision() { return collision; }
+
+	protected static Sprite setup(String imagePath, Float scale) {
+		Texture t = new Texture(Gdx.files.internal(imagePath + ".png/"));
+		Sprite s = new Sprite(t);
+		if (scale == null) {
+			s.setScale(defaultSpriteScale);
+		} else {
+			s.setScale(scale);
+		}
+		return s;
+
+	}
+
+	public float distanceTo(Vector2 target) {
+		return (float) Math.sqrt((target.y - position.y) * (target.y - position.y) + (target.x - position.x) * (target.x - position.x));
+
+	}
+
+	public void drawCollision(ShapeRenderer shape) {
+		int x = (int) (((collision.x - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
+		int y = (int) (((collision.y - gp.getPlayer().getWorldY())*.5) + gp.getPlayer().getScreenY());
+
+
+		shape.begin(ShapeRenderer.ShapeType.Line);
+		shape.setColor(Color.RED);
+		shape.circle(x, y, collision.radius);
+		shape.end();
+	}
+
+
 
 }

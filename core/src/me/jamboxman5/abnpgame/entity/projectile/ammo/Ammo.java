@@ -1,6 +1,7 @@
 package me.jamboxman5.abnpgame.entity.projectile.ammo;
 
 
+import com.badlogic.gdx.audio.Sound;
 import me.jamboxman5.abnpgame.entity.projectile.Bullet;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
@@ -14,23 +15,40 @@ public abstract class Ammo {
 	protected double spread;
 	protected int shots;
 	protected int ammoCount;
+	protected Sound impactSound;
+	protected int breachCount;
 	
 	public void shoot(double rotation, Firearm weapon, int startX, int startY) {
+		double[] rotations = new double[shots];
+
 		for (int i = 0; i < shots; i++) {
+
 			double spreadRandom = (Math.random()/15) * spread;
 			if (Math.random() > .5) spreadRandom = -spreadRandom;
-			rotation += spreadRandom;
-			Bullet bullet = new Bullet(rotation,
-									   (int)(weapon.getFiringVelocity() * speedBoost), 
-									   startX, startY, 
-									   (int)(weapon.getRange() * rangeBoost));
+			rotations[i] = rotation + spreadRandom;
+
+		}
+
+		for (int i = 0; i < rotations.length; i++) {
+			Bullet bullet = new Bullet(rotations[i],
+					(int)(weapon.getFiringVelocity() * speedBoost),
+					startX, startY,
+					(int)(weapon.getRange() * rangeBoost), this);
 			ABNPGame.getInstance().getMapManager().addProjectile(bullet);
 		}
+
 	}
 
 	public int getAmmoCount() { return ammoCount; }
 
 	public void remove(int magSize) { ammoCount -= magSize; }
+
+	public Sound getImpactSound() { return impactSound; }
+
+	public int getBreachCount() { return breachCount; }
+
+	public void addAmmo(int rounds) { ammoCount += rounds;
+	}
 
 	public enum AmmoType {
 		StandardAmmo, ShellAmmo;

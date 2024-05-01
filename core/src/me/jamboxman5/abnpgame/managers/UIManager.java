@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import me.jamboxman5.abnpgame.entity.player.Player;
@@ -27,10 +28,38 @@ public class UIManager {
 
     static Sprite WeaponHudOverlay;
     static float guiScale = (1920f/(Gdx.graphics.getWidth()/.9f));
+    static Array<String> msgBuffer = new Array<>();
+    static int messageBufferCounter = 0;
 
     public static void setupElements() {
         Texture t = new Texture(Gdx.files.internal("ui/elements/WeaponHudOverlay.PNG"));
         WeaponHudOverlay = new Sprite(t);
+    }
+
+    public static void drawMessageBuffer(SpriteBatch batch) {
+        if (msgBuffer.size == 0) return;
+        messageBufferCounter++;
+        int x = 20;
+        int y = Gdx.graphics.getHeight()/2;
+
+        batch.begin();
+
+        for (int i = 0; i < msgBuffer.size; i++) {
+
+            Fonts.drawScaled(Fonts.INFOFONT, .8f, msgBuffer.get(i), batch, x, y);
+            y += 40;
+
+        }
+        if (messageBufferCounter > 360) {
+            msgBuffer.removeIndex(msgBuffer.size-1);
+            messageBufferCounter = 0;
+        }
+
+        batch.end();
+    }
+
+    public static void pushBufferMessage(String msg) {
+        msgBuffer.insert(0, msg);
     }
 
     public static void drawWeaponHud(SpriteBatch batch, ShapeRenderer shape, ABNPGame game, OrthographicCamera camera) {
@@ -115,7 +144,8 @@ public class UIManager {
         renderer.end();
 
         batch.begin();
-        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "HP: " + player.getHealth() + "/" + player.getMaxHealth(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-margin-height + (5*guiScale) + Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "HP: " + (int)player.getHealth() + "/" + (int)player.getMaxHealth(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-margin-height + (5*guiScale) + Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "Money: $" + player.getMoney(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-margin-height - (5*guiScale) - Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
         batch.end();
 
     }
@@ -200,6 +230,13 @@ public class UIManager {
 
         //
         debugTXT = "Active Projectiles: " + game.getMapManager().projectiles.size;
+        y-=spacer;
+        x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * guiScale);
+//        Utilities.drawStringShadow(g2, debugTXT, x, y);
+//        g2.drawString(debugTXT, x, y);
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, debugTXT, spriteBatch, x, y);
+
+        debugTXT = "Active Entities: " + game.getMapManager().entities.size;
         y-=spacer;
         x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * guiScale);
 //        Utilities.drawStringShadow(g2, debugTXT, x, y);

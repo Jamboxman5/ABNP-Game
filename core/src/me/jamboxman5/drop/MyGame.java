@@ -8,7 +8,6 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector3;
@@ -133,7 +132,7 @@ public class MyGame implements Screen {
                 iter.remove();
                 dropsLost++;
                 bucketVelocity -= 50;
-                if (dropsLost >= 10) drop.setScreen(new GameOverScreen(drop));
+                if (dropsLost >= 10) drop.setScreen(new DropGameOverScreen(drop));
             }
             if (raindrop.overlaps(bucket)) {
                 if (raindrop.y+raindrop.height/2 > bucket.height) {

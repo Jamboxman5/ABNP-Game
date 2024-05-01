@@ -20,7 +20,7 @@ public class ShotgunWinchester12 extends Firearm {
 									setup("entity/player/shotgun/Player_Shotgun_Shoot_2", null),
 									setup("entity/player/shotgun/Player_Shotgun_Shoot_1", null),
 									setup("entity/player/shotgun/Player_Shotgun_Shoot_1", null),
-									setup("entity/player/shotgun/Player_Shotgun_Shoot_0", null),
+									setup("entity/player/shotgun/Player_Shotgun_Shoot_1", null),
 									setup("entity/player/shotgun/Player_Shotgun_Shoot_0", null),
 									setup("entity/player/shotgun/Player_Shotgun_Shoot_0", null)});
 		reloadSprites = new Array<>(new Sprite[]{setup("entity/player/shotgun/Player_Shotgun", null)});
@@ -41,6 +41,7 @@ public class ShotgunWinchester12 extends Firearm {
 		this.type = WeaponType.WINCHESTER12;
 		this.xOffset = 18;
 		this.yOffset = 12;
+		this.recoil = 5;
 	}
 
 }

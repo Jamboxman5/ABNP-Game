@@ -2,19 +2,27 @@ package me.jamboxman5.abnpgame.entity.projectile;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import me.jamboxman5.abnpgame.entity.Entity;
+import me.jamboxman5.abnpgame.entity.LivingEntity;
+import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.main.ABNPGame;
-
-import java.awt.*;
-
 
 public class Bullet extends Projectile{
 
-	public Bullet(double rotation, int speed, double x, double y, int range) {
+	Ammo ammo;
+	int hits;
+
+	public Bullet(double rotation, int speed, double x, double y, int range, Ammo fired) {
 		this.rotation = rotation;
 		this.speed = speed;
 		this.worldX = x;
 		this.worldY = y;
 		this.range = range;
+		ammo = fired;
+		hits = 0;
 //		System.out.println("Bullet Start x: " + getScreenX());
 //		System.out.println("Bullet Start y: " + getScreenY());
 	}
@@ -24,11 +32,41 @@ public class Bullet extends Projectile{
 		if (traveled > range) ABNPGame.getInstance().getMapManager().disposeProjectile(this);
 		int xComp = (int) (speed * Math.cos(rotation));
 		int yComp = (int) (speed * Math.sin(rotation));
-		
-		int[] xPoints = {(int) worldX, (int) (worldX+xComp)};
-		int[] yPoints = {(int) worldY, (int) (worldY+yComp)};
-		Polygon bulletCollision = new Polygon(xPoints, yPoints, 2);
-		
+
+		Vector2[] collisionPoints = new Vector2[15];
+
+		float x = (float) worldX;
+		float y = (float) worldY;
+		for (int i = 0; i < 15; i++) {
+			collisionPoints[i] = new Vector2(x, y);
+			x += xComp/15.0;
+			y += yComp/15.0;
+		}
+
+		ABNPGame game = ABNPGame.getInstance();
+		Array<LivingEntity> ignoring = new Array<>();
+		for (Entity e : game.getMapManager().getEntities()) {
+			if (!(e instanceof LivingEntity)) continue;
+			LivingEntity entity = (LivingEntity) e;
+			for (Vector2 point : collisionPoints) {
+				if (entity.getCollision().contains(point) && !ignoring.contains(entity, true)) {
+					//bullet hit
+					ignoring.add(entity);
+					entity.damage(10);
+					ammo.getImpactSound().play();
+					hits++;
+					if (hits >= ammo.getBreachCount()) {
+						ABNPGame.getInstance().getMapManager().disposeProjectile(this);
+						break;
+					}
+
+				}
+			}
+			if (hits >= ammo.getBreachCount()) {
+				break;
+			}
+		}
+
 		worldX += xComp;
 		worldY += yComp;
 		traveled += speed;

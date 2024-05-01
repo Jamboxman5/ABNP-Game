@@ -5,12 +5,12 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
-class GameOverScreen implements Screen {
+class DropGameOverScreen implements Screen {
     final Drop drop;
     OrthographicCamera camera;
     long startTime;
 
-    public GameOverScreen(final Drop drop) {
+    public DropGameOverScreen(final Drop drop) {
         this.drop = drop;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);

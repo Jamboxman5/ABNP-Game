@@ -4,13 +4,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.Rectangle;
 
-class MainMenuScreen implements Screen {
+class DropMainMenuScreen implements Screen {
     final Drop drop;
     OrthographicCamera camera;
 
-    public MainMenuScreen(final Drop drop) {
+    public DropMainMenuScreen(final Drop drop) {
         this.drop = drop;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, 800, 480);

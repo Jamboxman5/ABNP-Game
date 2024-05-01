@@ -9,6 +9,7 @@ import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.player.Player;
 import me.jamboxman5.abnpgame.managers.MapManager;
 import me.jamboxman5.abnpgame.net.GameClient;
+import me.jamboxman5.abnpgame.screen.GameOverScreen;
 import me.jamboxman5.abnpgame.screen.MainMenuScreen;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.util.Fonts;
@@ -81,4 +82,9 @@ public class ABNPGame extends Game {
     public GameClient getClient() { return socketClient; }
 
 
+    public void gameOver() {
+        this.getScreen().dispose();
+        setScreen(new GameOverScreen(this));
+        loadPlayerData();
+    }
 }

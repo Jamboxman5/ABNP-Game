@@ -41,6 +41,7 @@ public class Pistol1911 extends Firearm {
 		this.type = WeaponType.M1911;
 		this.xOffset = 13;
 		this.yOffset = 15;
+		this.recoil = 2;
 
 	}
 	

@@ -20,6 +20,7 @@ public abstract class Weapon {
 	protected double durability;
 	protected double weight;
 	protected boolean reloading = false;
+	protected double recoil;
 	
 	protected long attackRateMS;
 	protected long lastAttack;
@@ -45,7 +46,7 @@ public abstract class Weapon {
 	}
 	public Sprite getHudSprite() { return hudSprite; }
 	public String getName() { return name; }
-	public abstract void attack();
+	public abstract boolean attack(double radians);
 	protected boolean canAttack() {
 	    if (reloading) return false;
 	    if ((System.currentTimeMillis() - lastAttack) < attackRateMS) return false;
@@ -67,6 +68,9 @@ public abstract class Weapon {
 	public int getXOffset() { return xOffset; }
 
 	public float getYOffset() { return yOffset; }
+
+	public double getRecoil() { return recoil;
+	}
 
 
 	public enum WeaponType {

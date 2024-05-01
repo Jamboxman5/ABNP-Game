@@ -3,10 +3,12 @@ package me.jamboxman5.abnpgame.entity.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.entity.Mob;
@@ -16,8 +18,6 @@ import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 import me.jamboxman5.abnpgame.weapon.mods.RedDotSight;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
-
-import java.awt.*;
 
 public class Player extends Mob {
 	
@@ -33,7 +33,7 @@ public class Player extends Mob {
 			  name, 
 			  gamePanel.getMapManager().getActiveMap().getDefaultX(), 
 			  gamePanel.getMapManager().getActiveMap().getDefaultY(),
-			  10, 100,
+			  100, 100,
 			  defaultSpeed);
 
 		WeaponModLoadout mods = new WeaponModLoadout();
@@ -51,21 +51,17 @@ public class Player extends Mob {
 		setDefaults();
 	}
 
-	private void setDefaults() {		
-		setSpeed(6.5);
-		setRotation(0);
-		collisionWidth = 50;
-		collision = new Rectangle((int)(getWorldX())-(collisionWidth/4),
-				  (int)(getWorldY())-(collisionWidth/2),
-				  (int)(collisionWidth*1.5) , 
-				  (int)(collisionWidth));
-	}
+
 	
 	@Override
 	public void update() {
 
+		super.update();
+
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
+
+		collision.setPosition(new Vector2(position.x, position.y+10).rotateAroundDeg(position, (float) (Math.toDegrees(getDrawingAngle()) + 360)));
 
 		animFrame -= 1;
 		
@@ -142,13 +138,7 @@ public class Player extends Mob {
 				isMoving = true;
 			}
 
-			if (stepCounter == 1) {
-				footstep1.play();
-			} else if (stepCounter == 20) {
-				footstep2.play();
-			} else if (stepCounter == 40) {
-				stepCounter = 0;
-			}
+
 
 		} else {
 			isMoving = false;
@@ -157,21 +147,19 @@ public class Player extends Mob {
 			stepCounter = 0;
 		}
 
-		velocity.add(acceleration);
 
-		switch(direction) {
-			case "forward":
-				velocity.limit(speed);
-				break;
-			default:
-				velocity.limit(speed/1.75f);
-				break;
+
+		if (Gdx.input.isTouched()) {
+			if (weapons.getActiveWeapon().attack(Math.toRadians(jitter))) {
+
+				jitter = (float) (Math.random() * weapons.getActiveWeapon().getRecoil());
+				if (Math.random() > .5) jitter = -jitter;
+
+			}
 		}
 
-		position.add(velocity);
-		
-		if (Gdx.input.isTouched()) {
-			weapons.getActiveWeapon().attack();
+		if (isDead()) {
+			gp.gameOver();
 		}
 		
 	}
@@ -207,20 +195,7 @@ public class Player extends Mob {
 	
 	@Override
 	public void draw(SpriteBatch batch, ShapeRenderer shape) {
-//		if (!(gp.getScreen().getClass().toString().contains("InGame"))) return;
-//
-//
-//		if (gp.getMousePointer() == null) return;
-//
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//				RenderingHints.VALUE_ANTIALIAS_ON);
-//		g2.setRenderingHint(RenderingHints.KEY_RENDERING,
-//	                RenderingHints.VALUE_RENDER_QUALITY);
-//		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-//				RenderingHints.VALUE_STROKE_PURE);
-//
-//		//DRAW PLAYER
-//
+
 		int x = (int) (position.x - gp.getPlayer().getWorldX() + screenX);
 		int y = (int) (position.y - gp.getPlayer().getWorldY() + screenY);
 
@@ -228,23 +203,14 @@ public class Player extends Mob {
 			Gdx.gl.glEnable(GL30.GL_BLEND);
 			Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 			shape.begin(ShapeRenderer.ShapeType.Filled);
-			drawRedDotSight(shape, gp.getMousePointer().x, gp.getMousePointer().y);
+			drawRedDotSight(shape, new Vector2(screenX, screenY), gp.getMousePointer());
 			shape.end();
 		}
-//
-//		g2.setColor(Color.red);
-//
-////			g2.drawLine(0, gp.getHeight()/2, gp.getWidth(), gp.getHeight()/2);
-////		    g2.drawLine(gp.getWidth()/2, 0, gp.getWidth()/2, gp.getHeight());
-//
-//		AffineTransform tx = new AffineTransform();
-//		AffineTransform oldTrans = g2.getTransform();
-//
-//		tx.setToTranslation(x, y);
+
 		batch.begin();
 		Sprite toDraw = weapons.getActiveWeapon().getPlayerSprite(animFrame);
 		if (gp.getPlayer().equals(this)) {
-			batch.setTransformMatrix(new Matrix4().translate(x, y, 0).rotate(0f, 0f, 1f, (float) (Math.toDegrees(getDrawingAngle()) + 360)));
+			batch.setTransformMatrix(new Matrix4().translate(x, y, 0).rotate(0f, 0f, 1f, (float) (Math.toDegrees(getDrawingAngle()) + 360) + jitter));
 			toDraw.setPosition((-toDraw.getWidth() / 2) + weapons.getActiveWeapon().getXOffset(), (-toDraw.getHeight() / 2) + weapons.getActiveWeapon().getYOffset());
 
 			toDraw.draw(batch);
@@ -253,34 +219,35 @@ public class Player extends Mob {
 		}
 		batch.end();
 
+
 	}
 
-	private double getAngleDistanceModifier(int x, int y) {
-		double ac = Math.abs(y - gp.getMousePointer().y);
-		double cb = Math.abs(x - gp.getMousePointer().x);
+	public void drawCollision(ShapeRenderer shape) {
+		int x = (int) (collision.x - gp.getPlayer().getWorldX() + screenX);
+		int y = (int) (collision.y - gp.getPlayer().getWorldY() + screenY);
 
-		double distance = Math.hypot(ac, cb);
-//		if (distance < 40) return 30;
-		return 30/(distance/40);
-
-//		return Math.hypot(ac, cb);
+		shape.begin(ShapeRenderer.ShapeType.Line);
+		shape.setColor(Color.RED);
+		shape.circle(x, y, collision.radius);
+		shape.end();
 	}
 
-	public void drawRedDotSight(ShapeRenderer shape, double x, double y) {
+	private void setDefaults() {
+//		setSpeed(6.5);
+		setRotation(0);
+		collision = new Circle(position.x, position.y, 35);
+	}
+
+	public void drawRedDotSight(ShapeRenderer shape, Vector2 start, Vector2 end) {
+
+		end.rotateAroundDeg(start, jitter);
 
 		shape.setColor(.8f, 0f, 0f, .5f);
-		shape.rectLine(new Vector2(screenX, screenY), new Vector2(gp.getMousePointer().x, gp.getMousePointer().y), 2);
-		shape.circle(gp.getMousePointer().x, gp.getMousePointer().y, 3, 4);
+		shape.rectLine(start, end, 2);
+		shape.circle(end.x, end.y, 3, 4);
 		shape.setColor((float) (255.0/255.0), (float) (200.0/255.0), (float) (200.0/255.0), 1f);
-		shape.circle(gp.getMousePointer().x, gp.getMousePointer().y, 1, 4);
+		shape.circle(end.x, end.y, 1, 4);
 
-//        g2.setComposite(comp);
-//		g2.setStroke(new BasicStroke(2));
-//	    g2.drawLine(x, y, (int)gp.getMousePointer().getX(), (int)gp.getMousePointer().getY());
-//	    g2.fillOval((int)gp.getMousePointer().getX()-2, (int)gp.getMousePointer().getY()-2, 4, 4);
-//	    g2.setComposite(old);
-//	    g2.setColor(new Color(255,200,200));
-//	    g2.fillOval((int)gp.getMousePointer().getX()-1, (int)gp.getMousePointer().getY()-1, 1, 1);
 	}
 
 	public float getAngleToCursor() {
@@ -322,8 +289,8 @@ public class Player extends Mob {
 		
 	}
 	public WeaponLoadout getWeaponLoadout() { return weapons; }
-	public int getScreenX() { return screenX; }
-	public int getScreenY() { return screenY; }
+	public int getScreenX() { return Gdx.graphics.getWidth()/2; }
+	public int getScreenY() { return Gdx.graphics.getHeight()/2; }
 	public void setRotation(double i) { rotation = i; }
 	public double getRotation() { return rotation; }
 	public void setName(String newName) { gamerTag = newName; }
@@ -355,5 +322,10 @@ public class Player extends Mob {
 	public void setExp(int exp) { this.exp = exp; }
 	public int getExp() { return exp; }
 	public int getMoney() { return money; }
+	public void giveMoney(int money) { this.money += money; }
 
+	public void takeMoney(int spent) {
+		money -= spent;
+		if (money < 0) money = 0;
+	}
 }

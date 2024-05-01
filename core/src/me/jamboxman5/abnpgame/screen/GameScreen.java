@@ -4,17 +4,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import me.jamboxman5.abnpgame.entity.zombie.Zombie;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
 import me.jamboxman5.abnpgame.util.Sounds;
+import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 
 public class GameScreen implements Screen, InputProcessor {
     final ABNPGame game;
@@ -25,16 +30,29 @@ public class GameScreen implements Screen, InputProcessor {
     private float minZoom;
     private float maxZoom;
 
+
     long debugToggleTime;
 
     private final Vector3 touchPos = new Vector3();
+    private long lastSpawn = System.currentTimeMillis();
     ShapeRenderer shape;
+
+    int spawnCounter = 0;
+    int spawnMultiplier = 1;
+
+    Sound purchaseSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/menu/Purchase.wav"));
+    Sound winSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/menu/Win.wav"));
+
+    Thread gameController;
+    int zombiesRemaining = 0;
 
     public GameScreen(final ABNPGame game) {
         this.game = game;
 
         minZoom = .65f * (1920f/Gdx.graphics.getWidth());
         maxZoom = minZoom - .25f;
+//        minZoom = 1;
+//        maxZoom = 1;
         shape = new ShapeRenderer();
         gameCamera = new OrthographicCamera();
         uiCamera = new OrthographicCamera();
@@ -60,12 +78,138 @@ public class GameScreen implements Screen, InputProcessor {
 
         }
 
+        Zombie.initSprites();
+
+        gameController = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+
+                    UIManager.pushBufferMessage("Prepare for the first wave!");
+                    Thread.sleep(10000);
+                    UIManager.pushBufferMessage("Begin!");
+
+                    for (int i = 0; i < 10; i++) {
+                        zombiesRemaining = (50 - i) + game.getMapManager().entities.size;
+                        Thread.sleep(2000);
+                        Zombie zombie = new Zombie(game, Zombie.ZombieType.NORMAL,getSpawnPoints()[spawnCounter], 5);
+                        game.getMapManager().addEntity(zombie);
+                        lastSpawn = System.currentTimeMillis();
+                        spawnCounter++;
+                        if (spawnCounter >= getSpawnPoints().length) spawnCounter = 0;
+                    }
+
+                    while (game.getMapManager().entities.size > 0) {
+                        zombiesRemaining = game.getMapManager().entities.size;
+                        Thread.sleep(3000);
+                    }
+                    zombiesRemaining = game.getMapManager().entities.size;
+
+                    winSound.play();
+                    UIManager.pushBufferMessage("Prepare for the next wave!");
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            for (int i = 0; i < 150; i++) {
+                                game.getPlayer().healBy(.1f, false);
+                                try {
+                                    Thread.sleep(100);
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                            }
+                        }
+                    }.start();
+                    Thread.sleep(15000);
+
+                    UIManager.pushBufferMessage("Begin!");
+
+                    for (int i = 0; i < 10; i++) {
+                        zombiesRemaining = 2*(50 - i) + game.getMapManager().entities.size;
+                        Thread.sleep(2000);
+                        Zombie zombie2 = new Zombie(game, Zombie.ZombieType.NORMAL,getSpawnPoints()[spawnCounter].cpy().add(new Vector2(40,40)), 7);
+                        Zombie zombie3 = new Zombie(game, Zombie.ZombieType.NORMAL,getSpawnPoints()[spawnCounter].cpy().add(new Vector2(-40,-40)), 7);
+                        game.getMapManager().addEntity(zombie2);
+                        game.getMapManager().addEntity(zombie3);
+                        lastSpawn = System.currentTimeMillis();
+                        spawnCounter++;
+                        if (spawnCounter >= getSpawnPoints().length) spawnCounter = 0;
+                    }
+
+                    while (game.getMapManager().entities.size > 0) {
+                        zombiesRemaining = game.getMapManager().entities.size;
+                        Thread.sleep(3000);
+                    }
+                    zombiesRemaining = game.getMapManager().entities.size;
+
+                    winSound.play();
+                    UIManager.pushBufferMessage("Prepare for the final wave!");
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            for (int i = 0; i < 30; i++) {
+                                game.getPlayer().healBy(.5, false);
+                                try {
+                                    Thread.sleep(500);
+                                } catch (InterruptedException e) {
+                                    throw new RuntimeException(e);
+                                }
+
+                            }
+                        }
+                    }.start();
+                    Thread.sleep(15000);
+                    UIManager.pushBufferMessage("Begin!");
+
+                    for (int i = 0; i < 50; i++) {
+                        zombiesRemaining = 3*(50 - i) + game.getMapManager().entities.size;
+                        Thread.sleep(2000);
+                        Zombie zombie = new Zombie(game, Zombie.ZombieType.NORMAL,getSpawnPoints()[spawnCounter], 5);
+                        Zombie zombie2 = new Zombie(game, Zombie.ZombieType.NORMAL,getSpawnPoints()[spawnCounter].cpy().add(new Vector2(60,60)), 9);
+                        Zombie zombie3 = new Zombie(game, Zombie.ZombieType.NORMAL,getSpawnPoints()[spawnCounter].cpy().add(new Vector2(-60,-60)), 9);                        game.getMapManager().addEntity(zombie);
+                        game.getMapManager().addEntity(zombie);
+                        game.getMapManager().addEntity(zombie2);
+                        game.getMapManager().addEntity(zombie3);
+                        lastSpawn = System.currentTimeMillis();
+                        spawnCounter++;
+                        if (spawnCounter >= getSpawnPoints().length) spawnCounter = 0;
+                    }
+
+                    while (game.getMapManager().entities.size > 0) {
+                        zombiesRemaining = game.getMapManager().entities.size;
+                        Thread.sleep(3000);
+                    }
+                    zombiesRemaining = game.getMapManager().entities.size;
+
+                    winSound.play();
+                    UIManager.pushBufferMessage("Congratulations! You win!");
+
+
+                } catch (InterruptedException e) {
+                }
+            }
+
+        };
+
+        gameController.start();
+
 //        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Crosshair);
     }
 
     @Override
     public void show() {
         Sounds.AMBIENCE.stop();
+    }
+
+    public Vector2[] getSpawnPoints() {
+        Vector2[] spawnPoints = {new Vector2(1600, 2040),
+                new Vector2(1240, 1710),
+                new Vector2(1790, 1500),
+                new Vector2(-800, 970),
+                new Vector2(190, 280)};
+        return spawnPoints;
     }
 
     @Override
@@ -103,6 +247,35 @@ public class GameScreen implements Screen, InputProcessor {
             game.debugMode = !game.debugMode;
             debugToggleTime = System.currentTimeMillis();
         }
+        if (Gdx.input.isKeyPressed(Input.Keys.BACKSPACE)) {
+            if (System.currentTimeMillis() - lastSpawn > 100) {
+                Zombie zombie = new Zombie(game, Zombie.ZombieType.NORMAL, getSpawnPoints()[spawnCounter], 5);
+                game.getMapManager().addEntity(zombie);
+                lastSpawn = System.currentTimeMillis();
+                spawnCounter++;
+                if (spawnCounter >= getSpawnPoints().length) spawnCounter = 0;
+            }
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
+            if (System.currentTimeMillis() - lastSpawn > 100) {
+
+                if (game.getPlayer().getMoney() >= 100 && game.getPlayer().getWeaponLoadout().getActiveWeapon() instanceof Firearm) {
+                    game.getPlayer().takeMoney(100);
+                    ((Firearm)game.getPlayer().getWeaponLoadout().getActiveWeapon()).buyMag(1);
+                    purchaseSound.play();
+                }
+
+                lastSpawn = System.currentTimeMillis();
+            }
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
+            if (System.currentTimeMillis() - lastSpawn > 100) {
+
+                UIManager.pushBufferMessage(zombiesRemaining + " Zombies Remaining!");
+
+                lastSpawn = System.currentTimeMillis();
+            }
+        }
         game.getMapManager().getDebugRenderer().render(game.getMapManager().getWorld(), gameCamera.combined);
         game.getMapManager().getWorld().step(1/60f, 6, 2);
     }
@@ -110,6 +283,10 @@ public class GameScreen implements Screen, InputProcessor {
     private void draw() {
         game.getMapManager().draw(game.batch, game.shapeRenderer);
         game.getPlayer().draw(game.batch, game.uiShapeRenderer);
+
+        if (game.debugMode) {
+            game.getPlayer().drawCollision(game.shapeRenderer);
+        }
 
         drawUI();
 
@@ -120,6 +297,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         UIManager.drawWeaponHud(game.uiCanvas, game.uiShapeRenderer, game, gameCamera);
         UIManager.drawHealthBar(game.uiCanvas, game.uiShapeRenderer, game.getPlayer());
+        UIManager.drawMessageBuffer(game.uiCanvas);
         if (game.debugMode) UIManager.drawDebugInfo(game, game.uiShapeRenderer, game.uiCanvas, Gdx.graphics.getDeltaTime());
 
     }
@@ -135,6 +313,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         game.getMapManager().updateProjectiles();
+        game.getMapManager().updateEntities();
     }
 
     @Override
@@ -163,6 +342,10 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
+        game.setPlayer(null);
+        game.getMapManager().clearMap();
+        gameController.interrupt();
+
     }
 
     public void setZoom(float newZoom) {

@@ -2,6 +2,7 @@ package me.jamboxman5.abnpgame.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
@@ -23,6 +24,9 @@ public abstract class Mob extends LivingEntity {
 	protected Sound footstep1;
 	protected Sound footstep2;
 	protected int stepCounter = 0;
+	protected long lastStep = System.currentTimeMillis();
+	protected float jitter = 0;
+	protected float jitterValue = .2f;
 
 	public Mob(ABNPGame gamePanel, String type, int x, int y, int health, int maxHealth, int speed) {
 		super(gamePanel, health, maxHealth);
@@ -35,14 +39,60 @@ public abstract class Mob extends LivingEntity {
 		acceleration = new Vector2(0,0);
 		position = new Vector2(x, y);
 		maxForce = .5f;
+		collision = new Circle(position, 30);
+
+	}
+
+	@Override
+	public void update() {
+
+		if (jitter < 0) jitter += .1;
+		if (jitter > 0) jitter -= .1;
+
+		velocity.add(acceleration);
+
+		switch(direction) {
+			case "forward":
+				velocity.limit(speed);
+				break;
+			default:
+				velocity.limit(speed/1.75f);
+				break;
+		}
+
+		position.add(velocity);
 
 	}
 	
 	public void move(Vector2 target) {
 		
 		if (gp.getMousePointer() == null) return;
-		
-		stepCounter++;
+
+		jitter += jitterValue;
+		int stepTime = (int) (2500 * (1.0/velocity.len()));
+
+		if (System.currentTimeMillis() - lastStep > stepTime) {
+			stepCounter++;
+			lastStep = System.currentTimeMillis();
+
+			if (stepCounter % 2 == 1) {
+				footstep1.play();
+				jitterValue = -jitterValue;
+			} else {
+				footstep2.play();
+				stepCounter = 0;
+				jitterValue = -jitterValue;
+			}
+
+//			else if (stepCounter == stepTime) {
+//				footstep2.play();
+//			} else if (stepCounter == stepTime*2) {
+//				stepCounter = 0;
+//			}
+
+		}
+
+
 		
 		if (!hasCollided(target.x, target.y)) {
 			
@@ -99,7 +149,7 @@ public abstract class Mob extends LivingEntity {
 	}
 
 	public void pursue(Mob pursuing) {
-		Vector2 target = pursuing.position.cpy();
+		Vector2 target = new Vector2(pursuing.getCollision().x, pursuing.getCollision().y);
 		Vector2 prediction = pursuing.velocity.cpy();
 		prediction.scl(10);
 		target.add(prediction);
@@ -124,6 +174,49 @@ public abstract class Mob extends LivingEntity {
 //        else bounds.x += steer.y;
 //        if (!deadSpace.contains(new Vector2(bounds.x, bounds.y + steer.y))) bounds.y += steer.y;
 //        else bounds.y += steer.x;
+	}
+
+	public void arrive(Vector2 target, float slowingRadius, float stopRadius) {
+//		Vector2 force = target.cpy().sub(new Vector2(position.x, position.y));
+//
+//		int radius = 300;
+//		float distance = force.len();
+//		if (distance < radius) {
+//			float m = map(distance, 0, radius, 0, speed);
+//			force.setLength(m);
+//		}
+//		else {
+//			force.setLength(speed);
+//		}
+//
+//		force.sub(velocity);
+//		force.limit(maxForce);
+//
+//
+//
+//		acceleration.add(force);
+//		acceleration.limit(speed);
+
+		Vector2 desiredVelocity = target.cpy().sub(position);
+		float distance = desiredVelocity.len() - stopRadius;
+
+		if (distance < slowingRadius)  {
+			desiredVelocity.nor().scl(speed).scl(distance/slowingRadius);
+		} else {
+			desiredVelocity.nor().scl(speed);
+		}
+
+		Vector2 steer = desiredVelocity.sub(velocity);
+		velocity = velocity.cpy().add(steer).limit(speed);
+		velocity.limit(speed/1.5f);
+		position.add(velocity);
+
+	}
+
+	public static float map(float val, float oldmax, float max, float newMin, float newMax)
+	{
+		val = (val - oldmax)/(max - oldmax);
+		return newMin + val * (newMax - newMin);
 	}
 
 	public void mbk(double xComp, double yComp) {

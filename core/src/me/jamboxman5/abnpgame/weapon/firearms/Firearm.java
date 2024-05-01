@@ -4,16 +4,9 @@ package me.jamboxman5.abnpgame.weapon.firearms;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.Weapon;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 
 public class Firearm extends Weapon {
 	
@@ -25,24 +18,34 @@ public class Firearm extends Weapon {
 
 
 	protected Sound reloadSound;
-	
+	protected Sound outOfAmmoSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/misc/Out_Of_Ammo.wav"));
+	protected long lastMisfire = System.currentTimeMillis();
+
 	protected Ammo currentAmmo;
 
 
 	public int getLoadedAmmo() { return loaded; }
 	public int getAmmoCount() { return currentAmmo.getAmmoCount(); }
-	public void shoot() {
-		if (loaded <= 0 && !reloading) {
-			reload(); return;
+	public boolean shoot(double offset) {
+		if (loaded <= 0) {
+			if (canReload()) reload();
+			else {
+				if (!reloading && (System.currentTimeMillis() - lastMisfire) > 250) {
+					outOfAmmoSound.play();
+					lastMisfire = System.currentTimeMillis();
+				}
+				return false;
+			}
 		}
-		if (!canAttack()) return;
+
+		if (!canAttack()) return false;
 		ABNPGame gp = ABNPGame.getInstance();
 		activeSprites = shootSprites;
 		gp.getPlayer().setAnimFrame(shootSprites.size-1);
 		attackSound.play();
 		this.lastAttack = System.currentTimeMillis();
 		loaded -= 1;
-		currentAmmo.shoot(gp.getPlayer().getAdjustedRotation(), 
+		currentAmmo.shoot(gp.getPlayer().getAdjustedRotation() + offset,
 						  this, 
 						  (int)gp.getPlayer().getWorldX(),
 						  (int)gp.getPlayer().getWorldY());
@@ -52,10 +55,11 @@ public class Firearm extends Weapon {
 //				gp.getPlayer().getAdjustedWorldY(),  
 //				150);
 //		bullet.shoot();
+		return true;
 	}
 
 	public boolean canReload() {
-		return (!reloading && (loaded < magSize));
+		return (!reloading && (loaded < magSize) && (currentAmmo.getAmmoCount() > 0));
 	}
 
 	public void reload() {
@@ -69,7 +73,11 @@ public class Firearm extends Weapon {
 				try {
 					Thread.sleep(reloadSpeedMS);
 					int delta = magSize - loaded;
-					loaded = magSize;
+					int ammoCount = currentAmmo.getAmmoCount();
+					if (delta > ammoCount) {
+						delta = ammoCount;
+					}
+					loaded += delta;
 					currentAmmo.remove(delta);
 					reloading = false;
 				} catch (InterruptedException e) {
@@ -82,11 +90,14 @@ public class Firearm extends Weapon {
 	}
 	
 	@Override
-	public void attack() {
-		shoot();
+	public boolean attack(double offset) {
+		return shoot(offset);
 	}
 	public int getFiringVelocity() { return firingVelocity; }
 	public int getRange() { return range; }
 	public Ammo.AmmoType getAmmoType() { return currentAmmo.getType(); }
 
+	public void buyMag(int magCount) {
+		currentAmmo.addAmmo(magSize*magCount);
+	}
 }

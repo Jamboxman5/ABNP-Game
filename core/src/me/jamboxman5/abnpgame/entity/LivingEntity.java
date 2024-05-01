@@ -4,8 +4,8 @@ import me.jamboxman5.abnpgame.main.ABNPGame;
 
 public abstract class LivingEntity extends Entity {
 
-    protected int health;
-    protected int maxHealth;
+    protected double health;
+    protected double maxHealth;
 
     public LivingEntity(ABNPGame gamePanel, int health, int maxHealth) {
         super(gamePanel);
@@ -15,15 +15,19 @@ public abstract class LivingEntity extends Entity {
 
     public boolean isDead() { return health <= 0; }
     public void kill() { health = 0; }
-    public void damage(int dmgPts) { health -= dmgPts; }
+    public void damage(double dmgPts) {
+        health -= dmgPts;
+        if (health < 0) health = 0;
+
+    }
     public void heal() { health = maxHealth; }
-    public void healBy(int healPts, boolean ignoreMax) {
+    public void healBy(double healPts, boolean ignoreMax) {
         health += healPts;
         if (!ignoreMax && health > maxHealth) {
             health = maxHealth;
         }
     }
-    public int getHealth() { return health; }
-    public int getMaxHealth() { return maxHealth; }
+    public double getHealth() { return health; }
+    public double getMaxHealth() { return maxHealth; }
     public float getHealthRatio() { return ((float)health)/((float)maxHealth); }
 }
