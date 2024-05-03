@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import me.jamboxman5.abnpgame.entity.ally.Ally;
 import me.jamboxman5.abnpgame.entity.zombie.Zombie;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
@@ -64,7 +65,7 @@ public class GameScreen implements Screen, InputProcessor {
         Gdx.input.setInputProcessor(this);
 
         game.getMapManager().setMap("Verdammtenstadt");
-        UIManager.setupElements();
+//        UIManager.setupElements();
 
         Pixmap pixmap;
         if (ScreenInfo.WIDTH > 1366) {
@@ -79,6 +80,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         Zombie.initSprites();
+        game.getMapManager().addAlly(new Ally(game, "Sarge", (int) game.getPlayer().getWorldX(), (int) game.getPlayer().getWorldY(), 50, 50, 5));
 
         gameController = new Thread() {
 
@@ -219,7 +221,7 @@ public class GameScreen implements Screen, InputProcessor {
         // blue and alpha component in the range [0,1]
         // of the color to be used to clear the screen.
 //        if (camera.zoom > .75f) camera.zoom = .75f;
-        ScreenUtils.clear(.1f, 0, 0f, 1);
+        ScreenUtils.clear(0f, 0, 0f, 1);
 
         // tell the camera to update its matrices.
         gameCamera.update();

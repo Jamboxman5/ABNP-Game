@@ -15,11 +15,11 @@ public class Bullet extends Projectile{
 	Ammo ammo;
 	int hits;
 
-	public Bullet(double rotation, int speed, double x, double y, int range, Ammo fired) {
+	public Bullet(double rotation, int speed, Vector2 position, int range, Ammo fired) {
 		this.rotation = rotation;
 		this.speed = speed;
-		this.worldX = x;
-		this.worldY = y;
+		this.worldX = position.x;
+		this.worldY = position.y;
 		this.range = range;
 		ammo = fired;
 		hits = 0;
@@ -76,8 +76,9 @@ public class Bullet extends Projectile{
 	public void draw(ShapeRenderer renderer) {
 		ABNPGame gp = ABNPGame.getInstance();
 		renderer.begin(ShapeRenderer.ShapeType.Filled);
-		int x = (int) (worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX());
-        int y = (int) (worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY());
+		int x = (int) (((worldX - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
+        int y = (int) (((worldY - gp.getPlayer().getWorldY())*.5) + gp.getPlayer().getScreenY());
+
 //        x *= gp.getZoom();
 //        y *= gp.getZoom();
 		int xComp = (int) (speed * Math.cos(rotation));

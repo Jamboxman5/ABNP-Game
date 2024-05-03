@@ -15,6 +15,8 @@ public class Fonts {
     public static BitmapFont TITLEFONT;
     public static BitmapFont SUBTITLEFONT;
     public static BitmapFont SELECTIONFONT;
+    public static BitmapFont BUTTONFONT;
+    public static BitmapFont SELECTEDBUTTONFONT;
     public static BitmapFont INFOFONT;
 
     private static GlyphLayout layout;
@@ -22,7 +24,9 @@ public class Fonts {
     public static void initFonts() {
         TITLEFONT = new BitmapFont(Gdx.files.internal("font/titlefont/TITLEFONT.fnt"));
         SUBTITLEFONT = new BitmapFont(Gdx.files.internal("font/subtitlefont/SUBTITLEFONT.fnt"));
-        SELECTIONFONT = new BitmapFont(Gdx.files.internal("font/subtitlefont/SUBTITLEFONT.fnt"));
+        SELECTIONFONT = new BitmapFont(Gdx.files.internal("font/selectionfont/SELECTIONFONT.fnt"));
+        BUTTONFONT = new BitmapFont(Gdx.files.internal("font/buttonfont/BUTTONFONT.fnt"));
+        SELECTEDBUTTONFONT = new BitmapFont(Gdx.files.internal("font/buttonfont/SELECTEDBUTTONFONT.fnt"));
         INFOFONT = new BitmapFont(Gdx.files.internal("font/infofont/INFOFONT.fnt"));
         layout = new GlyphLayout();
     }
@@ -70,9 +74,14 @@ public class Fonts {
         return height;
     }
 
-    public static float getTextWidth(String text, BitmapFont font) {
+    public static float getTextWidth(String text, BitmapFont font, float scale) {
+
+        font.getData().setScale(scale);
         layout.setText(font, text);
-        return layout.width;
+        float width = layout.width;
+        font.getData().setScale(1f);
+        return width;
+
     }
 
     public static void dispose() {

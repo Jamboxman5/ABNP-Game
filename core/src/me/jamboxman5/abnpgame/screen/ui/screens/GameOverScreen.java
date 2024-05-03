@@ -1,4 +1,4 @@
-package me.jamboxman5.abnpgame.screen;
+package me.jamboxman5.abnpgame.screen.ui.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.main.ABNPGame;
+import me.jamboxman5.abnpgame.screen.GameScreen;
+import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.steering.statemachine.SteeringGame;
 import me.jamboxman5.steering.statemachine.SteeringGameScreen;

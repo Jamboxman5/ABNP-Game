@@ -9,13 +9,11 @@ import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.player.Player;
 import me.jamboxman5.abnpgame.managers.MapManager;
 import me.jamboxman5.abnpgame.net.GameClient;
-import me.jamboxman5.abnpgame.screen.GameOverScreen;
-import me.jamboxman5.abnpgame.screen.MainMenuScreen;
+import me.jamboxman5.abnpgame.screen.ui.screens.GameOverScreen;
+import me.jamboxman5.abnpgame.screen.ui.screens.MainMenuScreen;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Sounds;
-
-import java.awt.*;
 
 public class ABNPGame extends Game {
 

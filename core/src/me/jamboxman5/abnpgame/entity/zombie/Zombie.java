@@ -24,7 +24,6 @@ public class Zombie extends Mob {
 
     public Array<Sprite> activeSprites;
 
-    protected Vector2 target;
     int animCounter = 0;
 
     public Zombie(ABNPGame game, ZombieType type, Vector2 startPos, int topSpeed) {

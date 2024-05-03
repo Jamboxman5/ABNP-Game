@@ -12,6 +12,7 @@ import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.Entity;
+import me.jamboxman5.abnpgame.entity.ally.Ally;
 import me.jamboxman5.abnpgame.entity.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.entity.projectile.Projectile;
 import me.jamboxman5.abnpgame.entity.zombie.Zombie;
@@ -26,7 +27,9 @@ import java.util.HashMap;
 public class MapManager {
 	
 	private final ABNPGame game;
-	
+
+	public Array<Entity> survivors = new Array<>();
+	public Array<Entity> disposingSurvivors = new Array<>();
 	public Array<Entity> entities = new Array<>();
 	public Array<Entity> disposingEntities = new Array<>();
 	public Array<Projectile> projectiles = new Array<>();
@@ -86,6 +89,27 @@ public class MapManager {
 			if (entities.contains(e, false)) entities.removeValue(e, false);
 		}
 		disposingEntities = new Array<>();
+		for (Entity e : survivors) { e.update(); }
+		for (Entity e : disposingSurvivors) {
+			if (survivors.contains(e, false)) survivors.removeValue(e, false);
+		}
+		disposingSurvivors = new Array<>();
+	}
+
+	public Zombie getNearestZombie(Vector2 from) {
+		Vector2 searchLoc = from.cpy();
+		Zombie closest = null;
+		for (int i = 0; i < entities.size; i++) {
+			Entity e = entities.get(i);
+			if (e instanceof Zombie) {
+				if (closest == null) {
+					closest = (Zombie) e;
+				} else {
+					if (e.distanceTo(searchLoc) < closest.distanceTo(searchLoc)) closest = (Zombie) e;
+				}
+			}
+		}
+		return closest;
 	}
 	
 	public void drawEntities() {
@@ -95,6 +119,13 @@ public class MapManager {
 				e.drawCollision(game.shapeRenderer);
 			}
 		}
+		for (Entity e : survivors) {
+			e.draw(game.batch, game.shapeRenderer);
+			if (game.debugMode) {
+				e.drawCollision(game.shapeRenderer);
+			}
+		}
+
 	}
 	
 	public void updateProjectiles() {
@@ -239,6 +270,7 @@ public class MapManager {
 	public void clearMap() {
 		entities = new Array<>();
 		projectiles = new Array<>();
+		survivors = new Array<>();
 	}
 
 	public void addSplatter(Vector2 position) {
@@ -248,4 +280,6 @@ public class MapManager {
 		splatters.insert(0, splatter);
 		splatterLocs.put(splatter, new Vector3(position.x, position.y, 1f));
 	}
+
+	public void addAlly(Ally sarge) { survivors.add(sarge);}
 }

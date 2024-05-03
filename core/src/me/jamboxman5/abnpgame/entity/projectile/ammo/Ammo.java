@@ -2,6 +2,7 @@ package me.jamboxman5.abnpgame.entity.projectile.ammo;
 
 
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.entity.projectile.Bullet;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
@@ -18,7 +19,7 @@ public abstract class Ammo {
 	protected Sound impactSound;
 	protected int breachCount;
 	
-	public void shoot(double rotation, Firearm weapon, int startX, int startY) {
+	public void shoot(double rotation, Firearm weapon, Vector2 start) {
 		double[] rotations = new double[shots];
 
 		for (int i = 0; i < shots; i++) {
@@ -32,7 +33,7 @@ public abstract class Ammo {
 		for (int i = 0; i < rotations.length; i++) {
 			Bullet bullet = new Bullet(rotations[i],
 					(int)(weapon.getFiringVelocity() * speedBoost),
-					startX, startY,
+					start,
 					(int)(weapon.getRange() * rangeBoost), this);
 			ABNPGame.getInstance().getMapManager().addProjectile(bullet);
 		}

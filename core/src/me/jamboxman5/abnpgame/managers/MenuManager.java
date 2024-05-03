@@ -18,74 +18,62 @@ import java.io.InputStream;
 
 public class MenuManager {
 
-    Texture menuBKG;
-    ABNPGame game;
-    public MenuManager(ABNPGame game) {
-        this.game = game;
-        menuBKG = new Texture(Gdx.files.internal("ui/bkg/Menu_Background_0.png"));
-
-    }
-
-    public void draw() {
-        drawMainMenu(game.uiCanvas, game.shapeRenderer);
-    }
-
-    private void drawMainMenu(SpriteBatch batch, ShapeRenderer renderer) {
-        renderer.setColor(new Color((50/255),0,0, 0));
-        batch.draw(menuBKG, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-
-
-        String title = "ABNP:";
-        String subTitle = "Zombie Assault";
-
-        int x = 60;
-        int y = Gdx.graphics.getHeight() - 220;
-
-
-        Fonts.drawScaled(Fonts.TITLEFONT, 1f, title, batch, x, y + Fonts.getTextHeight(title, Fonts.TITLEFONT, 1f));
-
-        y -= 90;
-
-        Fonts.drawScaled(Fonts.SUBTITLEFONT, .841f, subTitle, batch, x, y+ Fonts.getTextHeight(title, Fonts.SUBTITLEFONT, 1f));
-
-
-        x = (int) Fonts.getXForRightAlignedText(Gdx.graphics.getWidth() - 40,"Singleplayer", Fonts.SELECTIONFONT, .5f);
-        y = Gdx.graphics.getHeight()/2 - 140;
-        int spacer = 70;
-
-        Fonts.drawScaled(Fonts.SELECTIONFONT, .5f, "Singleplayer", batch, x, y);
-
-//        if (menuIndex == 0) {
+//    Texture menuBKG;
+//    ABNPGame game;
+//    public MenuManager(ABNPGame game) {
+//        this.game = game;
+//        menuBKG = new Texture(Gdx.files.internal("ui/bkg/Menu_Background_0.png"));
 //
-//            Utilities.drawStringShadow(g2, ">", x-60, y);
+//    }
 //
-//            g2.setColor(Color.white);
-//            g2.drawString(">", x-60, y);
-//        }
-        y-=spacer;
-
-        x = (int) Fonts.getXForRightAlignedText(Gdx.graphics.getWidth() - 40,"Multiplayer", Fonts.SELECTIONFONT, .5f);
-
-        Fonts.drawScaled(Fonts.SELECTIONFONT, .5f, "Multiplayer", batch, x, y);
-
-//        if (menuIndex == 1) {
-//            Utilities.drawStringShadow(g2, ">", x-60, y);
+//    public void draw() {
+//        drawMainMenu(game.uiCanvas, game.shapeRenderer);
+//    }
 //
-//            g2.setColor(Color.white);
-//            g2.drawString(">", x-60, y);
-//        }
-
-        y-= spacer;
-        x = (int) Fonts.getXForRightAlignedText(Gdx.graphics.getWidth() - 40,"Quit Game", Fonts.SELECTIONFONT, .5f);
-
-        Fonts.drawScaled(Fonts.SELECTIONFONT, .5f, "Quit Game", batch, x, y);
-//        if (menuIndex == 2) {
-//            Utilities.drawStringShadow(g2, ">", x-60, y);
+//    private void drawMainMenu(SpriteBatch batch, ShapeRenderer renderer) {
+//        renderer.setColor(new Color((50/255),0,0, 0));
 //
-//            g2.setColor(Color.white);
-//            g2.drawString(">", x-60, y);
-//        }
-
-    }
+//
+//
+//
+//
+//        x = (int) Fonts.getXForRightAlignedText(Gdx.graphics.getWidth() - 40,"Singleplayer", Fonts.SELECTIONFONT, 1f);
+//        y = Gdx.graphics.getHeight()/2 - 140;
+//        int spacer = 70;
+//
+//        Fonts.drawScaled(Fonts.SELECTIONFONT, 1f, "Singleplayer", batch, x, y);
+//
+////        if (menuIndex == 0) {
+////
+////            Utilities.drawStringShadow(g2, ">", x-60, y);
+////
+////            g2.setColor(Color.white);
+////            g2.drawString(">", x-60, y);
+////        }
+//        y-=spacer;
+//
+//        x = (int) Fonts.getXForRightAlignedText(Gdx.graphics.getWidth() - 40,"Multiplayer", Fonts.SELECTIONFONT, 1f);
+//
+//        Fonts.drawScaled(Fonts.SELECTIONFONT, 1f, "Multiplayer", batch, x, y);
+//
+////        if (menuIndex == 1) {
+////            Utilities.drawStringShadow(g2, ">", x-60, y);
+////
+////            g2.setColor(Color.white);
+////            g2.drawString(">", x-60, y);
+////        }
+//
+//        y-= spacer;
+//        x = (int) Fonts.getXForRightAlignedText(Gdx.graphics.getWidth() - 40,"Quit Game", Fonts.SELECTIONFONT, 1f);
+//
+//        Fonts.drawScaled(Fonts.SELECTIONFONT, 1f, "Quit Game", batch, x, y);
+////        if (menuIndex == 2) {
+////            Utilities.drawStringShadow(g2, ">", x-60, y);
+////
+////            g2.setColor(Color.white);
+////            g2.drawString(">", x-60, y);
+////        }
+//
+//    }
 
 }

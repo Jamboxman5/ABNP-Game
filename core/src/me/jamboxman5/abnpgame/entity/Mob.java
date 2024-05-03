@@ -27,6 +27,8 @@ public abstract class Mob extends LivingEntity {
 	protected long lastStep = System.currentTimeMillis();
 	protected float jitter = 0;
 	protected float jitterValue = .2f;
+	protected Vector2 target;
+
 
 	public Mob(ABNPGame gamePanel, String type, int x, int y, int health, int maxHealth, int speed) {
 		super(gamePanel, health, maxHealth);

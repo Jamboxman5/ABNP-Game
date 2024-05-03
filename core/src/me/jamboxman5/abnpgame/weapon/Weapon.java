@@ -7,6 +7,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Array;
+import me.jamboxman5.abnpgame.entity.player.Survivor;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
@@ -42,11 +43,13 @@ public abstract class Weapon {
 	protected WeaponModLoadout equippedMods;
 	
 	public Sprite getPlayerSprite(int idx) {
-		return activeSprites.get(idx);
+		if (idx < activeSprites.size) return activeSprites.get(idx);
+		else return activeSprites.get(0);
+
 	}
 	public Sprite getHudSprite() { return hudSprite; }
 	public String getName() { return name; }
-	public abstract boolean attack(double radians);
+	public abstract boolean attack(Survivor attacker, double radians);
 	protected boolean canAttack() {
 	    if (reloading) return false;
 	    if ((System.currentTimeMillis() - lastAttack) < attackRateMS) return false;
@@ -71,6 +74,8 @@ public abstract class Weapon {
 
 	public double getRecoil() { return recoil;
 	}
+
+
 
 
 	public enum WeaponType {

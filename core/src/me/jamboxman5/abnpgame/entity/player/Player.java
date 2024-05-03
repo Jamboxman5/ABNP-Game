@@ -19,15 +19,14 @@ import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 import me.jamboxman5.abnpgame.weapon.mods.RedDotSight;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
-public class Player extends Mob {
+public class Player extends Survivor {
 	
 	private final static int defaultSpeed = 10;
 	private String gamerTag;
 	protected int money;
 	protected int exp;
 	
-	protected WeaponLoadout weapons;
-		
+
 	public Player(ABNPGame gamePanel, String name) {
 		super(gamePanel, 
 			  name, 
@@ -36,11 +35,6 @@ public class Player extends Mob {
 			  100, 100,
 			  defaultSpeed);
 
-		WeaponModLoadout mods = new WeaponModLoadout();
-		mods.addMod(new RedDotSight());
-		weapons = new WeaponLoadout();
-		weapons.getActiveWeapon().setMods(mods);
-		
 		gamerTag = name;
 		
 		screenX = Gdx.graphics.getWidth()/2;
@@ -57,6 +51,8 @@ public class Player extends Mob {
 	public void update() {
 
 		super.update();
+
+		aimTarget = gp.getWorldMousePointer();
 
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
@@ -150,7 +146,7 @@ public class Player extends Mob {
 
 
 		if (Gdx.input.isTouched()) {
-			if (weapons.getActiveWeapon().attack(Math.toRadians(jitter))) {
+			if (weapons.getActiveWeapon().attack(this, Math.toRadians(jitter))) {
 
 				jitter = (float) (Math.random() * weapons.getActiveWeapon().getRecoil());
 				if (Math.random() > .5) jitter = -jitter;
@@ -238,17 +234,7 @@ public class Player extends Mob {
 		collision = new Circle(position.x, position.y, 35);
 	}
 
-	public void drawRedDotSight(ShapeRenderer shape, Vector2 start, Vector2 end) {
 
-		end.rotateAroundDeg(start, jitter);
-
-		shape.setColor(.8f, 0f, 0f, .5f);
-		shape.rectLine(start, end, 2);
-		shape.circle(end.x, end.y, 3, 4);
-		shape.setColor((float) (255.0/255.0), (float) (200.0/255.0), (float) (200.0/255.0), 1f);
-		shape.circle(end.x, end.y, 1, 4);
-
-	}
 
 	public float getAngleToCursor() {
 		try {
@@ -273,8 +259,8 @@ public class Player extends Mob {
 	
 	public float getDrawingAngle() {
 		try {
-			float num = (float) (getScreenY() - gp.getMousePointer().y);
-			float denom = (float) (getScreenX() - gp.getMousePointer().x);
+			float num = (float) (position.y - gp.getWorldMousePointer().y);
+			float denom = (float) (position.x - gp.getWorldMousePointer().x);
 			if (denom == 0 && num == 0) return (float) (-Math.PI/2);
 			float angle = (float) Math.atan(num/denom);
 			if ((int)gp.getMousePointer().x <= screenX) {
@@ -311,9 +297,6 @@ public class Player extends Mob {
 		return getDrawingAngle();
 	}
 
-	public void setAnimFrame(int i) {
-		animFrame = i;
-	}
 	public void setWeaponLoadout(WeaponLoadout newLoadout) {
 		weapons = newLoadout;
 	}

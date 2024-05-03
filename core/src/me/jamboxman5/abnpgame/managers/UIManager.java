@@ -31,10 +31,10 @@ public class UIManager {
     static Array<String> msgBuffer = new Array<>();
     static int messageBufferCounter = 0;
 
-    public static void setupElements() {
-        Texture t = new Texture(Gdx.files.internal("ui/elements/WeaponHudOverlay.PNG"));
-        WeaponHudOverlay = new Sprite(t);
-    }
+//    public static void setupElements() {
+//        Texture t = new Texture(Gdx.files.internal("ui/elements/WeaponHudOverlay.PNG"));
+//        WeaponHudOverlay = new Sprite(t);
+//    }
 
     public static void drawMessageBuffer(SpriteBatch batch) {
         if (msgBuffer.size == 0) return;

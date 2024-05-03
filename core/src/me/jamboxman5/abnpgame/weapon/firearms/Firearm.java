@@ -4,6 +4,7 @@ package me.jamboxman5.abnpgame.weapon.firearms;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import me.jamboxman5.abnpgame.entity.player.Survivor;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.Weapon;
@@ -26,7 +27,7 @@ public class Firearm extends Weapon {
 
 	public int getLoadedAmmo() { return loaded; }
 	public int getAmmoCount() { return currentAmmo.getAmmoCount(); }
-	public boolean shoot(double offset) {
+	public boolean shoot(Survivor shooter, double offset) {
 		if (loaded <= 0) {
 			if (canReload()) reload();
 			else {
@@ -39,17 +40,17 @@ public class Firearm extends Weapon {
 		}
 
 		if (!canAttack()) return false;
+//		if (!(shooter instanceof Player)) return false;
 		ABNPGame gp = ABNPGame.getInstance();
 		activeSprites = shootSprites;
-		gp.getPlayer().setAnimFrame(shootSprites.size-1);
+		shooter.setAnimFrame(shootSprites.size-1);
 		attackSound.play();
 		this.lastAttack = System.currentTimeMillis();
 		loaded -= 1;
-		currentAmmo.shoot(gp.getPlayer().getAdjustedRotation() + offset,
+		currentAmmo.shoot(shooter.getAimAngle() + offset,
 						  this, 
-						  (int)gp.getPlayer().getWorldX(),
-						  (int)gp.getPlayer().getWorldY());
-//		Bullet bullet = new Bullet(gp.getPlayer().getAdjustedRotation(), 
+						  shooter.getPosition());
+//		Bullet bullet = new Bullet(gp.getPlayer().getAdjustedRotation(),
 //				150, 
 //				gp.getPlayer().getAdjustedWorldX(), 
 //				gp.getPlayer().getAdjustedWorldY(),  
@@ -90,8 +91,8 @@ public class Firearm extends Weapon {
 	}
 	
 	@Override
-	public boolean attack(double offset) {
-		return shoot(offset);
+	public boolean attack(Survivor attacker, double offset) {
+		return shoot(attacker, offset);
 	}
 	public int getFiringVelocity() { return firingVelocity; }
 	public int getRange() { return range; }
@@ -100,4 +101,7 @@ public class Firearm extends Weapon {
 	public void buyMag(int magCount) {
 		currentAmmo.addAmmo(magSize*magCount);
 	}
+
+	public boolean isEmpty() { return loaded + currentAmmo.getAmmoCount() == 0; }
+
 }
