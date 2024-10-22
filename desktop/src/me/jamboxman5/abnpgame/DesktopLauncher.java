@@ -17,6 +17,7 @@ public class DesktopLauncher {
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setWindowedMode(ScreenInfo.WIDTH,ScreenInfo.HEIGHT);
 		config.useVsync(true);
+
 		config.setForegroundFPS(60);
 		config.setResizable(false);
 		config.setTitle("ABNPGame");
