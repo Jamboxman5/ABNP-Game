@@ -6,6 +6,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.jamboxman5.abnpgame.entity.player.Player;
+import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
@@ -18,7 +19,9 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class DataManager {
 
@@ -52,6 +55,7 @@ public class DataManager {
         JsonArray weaponsArr = weaponsOBJ.get("weapons").getAsJsonArray();
 
         Array<Weapon> weapons = new Array<>();
+
         for (int i = 0; i < weaponsArr.size(); i++) {
             JsonObject weaponOBJ = weaponsArr.get(i).getAsJsonObject();
             Weapon.WeaponType type = Weapon.WeaponType.valueOf(weaponOBJ.get("type").getAsString());
@@ -64,9 +68,25 @@ public class DataManager {
                 loadout.addMod(WeaponMod.getByType(modType));
             }
             weapon.setMods(loadout);
+            if (weapon instanceof Firearm) {
+                Firearm arm = (Firearm) weapon;
+                arm.setLoadedAmmo(weaponOBJ.get("loaded").getAsInt());
+            }
             weapons.add(weapon);
         }
-        WeaponLoadout loadout = new WeaponLoadout(weapons);
+
+        JsonArray ammoArr = weaponsOBJ.get("ammo").getAsJsonArray();
+
+        Array<Ammo> ammos = new Array<>();
+
+        for (int i = 0; i < ammoArr.size(); i++) {
+            JsonObject ammoOBJ = ammoArr.get(i).getAsJsonObject();
+            Ammo ammo = Ammo.getByType(Ammo.AmmoType.valueOf(ammoOBJ.get("type").getAsString()));
+            ammo.setCount(ammoOBJ.get("count").getAsInt());
+            ammos.add(ammo);
+        }
+
+        WeaponLoadout loadout = new WeaponLoadout(weapons, ammos);
         Player player = new Player(ABNPGame.getInstance(), name);
         player.setWeaponLoadout(loadout);
         player.setMoney(money);
@@ -98,7 +118,8 @@ public class DataManager {
             weaponOBJ.addProperty("type", weapon.getType().toString());
             if (weapon instanceof Firearm) {
                 Firearm firearm = (Firearm) weapon;
-                weaponOBJ.addProperty("ammo", firearm.getAmmoType().toString());
+                weaponOBJ.addProperty("loaded", firearm.getLoadedAmmo());
+                weaponOBJ.addProperty("ammoType", firearm.getAmmoType().toString());
             }
             JsonArray modsArr = new JsonArray();
             for (WeaponMod mod : weapon.getModLoadout().getMods()) {
@@ -112,9 +133,24 @@ public class DataManager {
 
         weaponLoadoutOBJ.add("weapons", weaponsArr);
 
+        JsonArray ammoArray = new JsonArray();
+
+        Set<Ammo.AmmoType> typesCovered = new HashSet<>();
+        for (Firearm firearm : p.getWeaponLoadout().getFirearms()) {
+            if (!typesCovered.contains(firearm.getAmmoType())) {
+                typesCovered.add(firearm.getAmmoType());
+                JsonObject ammo = new JsonObject();
+                ammo.addProperty("type", firearm.getAmmoType().toString());
+                ammo.addProperty("count", firearm.getAmmoCount());
+                ammoArray.add(ammo);
+            }
+        }
+
+        weaponLoadoutOBJ.add("ammo", ammoArray);
+
         playerOBJ.addProperty("username", p.getUsername());
-        playerOBJ.addProperty("money", 0);
-        playerOBJ.addProperty("experience", 0);
+        playerOBJ.addProperty("money", p.getMoney());
+        playerOBJ.addProperty("experience", p.getExp());
         playerOBJ.add("weaponLoadout", weaponLoadoutOBJ);
         playerOBJ.add("purchasedWeapons", new JsonArray());
 

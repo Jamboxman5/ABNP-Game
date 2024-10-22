@@ -1,23 +1,42 @@
 {
-	"username": "testPlayer",
-	"money": 69420,
-	"experience": 1337,
+	"username": "Jamboxman5",
+	"money": 1000,
+	"experience": 0,
 	"weaponLoadout": {
 		"weapons": [
-		{
-			"type": "M4A1",
-			"ammo": "StandardAmmo",
-			"mods": [
-			{"type": "RedDotSight"}
-			]
-		},
-		{
-			"type": "M1911",
-			"ammo": "StandardAmmo",
-			"mods": []
-		}
-		
+			{
+				"type": "M1911",
+				"loaded": 8,
+				"ammoType": "StandardAmmo",
+				"mods": []
+			},
+			{
+				"type": "M4A1",
+				"loaded": 30,
+				"ammoType": "StandardAmmo",
+				"mods": [
+					{
+						"type": "RedDotSight"
+					}
+				]
+			},
+			{
+				"type": "WINCHESTER12",
+				"loaded": 6,
+				"ammoType": "ShellAmmo",
+				"mods": []
+			}
+		],
+		"ammo": [
+			{
+				"type": "StandardAmmo",
+				"count": 100
+			},
+			{
+				"type": "ShellAmmo",
+				"count": 100
+			}
 		]
 	},
-	"purchasedWeapons": ["M4A1", "Winchester 12GA", "M1911"] 
+	"purchasedWeapons": []
 }

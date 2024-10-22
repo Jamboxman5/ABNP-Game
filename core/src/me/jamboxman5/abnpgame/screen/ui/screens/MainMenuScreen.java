@@ -3,7 +3,9 @@ package me.jamboxman5.abnpgame.screen.ui.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,6 +18,10 @@ import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ui.elements.Button;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.util.Fonts;
+import me.jamboxman5.abnpgame.util.Sounds;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class MainMenuScreen implements Screen {
 
@@ -46,7 +52,15 @@ public class MainMenuScreen implements Screen {
 
     @Override
     public void show() {
+        if (!Sounds.AMBIENCE.isPlaying()) {
+            Sounds.AMBIENCE.setLooping(true);
+            Sounds.AMBIENCE.play();
+        }
+
         getButtons(game, game.uiShapeRenderer);
+        Pixmap pixmap = new Pixmap(Gdx.files.internal("ui/cursor/Cursor_Pointer_Full.png"));
+        Cursor cursor = Gdx.graphics.newCursor(pixmap, 0, 0);
+        Gdx.graphics.setCursor(cursor);
     }
 
     @Override
@@ -69,6 +83,7 @@ public class MainMenuScreen implements Screen {
         updateActiveButton(game.getMousePointer());
         if (Gdx.input.isTouched()) {
             if (activeButton != null && (System.currentTimeMillis() - lastButton > 500)) {
+                Sounds.MENUSELECT.play();
                 activeButton.press();
                 lastButton = System.currentTimeMillis();
             }
@@ -133,7 +148,10 @@ public class MainMenuScreen implements Screen {
     public void updateActiveButton(Vector2 p) {
         for (Button b : buttons) {
             if (b.contains(p))  {
-                activeButton = b;
+                if (activeButton != b) {
+                    activeButton = b;
+                    Sounds.MENUSCROLL.play();
+                }
                 return;
             }
         }
@@ -166,8 +184,26 @@ public class MainMenuScreen implements Screen {
             @Override
             public void run() {
                 Screen old = game.getScreen();
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new MapSelectMenuScreen(game));
                 old.dispose();
+
+            }
+        });
+
+        arcadeButton.setAction(new Runnable() {
+            @Override
+            public void run() {
+                Screen old = game.getScreen();
+                game.setScreen(new ArcadeMenuScreen(game));
+                old.dispose();
+
+            }
+        });
+
+        quitButton.setAction(new Runnable() {
+            @Override
+            public void run() {
+                System.exit(0);
 
             }
         });

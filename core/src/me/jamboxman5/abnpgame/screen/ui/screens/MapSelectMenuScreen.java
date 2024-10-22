@@ -1,5 +1,6 @@
 package me.jamboxman5.abnpgame.screen.ui.screens;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -9,13 +10,18 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import me.jamboxman5.abnpgame.main.ABNPGame;
+import me.jamboxman5.abnpgame.map.Map;
+import me.jamboxman5.abnpgame.map.maps.*;
 import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.screen.ui.elements.Button;
 import me.jamboxman5.abnpgame.util.Fonts;
+import me.jamboxman5.abnpgame.util.Sounds;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class MapSelectMenuScreen implements Screen {
@@ -24,6 +30,9 @@ public class MapSelectMenuScreen implements Screen {
     final ABNPGame game;
     OrthographicCamera camera;
 
+    private final String title = "Select a Map:";
+    private final int alignX = Gdx.graphics.getWidth() - 40;
+    private final int spacer = 70;
     private long lastButton = System.currentTimeMillis();
 
     public Button[] buttons;
@@ -32,6 +41,7 @@ public class MapSelectMenuScreen implements Screen {
     public Button karnivale;
     public Button airbase;
     public Button farmHouse;
+    public Button back;
     public Button activeButton;
 
 
@@ -45,7 +55,7 @@ public class MapSelectMenuScreen implements Screen {
 
     @Override
     public void show() {
-
+        getButtons();
     }
 
     @Override
@@ -82,7 +92,7 @@ public class MapSelectMenuScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        menuBKG.dispose();
     }
 
 
@@ -91,6 +101,7 @@ public class MapSelectMenuScreen implements Screen {
         updateActiveButton(game.getMousePointer());
         if (Gdx.input.isTouched()) {
             if (activeButton != null && (System.currentTimeMillis() - lastButton > 500)) {
+                Sounds.MENUSELECT.play();
                 activeButton.press();
                 lastButton = System.currentTimeMillis();
             }
@@ -98,91 +109,102 @@ public class MapSelectMenuScreen implements Screen {
     }
 
     public void drawBKG(SpriteBatch batch) {
+        batch.begin();
+        batch.draw(menuBKG, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.end();
+    }
 
+    public void drawButtons(SpriteBatch batch, ShapeRenderer renderer) {
+        for (Button b : buttons) {
+            b.draw(batch, renderer, (activeButton == b));
+        }
+    }
+
+    public void drawTitle(SpriteBatch batch) {
+        batch.begin();
+
+        int x = 60;
+        int y = Gdx.graphics.getHeight() - 220;
+
+        Fonts.drawScaled(Fonts.TITLEFONT, .6f, title, batch, x, y + Fonts.getTextHeight(title, Fonts.TITLEFONT, 1f));
+//
+//        y -= 90;
+//        Fonts.drawScaled(Fonts.SUBTITLEFONT, .841f, subTitle, batch, x, y+ Fonts.getTextHeight(title, Fonts.SUBTITLEFONT, 1f));
+        batch.end();
     }
 
     public void draw() {
 
-        g2.drawImage(bkg, 0, 0, gp.getScreenWidth(), gp.getScreenHeight(), null);
-
-        g2.setFont(Fonts.TITLEFONT.deriveFont(Font.BOLD, 180));
-        String title = "Select Map:";
-
-        int x = 60+Utilities.getTextHeight(title, g2)/12;
-        int y = 180+Utilities.getTextHeight(title, g2)/12;
-
-        Utilities.drawStringWithShadow(g2, title, Color.white, x, y);
-
-        g2.setFont(Fonts.BUTTONFONT);
-
-
-        int spacer = 60;
-        y = gp.getScreenHeight() - 40;
-
-
-
-        for (int i = gp.getMapManager().getMapList().size()-1; i >= 0; i--) {
-            Map m = gp.getMapManager().getMapList().get(i);
-            x = Utilities.getXForRightAlignedText(gp.getScreenWidth() - 40,m.getName().replace("_", " "), g2);
-            Utilities.drawStringShadow(g2, m.getName().replace("_", " "), x, y);
-            g2.setColor(Color.white);
-            g2.drawString(m.getName().replace("_", " "), x, y);
-            if (menuIndex == i) {
-                Utilities.drawStringShadow(g2, ">", x - 60, y);
-                g2.setColor(Color.white);
-                g2.drawString(">", x - 60, y);
-            }
-            y -= spacer;
-
-        }
-
-        y = gp.getScreenHeight() - 40;
-        x = 80;
-        Utilities.drawStringShadow(g2, "Main Menu", x, y);
-        if (menuIndex == 5) {
-            g2.setColor(Color.LIGHT_GRAY);
-        } else {
-            g2.setColor(Color.white);
-        }
-        g2.drawString("Main Menu", x, y);
-        Utilities.drawStringShadow(g2, ">", x - 40, y);
-        g2.setColor(Color.RED);
-        g2.drawString(">", x - 40, y);
+        drawBKG(game.uiCanvas);
+        drawTitle(game.uiCanvas);
+        drawButtons(game.uiCanvas, game.uiShapeRenderer);
 
     }
 
-    private void getButtons(ABNPGame gp, ShapeRenderer renderer) {
-        buttons = new Button[3];
-        int x = (int) (alignX - Fonts.getTextWidth("Campaign", Fonts.BUTTONFONT, 1f));
-        int y = spacer*(buttons.length);
-        campaignButton = new Button(x, y, "Campaign", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
-        x = (int) (alignX - Fonts.getTextWidth("Arcade", Fonts.BUTTONFONT, 1f));
+    private void getButtons() {
+        buttons = new Button[6];
+        int x = (int) (alignX - Fonts.getTextWidth("Farmhouse", Fonts.BUTTONFONT, 1f));
+        int y = spacer*(buttons.length-1);
+        farmHouse = new Button(x, y, "Farmhouse", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
+        x = (int) (alignX - Fonts.getTextWidth("Airbase", Fonts.BUTTONFONT, 1f));
         y -= spacer;
-        arcadeButton = new Button(x, y, "Arcade", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
-        x = (int) (alignX - Fonts.getTextWidth("Quit", Fonts.BUTTONFONT, 1f));
+        airbase = new Button(x, y, "Airbase", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
+        x = (int) (alignX - Fonts.getTextWidth("Karnivale", Fonts.BUTTONFONT, 1f));
         y -= spacer;
-        quitButton = new Button(x, y, "Quit", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
+        karnivale = new Button(x, y, "Karnivale", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
+        x = (int) (alignX - Fonts.getTextWidth("Verdammtenstadt", Fonts.BUTTONFONT, 1f));
+        y -= spacer;
+        verdammtenstadt = new Button(x, y, "Verdammtenstadt", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
+        x = (int) (alignX - Fonts.getTextWidth("Black Isle", Fonts.BUTTONFONT, 1f));
+        y -= spacer;
+        blackIsle = new Button(x, y, "Black Isle", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
 
-        buttons[0] = campaignButton;
-        buttons[1] = arcadeButton;
-        buttons[2] = quitButton;
+        x = Gdx.graphics.getWidth() - alignX;
+        back = new Button(x, y, "Back", Fonts.BUTTONFONT, Button.TextAlign.LEFT);
 
-        campaignButton.setAction(new Runnable() {
+        buttons[0] = back;
+        buttons[1] = farmHouse;
+        buttons[2] = airbase;
+        buttons[3] = karnivale;
+        buttons[4] = verdammtenstadt;
+        buttons[5] = blackIsle;
+
+                back.setAction(new Runnable() {
+                    @Override
+                    public void run() {
+                        Screen old = game.getScreen();
+                        game.setScreen(new MainMenuScreen(game));
+                        old.dispose();
+
+                    }
+                });
+
+                farmHouse.setAction(getMapSelectButtonAction(new Farmhouse()));
+                airbase.setAction(getMapSelectButtonAction(new Airbase()));
+                karnivale.setAction(getMapSelectButtonAction(new Karnivale()));
+                verdammtenstadt.setAction(getMapSelectButtonAction(new Verdammtenstadt()));
+                blackIsle.setAction(getMapSelectButtonAction(new BlackIsle()));
+
+    }
+
+    private Runnable getMapSelectButtonAction(final Map selected) {
+        return new Runnable() {
             @Override
             public void run() {
                 Screen old = game.getScreen();
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new GameScreen(game, selected));
                 old.dispose();
-
             }
-        });
-
+        };
     }
 
     public void updateActiveButton(Vector2 p) {
         for (Button b : buttons) {
             if (b.contains(p))  {
-                activeButton = b;
+                if (activeButton != b) {
+                    activeButton = b;
+                    Sounds.MENUSCROLL.play();
+                }
                 return;
             }
         }

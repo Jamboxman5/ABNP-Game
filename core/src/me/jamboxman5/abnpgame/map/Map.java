@@ -1,28 +1,28 @@
 package me.jamboxman5.abnpgame.map;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
-public class Map {
+public abstract class Map {
 
-	private Sprite img;
-	private String name;
-	private final int defaultX, defaultY;
+	protected Sprite img;
+	protected String name;
+	protected final Vector2 spawnPosition;
 	
-	public Map(String name, int x, int y) {
+	public Map(String name, Vector2 start) {
 		this.name = name;
-		defaultX = x;
-		defaultY = y;
+		spawnPosition = start;
 	}
 	
-	public Sprite getImage() {
-		return img;
-	}
-	public void setImage(Sprite image) { img = image; }
+	public Sprite getImage() { return img; }
 	public String toString() { return name; }
 
-	public int getDefaultX() { return defaultX; }
-	public int getDefaultY() { return defaultY; }
+	public Vector2 getPlayerSpawn() { return spawnPosition; }
 
 	public String getName() { return name; }
+
+	public abstract Vector2[] getZombieSpawns();
+	public abstract void load();
 	
 }

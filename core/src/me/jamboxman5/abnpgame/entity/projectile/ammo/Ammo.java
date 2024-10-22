@@ -18,7 +18,18 @@ public abstract class Ammo {
 	protected int ammoCount;
 	protected Sound impactSound;
 	protected int breachCount;
-	
+
+	public static Ammo getByType(AmmoType type) {
+		switch(type) {
+			case ShellAmmo:
+				return new ShellAmmo();
+			case StandardAmmo:
+				return new StandardAmmo();
+			default:
+				return new StandardAmmo();
+		}
+	}
+
 	public void shoot(double rotation, Firearm weapon, Vector2 start) {
 		double[] rotations = new double[shots];
 
@@ -49,6 +60,10 @@ public abstract class Ammo {
 	public int getBreachCount() { return breachCount; }
 
 	public void addAmmo(int rounds) { ammoCount += rounds;
+	}
+
+	public void setCount(int count) {
+		ammoCount = count;
 	}
 
 	public enum AmmoType {

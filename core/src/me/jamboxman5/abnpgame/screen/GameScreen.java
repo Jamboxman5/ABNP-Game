@@ -11,14 +11,14 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.Viewport;
+import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.ally.Ally;
 import me.jamboxman5.abnpgame.entity.zombie.Zombie;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
+import me.jamboxman5.abnpgame.map.Map;
+import me.jamboxman5.abnpgame.screen.ui.screens.MainMenuScreen;
 import me.jamboxman5.abnpgame.util.Sounds;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 
@@ -46,8 +46,9 @@ public class GameScreen implements Screen, InputProcessor {
 
     Thread gameController;
     int zombiesRemaining = 0;
+    private boolean gameOver = false;
 
-    public GameScreen(final ABNPGame game) {
+    public GameScreen(final ABNPGame game, Map activeMap) {
         this.game = game;
 
         minZoom = .65f * (1920f/Gdx.graphics.getWidth());
@@ -64,9 +65,27 @@ public class GameScreen implements Screen, InputProcessor {
         uiCamera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
         Gdx.input.setInputProcessor(this);
 
-        game.getMapManager().setMap("Verdammtenstadt");
+        game.getMapManager().setMap(activeMap);
 //        UIManager.setupElements();
 
+
+
+        Zombie.initSprites();
+
+
+
+//        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Crosshair);
+    }
+
+    @Override
+    public void show() {
+
+        game.generatePlayer();
+        game.getPlayer().setPosition(game.getMapManager().getActiveMap().getPlayerSpawn());
+        game.getMapManager().addAlly(new Ally(game, "Sarge", game.getMapManager().getActiveMap().getPlayerSpawn().cpy().add(new Vector2(0,1)), 50, 50, 5));
+
+
+        Sounds.AMBIENCE.stop();
         Pixmap pixmap;
         if (ScreenInfo.WIDTH > 1366) {
             pixmap = new Pixmap(Gdx.files.internal("ui/cursor/Cursor_Reticle_Large.png"));
@@ -79,15 +98,15 @@ public class GameScreen implements Screen, InputProcessor {
 
         }
 
-        Zombie.initSprites();
-        game.getMapManager().addAlly(new Ally(game, "Sarge", (int) game.getPlayer().getWorldX(), (int) game.getPlayer().getWorldY(), 50, 50, 5));
-
         gameController = new Thread() {
 
             @Override
             public void run() {
                 try {
 
+                    gameOver = false;
+
+                    Vector2[] spawnPoints = game.getMapManager().getActiveMap().getZombieSpawns();
                     UIManager.pushBufferMessage("Prepare for the first wave!");
                     Thread.sleep(10000);
                     UIManager.pushBufferMessage("Begin!");
@@ -95,11 +114,11 @@ public class GameScreen implements Screen, InputProcessor {
                     for (int i = 0; i < 10; i++) {
                         zombiesRemaining = (50 - i) + game.getMapManager().entities.size;
                         Thread.sleep(2000);
-                        Zombie zombie = new Zombie(game, Zombie.ZombieType.NORMAL,getSpawnPoints()[spawnCounter], 5);
+                        Zombie zombie = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter], 5);
                         game.getMapManager().addEntity(zombie);
                         lastSpawn = System.currentTimeMillis();
                         spawnCounter++;
-                        if (spawnCounter >= getSpawnPoints().length) spawnCounter = 0;
+                        if (spawnCounter >= spawnPoints.length) spawnCounter = 0;
                     }
 
                     while (game.getMapManager().entities.size > 0) {
@@ -131,13 +150,13 @@ public class GameScreen implements Screen, InputProcessor {
                     for (int i = 0; i < 10; i++) {
                         zombiesRemaining = 2*(50 - i) + game.getMapManager().entities.size;
                         Thread.sleep(2000);
-                        Zombie zombie2 = new Zombie(game, Zombie.ZombieType.NORMAL,getSpawnPoints()[spawnCounter].cpy().add(new Vector2(40,40)), 7);
-                        Zombie zombie3 = new Zombie(game, Zombie.ZombieType.NORMAL,getSpawnPoints()[spawnCounter].cpy().add(new Vector2(-40,-40)), 7);
+                        Zombie zombie2 = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter].cpy().add(new Vector2(40,40)), 7);
+                        Zombie zombie3 = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter].cpy().add(new Vector2(-40,-40)), 7);
                         game.getMapManager().addEntity(zombie2);
                         game.getMapManager().addEntity(zombie3);
                         lastSpawn = System.currentTimeMillis();
                         spawnCounter++;
-                        if (spawnCounter >= getSpawnPoints().length) spawnCounter = 0;
+                        if (spawnCounter >= spawnPoints.length) spawnCounter = 0;
                     }
 
                     while (game.getMapManager().entities.size > 0) {
@@ -165,18 +184,18 @@ public class GameScreen implements Screen, InputProcessor {
                     Thread.sleep(15000);
                     UIManager.pushBufferMessage("Begin!");
 
-                    for (int i = 0; i < 50; i++) {
+                    for (int i = 0; i < 10; i++) {
                         zombiesRemaining = 3*(50 - i) + game.getMapManager().entities.size;
                         Thread.sleep(2000);
-                        Zombie zombie = new Zombie(game, Zombie.ZombieType.NORMAL,getSpawnPoints()[spawnCounter], 5);
-                        Zombie zombie2 = new Zombie(game, Zombie.ZombieType.NORMAL,getSpawnPoints()[spawnCounter].cpy().add(new Vector2(60,60)), 9);
-                        Zombie zombie3 = new Zombie(game, Zombie.ZombieType.NORMAL,getSpawnPoints()[spawnCounter].cpy().add(new Vector2(-60,-60)), 9);                        game.getMapManager().addEntity(zombie);
+                        Zombie zombie = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter], 5);
+                        Zombie zombie2 = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter].cpy().add(new Vector2(60,60)), 9);
+                        Zombie zombie3 = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter].cpy().add(new Vector2(-60,-60)), 9);                        game.getMapManager().addEntity(zombie);
                         game.getMapManager().addEntity(zombie);
                         game.getMapManager().addEntity(zombie2);
                         game.getMapManager().addEntity(zombie3);
                         lastSpawn = System.currentTimeMillis();
                         spawnCounter++;
-                        if (spawnCounter >= getSpawnPoints().length) spawnCounter = 0;
+                        if (spawnCounter >= spawnPoints.length) spawnCounter = 0;
                     }
 
                     while (game.getMapManager().entities.size > 0) {
@@ -187,6 +206,7 @@ public class GameScreen implements Screen, InputProcessor {
 
                     winSound.play();
                     UIManager.pushBufferMessage("Congratulations! You win!");
+                    gameOver = true;
 
 
                 } catch (InterruptedException e) {
@@ -197,22 +217,9 @@ public class GameScreen implements Screen, InputProcessor {
 
         gameController.start();
 
-//        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Crosshair);
     }
 
-    @Override
-    public void show() {
-        Sounds.AMBIENCE.stop();
-    }
 
-    public Vector2[] getSpawnPoints() {
-        Vector2[] spawnPoints = {new Vector2(1600, 2040),
-                new Vector2(1240, 1710),
-                new Vector2(1790, 1500),
-                new Vector2(-800, 970),
-                new Vector2(190, 280)};
-        return spawnPoints;
-    }
 
     @Override
     public void render(float delta) {
@@ -229,7 +236,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         // tell the SpriteBatch to render in the
         // coordinate system specified by the camera.
-        game.batch.setProjectionMatrix(gameCamera.combined);
+        game.canvas.setProjectionMatrix(gameCamera.combined);
         game.shapeRenderer.setProjectionMatrix(gameCamera.combined);
         game.uiShapeRenderer.setProjectionMatrix(uiCamera.combined);
         game.uiCanvas.setProjectionMatrix(uiCamera.combined);
@@ -251,11 +258,11 @@ public class GameScreen implements Screen, InputProcessor {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.BACKSPACE)) {
             if (System.currentTimeMillis() - lastSpawn > 100) {
-                Zombie zombie = new Zombie(game, Zombie.ZombieType.NORMAL, getSpawnPoints()[spawnCounter], 5);
+                Zombie zombie = new Zombie(game, Zombie.ZombieType.NORMAL, game.getMapManager().getActiveMap().getZombieSpawns()[spawnCounter], 5);
                 game.getMapManager().addEntity(zombie);
                 lastSpawn = System.currentTimeMillis();
                 spawnCounter++;
-                if (spawnCounter >= getSpawnPoints().length) spawnCounter = 0;
+                if (spawnCounter >= game.getMapManager().getActiveMap().getZombieSpawns().length) spawnCounter = 0;
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
@@ -278,13 +285,23 @@ public class GameScreen implements Screen, InputProcessor {
                 lastSpawn = System.currentTimeMillis();
             }
         }
-        game.getMapManager().getDebugRenderer().render(game.getMapManager().getWorld(), gameCamera.combined);
-        game.getMapManager().getWorld().step(1/60f, 6, 2);
+
+        if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            if (System.currentTimeMillis() - lastSpawn > 100) {
+
+                DataManager.save(game.getPlayer());
+                game.setScreen(new MainMenuScreen(game));
+                dispose();
+
+                lastSpawn = System.currentTimeMillis();
+            }
+        }
+
     }
 
     private void draw() {
-        game.getMapManager().draw(game.batch, game.shapeRenderer);
-        game.getPlayer().draw(game.batch, game.uiShapeRenderer);
+        game.getMapManager().draw(game.canvas, game.shapeRenderer, gameCamera);
+        game.getPlayer().draw(game.canvas, game.uiShapeRenderer);
 
         if (game.debugMode) {
             game.getPlayer().drawCollision(game.shapeRenderer);
@@ -294,6 +311,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     }
 
+
     private void drawUI() {
 
 
@@ -301,6 +319,11 @@ public class GameScreen implements Screen, InputProcessor {
         UIManager.drawHealthBar(game.uiCanvas, game.uiShapeRenderer, game.getPlayer());
         UIManager.drawMessageBuffer(game.uiCanvas);
         if (game.debugMode) UIManager.drawDebugInfo(game, game.uiShapeRenderer, game.uiCanvas, Gdx.graphics.getDeltaTime());
+        if (gameOver) {
+            if (UIManager.drawFadeOut(game.uiShapeRenderer)) {
+                game.setScreen(new MainMenuScreen(game));
+            }
+        }
 
     }
 
@@ -322,7 +345,7 @@ public class GameScreen implements Screen, InputProcessor {
     public void resize(int width, int height) {
         ScreenInfo.WIDTH = width;
         ScreenInfo.HEIGHT = height;
-        game.batch.setProjectionMatrix(gameCamera.combined);
+        game.canvas.setProjectionMatrix(gameCamera.combined);
 
 //        viewport.update(width, height);
     }
@@ -344,7 +367,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void dispose() {
-        game.setPlayer(null);
+//        game.setPlayer(null);
         game.getMapManager().clearMap();
         gameController.interrupt();
 

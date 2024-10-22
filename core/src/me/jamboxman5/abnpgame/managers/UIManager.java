@@ -30,6 +30,7 @@ public class UIManager {
     static float guiScale = (1920f/(Gdx.graphics.getWidth()/.9f));
     static Array<String> msgBuffer = new Array<>();
     static int messageBufferCounter = 0;
+    public static float fadeOut = 0f;
 
 //    public static void setupElements() {
 //        Texture t = new Texture(Gdx.files.internal("ui/elements/WeaponHudOverlay.PNG"));
@@ -256,4 +257,21 @@ public class UIManager {
     }
 
 
+    public static boolean drawFadeOut(ShapeRenderer shape) {
+
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+        shape.setColor(1f,1f,1f, fadeOut);
+        shape.rect(0,0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        shape.end();
+
+        fadeOut += .005f;
+        if (fadeOut >= 1) {
+            fadeOut = 0f;
+            return true;
+        }
+        return false;
+
+    }
 }

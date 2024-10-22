@@ -1,10 +1,14 @@
 package me.jamboxman5.abnpgame.weapon;
 
 import com.badlogic.gdx.utils.Array;
+import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
+import me.jamboxman5.abnpgame.entity.projectile.ammo.ShellAmmo;
+import me.jamboxman5.abnpgame.entity.projectile.ammo.StandardAmmo;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
+import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,18 +16,28 @@ import java.util.List;
 public class WeaponLoadout {
 
 	Array<Weapon> weapons;
+	Array<Ammo> ammos;
 	Weapon activeWeapon;
 	
 	public WeaponLoadout() {
 		weapons = new Array<>();
-		weapons.add(new RifleM4A1());
-		weapons.add(new Pistol1911());
+		ammos = new Array<>();
+		ammos.add(new StandardAmmo());
+		ammos.add(new ShellAmmo());
+		weapons.add(new RifleM4A1(new WeaponModLoadout(), getAmmo(Ammo.AmmoType.StandardAmmo), 30));
+		weapons.add(new Pistol1911(new WeaponModLoadout(), getAmmo(Ammo.AmmoType.StandardAmmo), 30));
 		weapons.add(new ShotgunWinchester12());
 		activeWeapon = weapons.get(0);
 	}
-	public WeaponLoadout(Array<Weapon> weapons) {
+	public WeaponLoadout(Array<Weapon> weapons, Array<Ammo> ammos) {
 		this.weapons = weapons;
-		if (!weapons.isEmpty()) activeWeapon = weapons.get(0);
+		this.ammos = ammos;
+		if (!weapons.isEmpty())  {
+			activeWeapon = weapons.get(0);
+			for (Firearm firearm : getFirearms()) {
+				firearm.setAmmo(getAmmo(firearm.getAmmoType()));
+			}
+		}
 	}
 	public void nextWeapon() {
 		int idx = weapons.indexOf(activeWeapon, false) + 1;
@@ -56,4 +70,20 @@ public class WeaponLoadout {
 	}
 
     public Array<Weapon> getWeapons() { return weapons; }
+
+    public Array<Firearm> getFirearms() {
+		Array<Firearm> firearms = new Array<>();
+		for (Weapon w : weapons) {
+			if (w instanceof Firearm) firearms.add((Firearm) w);
+		}
+		return firearms;
+    }
+
+	public Array<Ammo> getAmmos() { return ammos; }
+	public Ammo getAmmo(Ammo.AmmoType type) {
+		for (Ammo ammo : ammos) {
+			if (ammo.getType() == type) return ammo;
+		}
+		return null;
+	}
 }

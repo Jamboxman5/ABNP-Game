@@ -30,8 +30,7 @@ public class Player extends Survivor {
 	public Player(ABNPGame gamePanel, String name) {
 		super(gamePanel, 
 			  name, 
-			  gamePanel.getMapManager().getActiveMap().getDefaultX(), 
-			  gamePanel.getMapManager().getActiveMap().getDefaultY(),
+			  gamePanel.getMapManager().getActiveMap().getPlayerSpawn(),
 			  100, 100,
 			  defaultSpeed);
 
@@ -310,5 +309,8 @@ public class Player extends Survivor {
 	public void takeMoney(int spent) {
 		money -= spent;
 		if (money < 0) money = 0;
+	}
+
+	public void giveExp(int i) { exp += i;
 	}
 }

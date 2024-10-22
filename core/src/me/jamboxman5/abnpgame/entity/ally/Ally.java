@@ -13,8 +13,8 @@ import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 
 public class Ally extends Survivor {
 
-    public Ally(ABNPGame gamePanel, String type, int x, int y, int health, int maxHealth, int speed) {
-        super(gamePanel, type, x, y, health, maxHealth, speed);
+    public Ally(ABNPGame gamePanel, String type, Vector2 startPos, int health, int maxHealth, int speed) {
+        super(gamePanel, type, startPos, health, maxHealth, speed);
         target = gp.getPlayer().getPosition();
     }
 

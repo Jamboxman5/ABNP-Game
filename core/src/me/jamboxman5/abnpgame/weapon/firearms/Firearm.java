@@ -4,10 +4,13 @@ package me.jamboxman5.abnpgame.weapon.firearms;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.math.Vector2;
+import me.jamboxman5.abnpgame.entity.ally.Ally;
 import me.jamboxman5.abnpgame.entity.player.Survivor;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.Weapon;
+import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
 
 public class Firearm extends Weapon {
 	
@@ -16,7 +19,6 @@ public class Firearm extends Weapon {
 	protected int reloadSpeedMS;
 	protected int range;
 	protected int firingVelocity;
-
 
 	protected Sound reloadSound;
 	protected Sound outOfAmmoSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/misc/Out_Of_Ammo.wav"));
@@ -47,9 +49,15 @@ public class Firearm extends Weapon {
 		attackSound.play();
 		this.lastAttack = System.currentTimeMillis();
 		loaded -= 1;
+
+		Vector2 shootPos = shooter.getPosition().cpy();
+//		if (shooter instanceof Ally) {
+//			shootPos.add(shooter.getAimVector().cpy().nor().scl(100));
+//		}
+
 		currentAmmo.shoot(shooter.getAimAngle() + offset,
 						  this, 
-						  shooter.getPosition());
+						 shootPos);
 //		Bullet bullet = new Bullet(gp.getPlayer().getAdjustedRotation(),
 //				150, 
 //				gp.getPlayer().getAdjustedWorldX(), 
@@ -104,4 +112,8 @@ public class Firearm extends Weapon {
 
 	public boolean isEmpty() { return loaded + currentAmmo.getAmmoCount() == 0; }
 
+	public void setLoadedAmmo(int loaded) { this.loaded = loaded; }
+
+	public void setAmmo(Ammo newAmmo) { currentAmmo = newAmmo;
+	}
 }

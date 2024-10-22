@@ -1,15 +1,11 @@
 package me.jamboxman5.abnpgame.managers;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.Entity;
 import me.jamboxman5.abnpgame.entity.ally.Ally;
@@ -18,10 +14,9 @@ import me.jamboxman5.abnpgame.entity.projectile.Projectile;
 import me.jamboxman5.abnpgame.entity.zombie.Zombie;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
-import me.jamboxman5.abnpgame.util.Fonts;
+import me.jamboxman5.abnpgame.map.maps.Verdammtenstadt;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 
-import java.awt.*;
 import java.util.HashMap;
 
 public class MapManager {
@@ -41,28 +36,14 @@ public class MapManager {
 
 	int splatterTimer = 0;
 
-	MapRenderer renderer;
-	
-	Map m;
-	private World world;
-	private Box2DDebugRenderer dbgRenderer;
+	Map activeMap;
 	
 	public MapManager(ABNPGame game) {
 		this.game = game;
-		world = new World(new Vector2(0,0), true);
-		dbgRenderer = new Box2DDebugRenderer();
-		getMaps();
+		activeMap = new Verdammtenstadt();
 	}
 
-	void getMaps() {
-		setup("Verdammtenstadt");
-		setup("Black_Isle");
-		setup("Farmhouse");
-		setup("Karnivale");
-		setup("Airbase");
-	}
-
-	public void draw(SpriteBatch batch, ShapeRenderer renderer) {
+	public void draw(SpriteBatch batch, ShapeRenderer renderer, Camera camera) {
 		
 //		if (game.getScreen().getClass() != GameScreen.class) return;
 //
@@ -73,12 +54,12 @@ public class MapManager {
 //		int screenY = 0;
 
 		batch.begin();
-		m.getImage().setScale(.5f);
-		m.getImage().setOrigin(screenX, screenY);
-		m.getImage().draw(batch);
+		activeMap.getImage().setScale(.5f);
+		activeMap.getImage().setOrigin(screenX, screenY);
+		activeMap.getImage().draw(batch);
 
 		batch.end();
-		drawSplatters(game.batch);
+		drawSplatters(game.canvas);
 		drawProjectiles(renderer);
 		drawEntities();
 	}
@@ -114,13 +95,13 @@ public class MapManager {
 	
 	public void drawEntities() {
 		for (Entity e : entities) {
-			e.draw(game.batch, game.shapeRenderer);
+			e.draw(game.canvas, game.shapeRenderer);
 			if (game.debugMode) {
 				e.drawCollision(game.shapeRenderer);
 			}
 		}
 		for (Entity e : survivors) {
-			e.draw(game.batch, game.shapeRenderer);
+			e.draw(game.canvas, game.shapeRenderer);
 			if (game.debugMode) {
 				e.drawCollision(game.shapeRenderer);
 			}
@@ -161,7 +142,7 @@ public class MapManager {
 			splatters.get(i).setCenter(x, y);
 			splatters.get(i).draw(batch);
 
-			if (position.z > 0) position.z -= .002;
+			if (position.z > 0) position.z -= .002f;
 
 		}
 		if (splatterTimer > 600) {
@@ -176,35 +157,8 @@ public class MapManager {
 	public void disposeProjectile(Projectile p) {
 		disposingProjectiles.add(p);
 	}
-	
-	public void setup(String imageName) {
-		int x = 0;
-		int y = 0;
-		if (imageName.equals("Black_Isle")) {
-			x = 1753;
-			y = 1232;
-		} else if (imageName.equals("Verdammtenstadt")) {
-			x = 1426;
-			y = 1374;
-		} else if (imageName.equals("Farmhouse")) {
-			x = 583;
-			y = 483;
-		} else if (imageName.equals("Airbase")) {
-			x = 583;
-			y = 483;
-		} else if (imageName.equals("Karnivale")) {
-			x = 583;
-			y = 483;
-		}
-		m = new Map(imageName, x, y);
-		Texture texture = new Texture(Gdx.files.internal("map/" + imageName + ".png/"));
-		Sprite sprite = new Sprite(texture);
-		sprite.scale(1.4f);
-		m.setImage(sprite);
-		maps.add(m);
-	}
 
-	public Map getActiveMap() {	return m; }
+	public Map getActiveMap() {	return activeMap; }
 	
 	public void addEntity(Entity entity) { entities.add(entity); }
 
@@ -238,16 +192,17 @@ public class MapManager {
 		entities.get(index).setRotation(rotation);
 	}
 
-	public void setMap(int mapIndex) {
-		m = maps.get(mapIndex);
+	public void setMap(Map newMap) {
+		if (newMap != null) newMap.load();
+		activeMap = newMap;
 	}
 
 	public void setMap(String map) {
 		for(Map m2 : maps) {
 			if (m2.toString().equals(map)) {
-				m = m2;
-				game.getPlayer().setWorldX(m.getDefaultX());
-				game.getPlayer().setWorldY(m.getDefaultY());
+				activeMap = m2;
+				game.getPlayer().setWorldX(activeMap.getPlayerSpawn().x);
+				game.getPlayer().setWorldY(activeMap.getPlayerSpawn().y);
 				return;
 			}
 		}
@@ -262,10 +217,6 @@ public class MapManager {
 		((OnlinePlayer)entities.get(idx)).getWeaponLoadout().addWeapon(weapon, true);
 		((OnlinePlayer)entities.get(idx)).getWeaponLoadout().removeWeapon(oldWeapon);
 	}
-
-	public World getWorld() { return world; }
-
-	public Box2DDebugRenderer getDebugRenderer() { return dbgRenderer; }
 
 	public void clearMap() {
 		entities = new Array<>();

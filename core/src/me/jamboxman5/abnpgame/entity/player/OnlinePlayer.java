@@ -48,35 +48,7 @@ public class OnlinePlayer extends Player {
 			super.draw(batch, shape);
 			return;
 		} 
-		
-//		if (gp.getGameStage() != GameStage.InGameSinglePlayer &&
-//			gp.getGameStage() != GameStage.InGameMultiplayer) return;
-//
-//		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-//                RenderingHints.VALUE_ANTIALIAS_ON);
-//		g2.setRenderingHint(RenderingHints.KEY_RENDERING,
-//                RenderingHints.VALUE_RENDER_QUALITY);
-//		g2.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL,
-//                RenderingHints.VALUE_STROKE_PURE);
-//
-//		//DRAW PLAYER
-//
-//		int x = (int) (worldX - gp.getPlayer().getWorldX() + gp.getPlayer().getAdjustedScreenX());
-//        int y = (int) (worldY - gp.getPlayer().getWorldY() + gp.getPlayer().getAdjustedScreenY());
-//
-//        AffineTransform tx = new AffineTransform();
-//	    AffineTransform oldTrans = g2.getTransform();
-//
-//	    tx.setToTranslation(x, y);
-//
-//	    tx.rotate(rotation);
-//
-//	    g2.transform(tx);
-//
-//	    BufferedImage sprite = weapons.getActiveWeapon().getPlayerSprite(animFrame);
-//	    g2.drawImage(sprite, (int)(-sprite.getWidth()+(60*gp.getZoom())), (int)(-sprite.getHeight()+(20*gp.getZoom())), null);
-//	    g2.drawImage(sprite, (int)(-sprite.getWidth()+(85*gp.getZoom())), (int)(-sprite.getHeight()+(18*gp.getZoom())), null);
-//	    g2.setTransform(oldTrans);
+
 	}
 
 }

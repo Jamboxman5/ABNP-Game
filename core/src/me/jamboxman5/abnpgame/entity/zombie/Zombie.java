@@ -29,8 +29,7 @@ public class Zombie extends Mob {
     public Zombie(ABNPGame game, ZombieType type, Vector2 startPos, int topSpeed) {
         super(game,
                 type.toString(),
-                (int) startPos.x,
-                (int) startPos.y,
+                startPos,
                 50, 50,
                 topSpeed);
 
@@ -131,6 +130,7 @@ public class Zombie extends Mob {
 
         if (isDead()) {
             gp.getPlayer().giveMoney(10);
+            gp.getPlayer().giveExp(10);
             gp.getMapManager().disposingEntities.add(this);
             gp.getMapManager().addSplatter(position);
         }

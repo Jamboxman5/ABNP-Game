@@ -10,11 +10,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.main.ABNPGame;
-import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.util.Fonts;
-import me.jamboxman5.steering.statemachine.SteeringGame;
-import me.jamboxman5.steering.statemachine.SteeringGameScreen;
 
 import java.util.Iterator;
 
@@ -73,7 +70,7 @@ public class GameOverScreen implements Screen {
 
 
 
-        game.batch.setProjectionMatrix(camera.combined);
+        game.canvas.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         renderStars();
         shapeRenderer.end();
@@ -86,7 +83,7 @@ public class GameOverScreen implements Screen {
         game.uiCanvas.end();
 
         if (Gdx.input.isTouched() && System.currentTimeMillis() - startTime > 3000) {
-            game.setScreen(new GameScreen(game));
+            game.setScreen(new MainMenuScreen(game));
             dispose();
         }
 

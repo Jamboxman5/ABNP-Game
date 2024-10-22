@@ -30,7 +30,7 @@ public abstract class Mob extends LivingEntity {
 	protected Vector2 target;
 
 
-	public Mob(ABNPGame gamePanel, String type, int x, int y, int health, int maxHealth, int speed) {
+	public Mob(ABNPGame gamePanel, String type, Vector2 startPos, int health, int maxHealth, int speed) {
 		super(gamePanel, health, maxHealth);
 		this.name = type;
 //		this.worldX = x;
@@ -39,7 +39,7 @@ public abstract class Mob extends LivingEntity {
 
 		velocity = new Vector2(0,0);
 		acceleration = new Vector2(0,0);
-		position = new Vector2(x, y);
+		position = startPos;
 		maxForce = .5f;
 		collision = new Circle(position, 30);
 

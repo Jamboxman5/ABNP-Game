@@ -10,8 +10,9 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import me.jamboxman5.abnpgame.util.Fonts;
 
-import java.awt.*;
-
+import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Button {
 
@@ -69,7 +70,7 @@ public class Button {
             renderer.begin(ShapeRenderer.ShapeType.Filled);
             Gdx.gl.glEnable(GL30.GL_BLEND);
             Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-            renderer.setColor(new Color(75f,0f,0f, .6f));
+            renderer.setColor(new Color((75f/255f),0f,0f, .6f));
             renderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
             renderer.end();
 
@@ -89,12 +90,15 @@ public class Button {
                 x = (int) Fonts.getXForCenteredText((int) (bounds.x + bounds.width/2), text, font);
                 break;
         }
-        int y = (int) (bounds.y + (int)(bounds.height/1.7));
+//        int y = (int) (bounds.y + (int)(bounds.height/1.7));
+        int y = (int) (bounds.y + (int)(bounds.height/1.6));
 //        Color color = Color.WHITE;
         if (active) font = Fonts.SELECTEDBUTTONFONT;
         else font = Fonts.BUTTONFONT;
 //        if (this.color != null) color = this.color;
-        Fonts.drawScaled(font, textScale, text, batch, x, y+bounds.height/2);
+        if (fill)
+            Fonts.drawScaled(font, textScale, text, batch, x, y);
+        else Fonts.drawScaled(font, textScale, text, batch, x, y+bounds.height/2);
         batch.end();
     }
 

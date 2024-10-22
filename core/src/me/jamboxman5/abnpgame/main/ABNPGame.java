@@ -18,7 +18,7 @@ import me.jamboxman5.abnpgame.util.Sounds;
 public class ABNPGame extends Game {
 
     private static ABNPGame instance;
-    public SpriteBatch batch;
+    public SpriteBatch canvas;
     public SpriteBatch uiCanvas;
     public ShapeRenderer uiShapeRenderer;
     public ShapeRenderer shapeRenderer;
@@ -31,17 +31,14 @@ public class ABNPGame extends Game {
 
     public void create() {
         instance = this;
-        batch = new SpriteBatch();
+        canvas = new SpriteBatch();
         uiCanvas = new SpriteBatch();
         uiShapeRenderer = new ShapeRenderer();
         shapeRenderer = new ShapeRenderer();
         mapManager = new MapManager(this);
         Fonts.initFonts();
         Sounds.initSounds();
-        loadPlayerData();
-
-        Sounds.AMBIENCE.setLooping(true);
-        Sounds.AMBIENCE.play();
+        generatePlayer();
 
         this.setScreen(new MainMenuScreen(this));
 
@@ -52,12 +49,16 @@ public class ABNPGame extends Game {
     }
 
     public void dispose() {
-        batch.dispose();
+        canvas .dispose();
+        uiCanvas.dispose();
+        shapeRenderer.dispose();
+        uiShapeRenderer.dispose();
         Sounds.dispose();
         Fonts.dispose();
+
     }
 
-    private void loadPlayerData() {
+    public void generatePlayer() {
         player = DataManager.loadLocalPlayer();
     }
 
@@ -81,8 +82,9 @@ public class ABNPGame extends Game {
 
 
     public void gameOver() {
+        DataManager.save(getPlayer());
         this.getScreen().dispose();
         setScreen(new GameOverScreen(this));
-        loadPlayerData();
+//        generatePlayer();
     }
 }

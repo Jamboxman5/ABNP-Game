@@ -14,8 +14,8 @@ public abstract class Survivor extends Mob {
 
     protected Vector2 aimTarget;
 
-    public Survivor(ABNPGame gamePanel, String type, int x, int y, int health, int maxHealth, int speed) {
-        super(gamePanel, type, x, y, health, maxHealth, speed);
+    public Survivor(ABNPGame gamePanel, String type, Vector2 startPos, int health, int maxHealth, int speed) {
+        super(gamePanel, type, startPos, health, maxHealth, speed);
 
         WeaponModLoadout mods = new WeaponModLoadout();
         mods.addMod(new RedDotSight());
@@ -44,4 +44,5 @@ public abstract class Survivor extends Mob {
     public double getAimAngle() {
         return getAngleToPoint(aimTarget);
     }
+    public Vector2 getAimVector() { return aimTarget; }
 }
