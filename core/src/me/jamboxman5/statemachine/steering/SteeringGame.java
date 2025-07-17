@@ -1,4 +1,4 @@
-package me.jamboxman5.steering.statemachine;
+package me.jamboxman5.statemachine.steering;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;

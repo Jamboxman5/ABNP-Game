@@ -1,11 +1,9 @@
 package me.jamboxman5.abnpgame.entity;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.main.ABNPGame;
-import me.jamboxman5.abnpgame.screen.ScreenInfo;
 
 public abstract class Mob extends LivingEntity {
 	
@@ -46,7 +44,7 @@ public abstract class Mob extends LivingEntity {
 	}
 
 	@Override
-	public void update() {
+	public void update(float delta) {
 
 		if (jitter < 0) jitter += .1;
 		if (jitter > 0) jitter -= .1;

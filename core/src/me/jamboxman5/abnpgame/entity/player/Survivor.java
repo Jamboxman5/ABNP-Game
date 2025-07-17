@@ -13,6 +13,7 @@ public abstract class Survivor extends Mob {
     protected WeaponLoadout weapons;
 
     protected Vector2 aimTarget;
+    protected float rotationSpeed;
 
     public Survivor(ABNPGame gamePanel, String type, Vector2 startPos, int health, int maxHealth, int speed) {
         super(gamePanel, type, startPos, health, maxHealth, speed);

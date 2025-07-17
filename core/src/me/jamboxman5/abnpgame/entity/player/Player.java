@@ -11,13 +11,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-import me.jamboxman5.abnpgame.entity.Mob;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.util.InputKeys;
 import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
-import me.jamboxman5.abnpgame.weapon.mods.RedDotSight;
-import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
 public class Player extends Survivor {
 	
@@ -47,9 +44,9 @@ public class Player extends Survivor {
 
 	
 	@Override
-	public void update() {
+	public void update(float delta) {
 
-		super.update();
+		super.update(delta);
 
 		aimTarget = gp.getWorldMousePointer();
 

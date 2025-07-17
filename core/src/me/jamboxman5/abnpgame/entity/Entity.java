@@ -11,8 +11,6 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 
-import java.awt.*;
-
 public abstract class Entity {
 	
 	protected final ABNPGame gp;
@@ -44,7 +42,7 @@ public abstract class Entity {
 	public void setPosition(Vector2 newPosition) { position = newPosition; }
 	public void setSpeed(double speed) { this.speed = speed; }
 
-	public abstract void update();
+	public abstract void update(float delta);
 	public abstract void draw(SpriteBatch batch, ShapeRenderer shape);
 	
 	public Sprite setup(String imagePath, float scale) {

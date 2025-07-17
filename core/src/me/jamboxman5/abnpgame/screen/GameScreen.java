@@ -84,7 +84,6 @@ public class GameScreen implements Screen, InputProcessor {
         game.getPlayer().setPosition(game.getMapManager().getActiveMap().getPlayerSpawn());
         game.getMapManager().addAlly(new Ally(game, "Sarge", game.getMapManager().getActiveMap().getPlayerSpawn().cpy().add(new Vector2(0,1)), 50, 50, 5));
 
-
         Sounds.AMBIENCE.stop();
         Pixmap pixmap;
         if (ScreenInfo.WIDTH > 1366) {
@@ -114,7 +113,7 @@ public class GameScreen implements Screen, InputProcessor {
                     for (int i = 0; i < 10; i++) {
                         zombiesRemaining = (50 - i) + game.getMapManager().entities.size;
                         Thread.sleep(2000);
-                        Zombie zombie = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter], 5);
+                        Zombie zombie = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter], 3);
                         game.getMapManager().addEntity(zombie);
                         lastSpawn = System.currentTimeMillis();
                         spawnCounter++;
@@ -150,8 +149,8 @@ public class GameScreen implements Screen, InputProcessor {
                     for (int i = 0; i < 10; i++) {
                         zombiesRemaining = 2*(50 - i) + game.getMapManager().entities.size;
                         Thread.sleep(2000);
-                        Zombie zombie2 = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter].cpy().add(new Vector2(40,40)), 7);
-                        Zombie zombie3 = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter].cpy().add(new Vector2(-40,-40)), 7);
+                        Zombie zombie2 = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter].cpy().add(new Vector2(40,40)), 4);
+                        Zombie zombie3 = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter].cpy().add(new Vector2(-40,-40)), 4);
                         game.getMapManager().addEntity(zombie2);
                         game.getMapManager().addEntity(zombie3);
                         lastSpawn = System.currentTimeMillis();
@@ -188,8 +187,8 @@ public class GameScreen implements Screen, InputProcessor {
                         zombiesRemaining = 3*(50 - i) + game.getMapManager().entities.size;
                         Thread.sleep(2000);
                         Zombie zombie = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter], 5);
-                        Zombie zombie2 = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter].cpy().add(new Vector2(60,60)), 9);
-                        Zombie zombie3 = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter].cpy().add(new Vector2(-60,-60)), 9);                        game.getMapManager().addEntity(zombie);
+                        Zombie zombie2 = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter].cpy().add(new Vector2(60,60)), 5);
+                        Zombie zombie3 = new Zombie(game, Zombie.ZombieType.NORMAL,spawnPoints[spawnCounter].cpy().add(new Vector2(-60,-60)), 5);                        game.getMapManager().addEntity(zombie);
                         game.getMapManager().addEntity(zombie);
                         game.getMapManager().addEntity(zombie2);
                         game.getMapManager().addEntity(zombie3);
@@ -206,6 +205,8 @@ public class GameScreen implements Screen, InputProcessor {
 
                     winSound.play();
                     UIManager.pushBufferMessage("Congratulations! You win!");
+                    game.getMapManager().clearMap();
+                    DataManager.save(game.getPlayer());
                     gameOver = true;
 
 
@@ -246,7 +247,7 @@ public class GameScreen implements Screen, InputProcessor {
         draw();
 
 
-        update();
+        update(delta);
 
         // process user input
         if (Gdx.input.isTouched()) {
@@ -290,6 +291,7 @@ public class GameScreen implements Screen, InputProcessor {
             if (System.currentTimeMillis() - lastSpawn > 100) {
 
                 DataManager.save(game.getPlayer());
+                game.getMapManager().clearMap();
                 game.setScreen(new MainMenuScreen(game));
                 dispose();
 
@@ -327,10 +329,10 @@ public class GameScreen implements Screen, InputProcessor {
 
     }
 
-    private void update() {
+    private void update(float delta) {
 
 
-        game.getPlayer().update();
+        game.getPlayer().update(delta);
         if (game.getPlayer().isMoving && getZoom() <= minZoom) {
             zoomOut();
         } else if (!game.getPlayer().isMoving && getZoom() > maxZoom) {
@@ -338,7 +340,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
 
         game.getMapManager().updateProjectiles();
-        game.getMapManager().updateEntities();
+        game.getMapManager().updateEntities(delta);
     }
 
     @Override

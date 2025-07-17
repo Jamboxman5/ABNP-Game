@@ -64,13 +64,13 @@ public class MapManager {
 		drawEntities();
 	}
 	
-	public void updateEntities() {
-		for (Entity e : entities) { e.update(); }
+	public void updateEntities(float delta) {
+		for (Entity e : entities) { e.update(delta); }
 		for (Entity e : disposingEntities) {
 			if (entities.contains(e, false)) entities.removeValue(e, false);
 		}
 		disposingEntities = new Array<>();
-		for (Entity e : survivors) { e.update(); }
+		for (Entity e : survivors) { e.update(delta); }
 		for (Entity e : disposingSurvivors) {
 			if (survivors.contains(e, false)) survivors.removeValue(e, false);
 		}

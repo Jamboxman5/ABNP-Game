@@ -1,10 +1,10 @@
-package me.jamboxman5.steering.statemachine.entity;
+package me.jamboxman5.statemachine.steering.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
-import me.jamboxman5.steering.statemachine.SteeringGameScreen;
+import me.jamboxman5.statemachine.steering.SteeringGameScreen;
 
 import java.util.ArrayList;
 

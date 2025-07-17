@@ -28,9 +28,9 @@ public class OnlinePlayer extends Player {
 	}
 	
 	@Override
-	public void update() {
+	public void update(float delta) {
 		if (gp.getPlayer() == this) {
-			super.update();
+			super.update(delta);
 			if (isMoving || (rotation != lastRotation)) {
 				Packet02Move packet = new Packet02Move(getUsername(), position.x, position.y, getDrawingAngle());
 				packet.writeData(gp.getClient());

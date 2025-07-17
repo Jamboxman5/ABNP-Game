@@ -1,4 +1,4 @@
-package me.jamboxman5.steering.statemachine;
+package me.jamboxman5.statemachine.steering;
 
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
-import me.jamboxman5.steering.statemachine.entity.SteerGuard;
-import me.jamboxman5.steering.statemachine.entity.SteerPlayer;
+import me.jamboxman5.statemachine.steering.entity.SteerGuard;
+import me.jamboxman5.statemachine.steering.entity.SteerPlayer;
 
 public class SteeringGameScreen implements Screen {
 

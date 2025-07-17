@@ -1,9 +1,5 @@
 package me.jamboxman5.abnpgame.entity.zombie;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL30;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -12,7 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.Mob;
 import me.jamboxman5.abnpgame.main.ABNPGame;
-import me.jamboxman5.abnpgame.util.Fonts;
 
 public class Zombie extends Mob {
 
@@ -91,9 +86,9 @@ public class Zombie extends Mob {
     }
 
     @Override
-    public void update() {
+    public void update(float delta) {
 
-        super.update();
+        super.update(delta);
 
         animCounter++;
 

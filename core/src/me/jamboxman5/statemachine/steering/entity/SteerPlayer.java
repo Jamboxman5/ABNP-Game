@@ -1,4 +1,4 @@
-package me.jamboxman5.steering.statemachine.entity;
+package me.jamboxman5.statemachine.steering.entity;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import me.jamboxman5.steering.statemachine.SteeringGameScreen;
+import me.jamboxman5.statemachine.steering.SteeringGameScreen;
 
 public class SteerPlayer extends SteerEntity {
 

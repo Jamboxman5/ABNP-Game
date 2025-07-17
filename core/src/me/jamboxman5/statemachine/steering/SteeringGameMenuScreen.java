@@ -1,4 +1,4 @@
-package me.jamboxman5.steering.statemachine;
+package me.jamboxman5.statemachine.steering;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
