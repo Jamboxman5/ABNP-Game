@@ -18,10 +18,12 @@ import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 
 public class Player extends Survivor {
 	
-	private final static int defaultSpeed = 10;
+	private final static int defaultSpeed = 8;
 	private String gamerTag;
 	protected int money;
+	protected int stamina = 200;
 	protected int exp;
+	protected boolean sprinting = false;
 	
 
 	public Player(ABNPGame gamePanel, String name) {
@@ -73,6 +75,14 @@ public class Player extends Survivor {
         } else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
             setDirection("right");
         }
+
+		if (Gdx.input.isKeyPressed(InputKeys.SHIFT) && stamina > 0) {
+			sprinting = true;
+			speed = (int) (defaultSpeed * 1.5);
+		} else {
+			sprinting = false;
+			speed = defaultSpeed;
+		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.R)) {
 			if (weapons.getActiveWeapon() instanceof Firearm) {

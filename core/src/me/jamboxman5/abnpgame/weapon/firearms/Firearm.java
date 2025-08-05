@@ -50,14 +50,16 @@ public class Firearm extends Weapon {
 		this.lastAttack = System.currentTimeMillis();
 		loaded -= 1;
 
+		boolean drawFirst = true;
+
 		Vector2 shootPos = shooter.getPosition().cpy();
-//		if (shooter instanceof Ally) {
-//			shootPos.add(shooter.getAimVector().cpy().nor().scl(100));
-//		}
+		if (shooter instanceof Ally) {
+			drawFirst = false;
+		}
 
 		currentAmmo.shoot(shooter.getAimAngle() + offset,
 						  this, 
-						 shootPos);
+						 shootPos, drawFirst);
 //		Bullet bullet = new Bullet(gp.getPlayer().getAdjustedRotation(),
 //				150, 
 //				gp.getPlayer().getAdjustedWorldX(), 

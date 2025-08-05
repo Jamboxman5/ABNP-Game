@@ -14,13 +14,15 @@ public class Bullet extends Projectile{
 
 	Ammo ammo;
 	int hits;
+	boolean drawFirst;
 
-	public Bullet(double rotation, int speed, Vector2 position, int range, Ammo fired) {
+	public Bullet(double rotation, int speed, Vector2 position, int range, Ammo fired, boolean drawFirst) {
 		this.rotation = rotation;
 		this.speed = speed;
 		this.worldX = position.x;
 		this.worldY = position.y;
 		this.range = range;
+		this.drawFirst = drawFirst;
 		ammo = fired;
 		hits = 0;
 //		System.out.println("Bullet Start x: " + getScreenX());
@@ -74,6 +76,10 @@ public class Bullet extends Projectile{
 
 	@Override
 	public void draw(ShapeRenderer renderer) {
+		if (!drawFirst) {
+			drawFirst = true;
+			return;
+		}
 		ABNPGame gp = ABNPGame.getInstance();
 		renderer.begin(ShapeRenderer.ShapeType.Filled);
 		int x = (int) (((worldX - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());

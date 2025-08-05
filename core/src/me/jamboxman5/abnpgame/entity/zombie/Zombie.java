@@ -20,8 +20,14 @@ public class Zombie extends Mob {
     public Array<Sprite> activeSprites;
 
     int animCounter = 0;
+    protected double damage;
 
-    public Zombie(ABNPGame game, ZombieType type, Vector2 startPos, int topSpeed) {
+    public Zombie(ABNPGame game,
+                  ZombieType type,
+                  Vector2 startPos,
+                  int topSpeed,
+                  int maxHealth,
+                  double damage) {
         super(game,
                 type.toString(),
                 startPos,
@@ -29,7 +35,7 @@ public class Zombie extends Mob {
                 topSpeed);
 
         target = game.getPlayer().getPosition();
-
+        this.damage = damage;
 
 
         activeSprites = attackSprites;
@@ -121,7 +127,7 @@ public class Zombie extends Mob {
         }
 
         arrive(new Vector2(gp.getPlayer().getCollision().x, gp.getPlayer().getCollision().y), 300, 1);
-        if (collision.overlaps(gp.getPlayer().getCollision())) gp.getPlayer().damage(.1);
+        if (collision.overlaps(gp.getPlayer().getCollision())) gp.getPlayer().damage(damage);
 
         if (isDead()) {
             gp.getPlayer().giveMoney(10);
@@ -159,7 +165,7 @@ public class Zombie extends Mob {
     }
 
     public enum ZombieType {
-        NORMAL
+        TANK, RUNNER, NORMAL
     }
 
 }

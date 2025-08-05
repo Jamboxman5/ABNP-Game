@@ -15,6 +15,7 @@ import me.jamboxman5.abnpgame.map.maps.*;
 import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.screen.ui.elements.Button;
+import me.jamboxman5.abnpgame.script.BasicScript;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Sounds;
 
@@ -192,7 +193,7 @@ public class MapSelectMenuScreen implements Screen {
             @Override
             public void run() {
                 Screen old = game.getScreen();
-                game.setScreen(new GameScreen(game, selected));
+                game.setScreen(new GameScreen(game, selected, new BasicScript()));
                 old.dispose();
             }
         };

@@ -95,55 +95,18 @@ public abstract class Mob extends LivingEntity {
 
 		
 		if (!hasCollided(target.x, target.y)) {
-			
-//			switch(direction) {
-//			case "forward":
-//				mfw(target);
-//				break;
-////			case "back":
-////				mbk(xComp,yComp);
-////				break;
-////			case "left":
-////				mlt(xComp,yComp);
-////				break;
-////			case "right":
-////				mrt(xComp,yComp);
-////				break;
-//			}
 
 			seek(target);
 
 		}
 
-//		System.out.println(position);
 
 	}
 	
 	public void mfw(Vector2 target) {
 
-//		if (gp.getMousePointer() == null) return;
-//
-//		if (screenX < gp.getMousePointer().getX()) {
-//			setWorldX(getWorldX() + xComp);
-//			setWorldY(getWorldY() + yComp);
-//		} else if (screenX > gp.getMousePointer().getX()) {
-//			setWorldX(getWorldX() - xComp);
-//			setWorldY(getWorldY() - yComp);
-//		} else if (screenY < gp.getMousePointer().getY()) {
-//			setWorldX(getWorldX() - xComp);
-//			setWorldY(getWorldY() - yComp);
-//		} else {
-//			setWorldX(getWorldX() - xComp);
-//			setWorldY(getWorldY() - yComp);
-//		}
-
-//		System.out.println(target);
 		seek(target);
-//		System.out.println(target);
 
-
-//		acceleration.add(target.x - position.x, target.y - position.y);
-//		acceleration.limit(speed);
 
 
 	}

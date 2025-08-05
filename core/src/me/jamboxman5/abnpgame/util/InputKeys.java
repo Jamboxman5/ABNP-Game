@@ -10,5 +10,6 @@ public class InputKeys {
     public static final int BACK = Input.Keys.S;
     public static final int ENTER = Input.Keys.ENTER;
     public static final int ESCAPE = Input.Keys.ESCAPE;
+    public static final int SHIFT = Input.Keys.SHIFT_LEFT;
 
 }

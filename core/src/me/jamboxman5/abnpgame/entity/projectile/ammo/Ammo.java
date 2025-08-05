@@ -30,7 +30,7 @@ public abstract class Ammo {
 		}
 	}
 
-	public void shoot(double rotation, Firearm weapon, Vector2 start) {
+	public void shoot(double rotation, Firearm weapon, Vector2 start, boolean drawFirst) {
 		double[] rotations = new double[shots];
 
 		for (int i = 0; i < shots; i++) {
@@ -45,7 +45,7 @@ public abstract class Ammo {
 			Bullet bullet = new Bullet(rotations[i],
 					(int)(weapon.getFiringVelocity() * speedBoost),
 					start,
-					(int)(weapon.getRange() * rangeBoost), this);
+					(int)(weapon.getRange() * rangeBoost), this, drawFirst);
 			ABNPGame.getInstance().getMapManager().addProjectile(bullet);
 		}
 
