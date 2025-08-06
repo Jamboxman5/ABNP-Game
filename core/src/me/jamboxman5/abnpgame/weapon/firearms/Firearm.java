@@ -5,12 +5,12 @@ package me.jamboxman5.abnpgame.weapon.firearms;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
-import me.jamboxman5.abnpgame.entity.ally.Ally;
-import me.jamboxman5.abnpgame.entity.player.Survivor;
+import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
+import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.main.ABNPGame;
+import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.weapon.Weapon;
-import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
 
 public class Firearm extends Weapon {
 	
@@ -46,7 +46,7 @@ public class Firearm extends Weapon {
 		ABNPGame gp = ABNPGame.getInstance();
 		activeSprites = shootSprites;
 		shooter.setAnimFrame(shootSprites.size-1);
-		attackSound.play();
+		attackSound.play(Settings.sfxVolume);
 		this.lastAttack = System.currentTimeMillis();
 		loaded -= 1;
 
@@ -77,7 +77,7 @@ public class Firearm extends Weapon {
 		reloading = true;
 		activeSprites = reloadSprites;
 		ABNPGame.getInstance().getPlayer().setAnimFrame(reloadSprites.size-1);
-		reloadSound.play();
+		reloadSound.play(Settings.sfxVolume);
 		new Thread() {
 			@Override
 			public void run() {

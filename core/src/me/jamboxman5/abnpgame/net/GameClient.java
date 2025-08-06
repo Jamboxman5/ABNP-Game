@@ -1,6 +1,6 @@
 package me.jamboxman5.abnpgame.net;
 
-import me.jamboxman5.abnpgame.entity.player.OnlinePlayer;
+import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.net.packets.*;
 import me.jamboxman5.abnpgame.net.packets.Packet.PacketTypes;

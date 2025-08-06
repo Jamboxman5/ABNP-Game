@@ -5,7 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import me.jamboxman5.abnpgame.entity.player.Player;
+import me.jamboxman5.abnpgame.entity.mob.player.Player;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.Weapon;
@@ -16,7 +16,6 @@ import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashSet;

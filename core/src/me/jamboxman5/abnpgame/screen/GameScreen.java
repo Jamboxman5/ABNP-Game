@@ -9,21 +9,17 @@ import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import me.jamboxman5.abnpgame.data.DataManager;
-import me.jamboxman5.abnpgame.entity.ally.Ally;
-import me.jamboxman5.abnpgame.entity.zombie.Zombie;
-import me.jamboxman5.abnpgame.entity.zombie.ZombieNormal;
-import me.jamboxman5.abnpgame.entity.zombie.ZombieRunner;
-import me.jamboxman5.abnpgame.entity.zombie.ZombieTank;
+import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
+import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieNormal;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.screen.ui.screens.MainMenuScreen;
-import me.jamboxman5.abnpgame.script.BasicScript;
 import me.jamboxman5.abnpgame.script.MissionScript;
+import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 
@@ -32,10 +28,6 @@ public class GameScreen implements Screen, InputProcessor {
 
     private final OrthographicCamera gameCamera;
     private final OrthographicCamera uiCamera;
-
-    private float minZoom;
-    private float maxZoom;
-
 
     long debugToggleTime;
 
@@ -51,18 +43,14 @@ public class GameScreen implements Screen, InputProcessor {
     public GameScreen(final ABNPGame game, Map activeMap, MissionScript controller) {
         this.game = game;
 
-        minZoom = .65f * (1920f/Gdx.graphics.getWidth());
-        maxZoom = minZoom - .25f;
-//        minZoom = 1;
-//        maxZoom = 1;
         shape = new ShapeRenderer();
         gameCamera = new OrthographicCamera();
         uiCamera = new OrthographicCamera();
         debugToggleTime = System.currentTimeMillis();
 
-        gameCamera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
-        gameCamera.zoom = maxZoom;
-        uiCamera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
+        gameCamera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
+        gameCamera.zoom = Settings.maxZoom;
+        uiCamera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
         Gdx.input.setInputProcessor(this);
 
         game.getMapManager().setMap(activeMap);
@@ -83,11 +71,10 @@ public class GameScreen implements Screen, InputProcessor {
 
         game.generatePlayer();
         game.getPlayer().setPosition(game.getMapManager().getActiveMap().getPlayerSpawn());
-        game.getMapManager().addAlly(new Ally(game, "Sarge", game.getMapManager().getActiveMap().getPlayerSpawn().cpy().add(new Vector2(0,1)), 50, 50, 5));
 
         Sounds.AMBIENCE.stop();
         Pixmap pixmap;
-        if (ScreenInfo.WIDTH > 1366) {
+        if (Settings.screenWidth > 1366) {
             pixmap = new Pixmap(Gdx.files.internal("ui/cursor/Cursor_Reticle_Large.png"));
             Cursor cursor = Gdx.graphics.newCursor(pixmap, 64, 64);
             Gdx.graphics.setCursor(cursor);
@@ -153,7 +140,7 @@ public class GameScreen implements Screen, InputProcessor {
                 if (game.getPlayer().getMoney() >= 100 && game.getPlayer().getWeaponLoadout().getActiveWeapon() instanceof Firearm) {
                     game.getPlayer().takeMoney(100);
                     ((Firearm)game.getPlayer().getWeaponLoadout().getActiveWeapon()).buyMag(1);
-                    purchaseSound.play();
+                    purchaseSound.play(Settings.sfxVolume);
                 }
 
                 gameController.lastSpawn = System.currentTimeMillis();
@@ -214,9 +201,9 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         game.getPlayer().update(delta);
-        if (game.getPlayer().isMoving && getZoom() <= minZoom) {
+        if (game.getPlayer().isMoving && getZoom() <= Settings.minZoom) {
             zoomOut();
-        } else if (!game.getPlayer().isMoving && getZoom() > maxZoom) {
+        } else if (!game.getPlayer().isMoving && getZoom() > Settings.maxZoom) {
             zoomIn();
         }
 
@@ -226,8 +213,8 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void resize(int width, int height) {
-        ScreenInfo.WIDTH = width;
-        ScreenInfo.HEIGHT = height;
+        Settings.screenWidth = width;
+        Settings.screenHeight = height;
         game.canvas.setProjectionMatrix(gameCamera.combined);
 
 //        viewport.update(width, height);

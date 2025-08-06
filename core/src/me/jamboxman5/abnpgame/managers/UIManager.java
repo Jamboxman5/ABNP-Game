@@ -1,33 +1,24 @@
 package me.jamboxman5.abnpgame.managers;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.utils.MeshBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.Viewport;
-import me.jamboxman5.abnpgame.entity.player.Player;
+import me.jamboxman5.abnpgame.entity.mob.player.Player;
 import me.jamboxman5.abnpgame.main.ABNPGame;
-import me.jamboxman5.abnpgame.screen.GameScreen;
-import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.util.Fonts;
+import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
-
-import javax.swing.plaf.ViewportUI;
-import java.awt.*;
-import java.util.concurrent.TimeUnit;
 
 public class UIManager {
 
     static Sprite WeaponHudOverlay;
-    static float guiScale = (1920f/(Gdx.graphics.getWidth()/.9f));
+    static float guiScale = Settings.guiScale;
     static Array<String> msgBuffer = new Array<>();
     static int messageBufferCounter = 0;
     public static float fadeOut = 0f;
@@ -68,8 +59,8 @@ public class UIManager {
 
         float width = 300 * guiScale;
         float height = 120 * guiScale;
-        float x = ScreenInfo.WIDTH - 20 - width;
-        float y = ScreenInfo.HEIGHT-20;
+        float x = Settings.screenWidth - 20 - width;
+        float y = Settings.screenHeight-20;
 
 //        Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .6f);
 //        Composite old = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
@@ -136,17 +127,26 @@ public class UIManager {
         renderer.rect(margin, Gdx.graphics.getHeight()-margin-height, width, height);
         renderer.setColor(Color.RED);
         renderer.rect(margin, Gdx.graphics.getHeight()-margin-height, width * player.getHealthRatio(), height);
+
+        renderer.setColor((float)(100.0/255.0), (float)(100.0/255.0), 0f, .6f);
+        renderer.rect(margin, Gdx.graphics.getHeight()-(margin)-(height*2)-10, width, height);
+        renderer.setColor(Color.YELLOW);
+        renderer.rect(margin, Gdx.graphics.getHeight()-(margin)-(height*2)-10, width * player.getStaminaRatio(), height);
+
+
         renderer.setColor(Color.WHITE);
         renderer.setAutoShapeType(true);
         Gdx.gl.glLineWidth(weight);
         renderer.set(ShapeRenderer.ShapeType.Line);
         renderer.rect(margin, Gdx.graphics.getHeight()-margin-height, width, height);
+        renderer.rect(margin, Gdx.graphics.getHeight()-(margin)-(height*2)-10, width, height);
 
         renderer.end();
 
         batch.begin();
         Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "HP: " + (int)player.getHealth() + "/" + (int)player.getMaxHealth(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-margin-height + (5*guiScale) + Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
-        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "Money: $" + player.getMoney(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-margin-height - (5*guiScale) - Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "Stamina: " + (int)player.getStamina() + "/" + (int)player.getMaxStamina(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-margin-(height*2)-10 + (5*guiScale) + Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "Money: $" + player.getMoney(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-(margin*2)-(height*2) - (5*guiScale) - Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
         batch.end();
 
     }

@@ -9,6 +9,7 @@ import me.jamboxman5.abnpgame.entity.Entity;
 import me.jamboxman5.abnpgame.entity.LivingEntity;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.main.ABNPGame;
+import me.jamboxman5.abnpgame.util.Settings;
 
 public class Bullet extends Projectile{
 
@@ -55,7 +56,7 @@ public class Bullet extends Projectile{
 					//bullet hit
 					ignoring.add(entity);
 					entity.damage(10);
-					ammo.getImpactSound().play();
+					ammo.getImpactSound().play(Settings.sfxVolume);
 					hits++;
 					if (hits >= ammo.getBreachCount()) {
 						ABNPGame.getInstance().getMapManager().disposeProjectile(this);
