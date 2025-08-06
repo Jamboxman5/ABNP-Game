@@ -1,4 +1,4 @@
-package me.jamboxman5.abnpgame.entity.player;
+package me.jamboxman5.abnpgame.entity.mob.player;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;

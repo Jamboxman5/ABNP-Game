@@ -1,9 +1,11 @@
-package me.jamboxman5.abnpgame.entity;
+package me.jamboxman5.abnpgame.entity.mob;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
+import me.jamboxman5.abnpgame.entity.LivingEntity;
 import me.jamboxman5.abnpgame.main.ABNPGame;
+import me.jamboxman5.abnpgame.util.Settings;
 
 public abstract class Mob extends LivingEntity {
 	
@@ -76,10 +78,10 @@ public abstract class Mob extends LivingEntity {
 			lastStep = System.currentTimeMillis();
 
 			if (stepCounter % 2 == 1) {
-				footstep1.play();
+				footstep1.play(Settings.sfxVolume);
 				jitterValue = -jitterValue;
 			} else {
-				footstep2.play();
+				footstep2.play(Settings.sfxVolume);
 				stepCounter = 0;
 				jitterValue = -jitterValue;
 			}

@@ -1,4 +1,4 @@
-package me.jamboxman5.abnpgame.entity.zombie;
+package me.jamboxman5.abnpgame.entity.mob.zombie;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import me.jamboxman5.abnpgame.entity.Mob;
+import me.jamboxman5.abnpgame.entity.mob.Mob;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 
 public class Zombie extends Mob {
@@ -21,22 +21,31 @@ public class Zombie extends Mob {
 
     int animCounter = 0;
     protected double damage;
+    protected long lastHit = 0;
+    protected int attackCooldownMS;
+    protected int rewardMoney;
+    protected int rewardEXP;
 
     public Zombie(ABNPGame game,
                   ZombieType type,
                   Vector2 startPos,
                   int topSpeed,
                   int maxHealth,
+                  int attackCooldownMS,
+                  int rewardMoney,
+                  int rewardEXP,
                   double damage) {
         super(game,
                 type.toString(),
                 startPos,
-                50, 50,
+                maxHealth, maxHealth,
                 topSpeed);
 
         target = game.getPlayer().getPosition();
         this.damage = damage;
-
+        this.attackCooldownMS = attackCooldownMS;
+        this.rewardMoney = rewardMoney;
+        this.rewardEXP = rewardEXP;
 
         activeSprites = attackSprites;
 
@@ -103,18 +112,21 @@ public class Zombie extends Mob {
 
         if (animCounter == 3) {
             animFrame++;
-
             Array<Sprite> lastSprites = activeSprites;
 
-            if (velocity.len() > 2) {
+            if (velocity.len() > 0) {
                 activeSprites = walkSprites;
+                if (collision.overlaps(gp.getPlayer().getCollision())) {
+                    activeSprites = attackSprites;
+                }
             } else {
                 if (collision.overlaps(gp.getPlayer().getCollision())) {
                     activeSprites = attackSprites;
                 } else {
-                    animFrame = 0;
+                    activeSprites = idleSprites;
                 }
             }
+
 
             if (!lastSprites.equals(activeSprites)) animFrame = 0;
 
@@ -130,8 +142,8 @@ public class Zombie extends Mob {
         if (collision.overlaps(gp.getPlayer().getCollision())) gp.getPlayer().damage(damage);
 
         if (isDead()) {
-            gp.getPlayer().giveMoney(10);
-            gp.getPlayer().giveExp(10);
+            gp.getPlayer().giveMoney(rewardMoney);
+            gp.getPlayer().giveExp(rewardEXP);
             gp.getMapManager().disposingEntities.add(this);
             gp.getMapManager().addSplatter(position);
         }

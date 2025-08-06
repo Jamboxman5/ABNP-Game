@@ -1,8 +1,8 @@
-package me.jamboxman5.abnpgame.entity.player;
+package me.jamboxman5.abnpgame.entity.mob.player;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import me.jamboxman5.abnpgame.entity.Mob;
+import me.jamboxman5.abnpgame.entity.mob.Mob;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
 import me.jamboxman5.abnpgame.weapon.mods.RedDotSight;

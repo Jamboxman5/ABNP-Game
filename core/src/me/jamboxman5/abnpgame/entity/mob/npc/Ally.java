@@ -1,11 +1,11 @@
-package me.jamboxman5.abnpgame.entity.ally;
+package me.jamboxman5.abnpgame.entity.mob.npc;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-import me.jamboxman5.abnpgame.entity.player.Survivor;
+import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 

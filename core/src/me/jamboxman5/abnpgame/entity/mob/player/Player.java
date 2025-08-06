@@ -1,4 +1,4 @@
-package me.jamboxman5.abnpgame.entity.player;
+package me.jamboxman5.abnpgame.entity.mob.player;
 
 
 import com.badlogic.gdx.Gdx;
@@ -23,8 +23,12 @@ public class Player extends Survivor {
 	protected int money;
 	protected int stamina = 200;
 	protected int exp;
+
 	protected boolean sprinting = false;
-	
+	protected int maxStamina = 200;
+	protected int staminaRegenMS = 100;
+	protected int staminaRegenRate = 1;
+	protected long lastStaminaRegen = 0;
 
 	public Player(ABNPGame gamePanel, String name) {
 		super(gamePanel, 
@@ -82,6 +86,14 @@ public class Player extends Survivor {
 		} else {
 			sprinting = false;
 			speed = defaultSpeed;
+		}
+
+		if (sprinting && velocity.len() > 0) stamina--;
+		else if (!Gdx.input.isKeyPressed(InputKeys.SHIFT) && stamina < maxStamina) {
+			if (System.currentTimeMillis() - lastStaminaRegen >= staminaRegenMS) {
+				stamina+=staminaRegenRate;
+				lastStaminaRegen = System.currentTimeMillis();
+			}
 		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.R)) {
@@ -319,5 +331,14 @@ public class Player extends Survivor {
 	}
 
 	public void giveExp(int i) { exp += i;
+	}
+
+	public int getStamina() { return stamina;
+	}
+
+	public Object getMaxStamina() { return maxStamina;
+	}
+
+	public float getStaminaRatio() { return ((float)stamina)/((float)maxStamina);
 	}
 }
