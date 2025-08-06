@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.util.Fonts;
+import me.jamboxman5.abnpgame.util.Settings;
 
 import java.util.Iterator;
 
@@ -26,7 +27,7 @@ public class GameOverScreen implements Screen {
     public GameOverScreen(final ABNPGame game) {
         this.game = game;
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
+        camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
         shapeRenderer = new ShapeRenderer();
 
     }
@@ -36,8 +37,8 @@ public class GameOverScreen implements Screen {
 
         if (System.currentTimeMillis() - lastNewStar > 50) {
             lastNewStar = System.currentTimeMillis();
-            int newX = (int) (Math.random()*ScreenInfo.WIDTH);
-            int newY = (int) (Math.random()*ScreenInfo.HEIGHT);
+            int newX = (int) (Math.random()*Settings.screenWidth);
+            int newY = (int) (Math.random()*Settings.screenHeight);
 
             stars.add(new Vector3(newX, newY, 1f));
         }

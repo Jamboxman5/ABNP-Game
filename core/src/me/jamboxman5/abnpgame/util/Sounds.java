@@ -12,7 +12,6 @@ public class Sounds {
 
     public static void initSounds() {
         AMBIENCE = Gdx.audio.newMusic(Gdx.files.internal("sound/music/Menu_Ambience.wav/"));
-
         MENUSCROLL = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/menu/Menu_Scroll.wav/"));
         MENUSELECT = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/menu/Menu_Select.wav/"));
     }
@@ -22,6 +21,10 @@ public class Sounds {
 
         MENUSCROLL.dispose();
         MENUSELECT.dispose();
+    }
+
+    public static void updateVolumes() {
+        AMBIENCE.setVolume(Settings.musVolume);
     }
 
 }

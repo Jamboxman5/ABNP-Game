@@ -5,7 +5,6 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import me.jamboxman5.abnpgame.entity.player.Player;
 import me.jamboxman5.legacyofgoku.LegacyGame;
 import me.jamboxman5.legacyofgoku.map.LegacyMap;
 import me.jamboxman5.legacyofgoku.map.LegacyMapManager;

@@ -14,9 +14,11 @@ import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.screen.ui.elements.Button;
 import me.jamboxman5.abnpgame.util.Fonts;
+import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
 
 import java.awt.*;
+import java.util.Set;
 
 public class ArcadeMenuScreen implements Screen {
 
@@ -50,7 +52,7 @@ public class ArcadeMenuScreen implements Screen {
         menuBKG = new Texture(Gdx.files.internal("ui/bkg/Dark_Brown_Background.png"));
 
         camera = new OrthographicCamera();
-        camera.setToOrtho(false, ScreenInfo.WIDTH, ScreenInfo.HEIGHT);
+        camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
     }
 
     @Override
@@ -99,7 +101,7 @@ public class ArcadeMenuScreen implements Screen {
         updateActiveButton(game.getMousePointer());
         if (Gdx.input.isTouched()) {
             if (activeButton != null && (System.currentTimeMillis() - lastButton > 500)) {
-                Sounds.MENUSELECT.play();
+                Sounds.MENUSELECT.play(Settings.sfxVolume);
                 activeButton.press();
                 lastButton = System.currentTimeMillis();
             }
@@ -169,7 +171,7 @@ public class ArcadeMenuScreen implements Screen {
             if (b.contains(p))  {
                 if (activeButton != b) {
                     activeButton = b;
-                    Sounds.MENUSCROLL.play();
+                    Sounds.MENUSCROLL.play(Settings.sfxVolume);
                 }
                 return;
             }
