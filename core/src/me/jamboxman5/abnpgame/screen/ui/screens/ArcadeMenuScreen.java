@@ -42,10 +42,6 @@ public class ArcadeMenuScreen implements Screen {
     public Button backButton2;
     public Button activeButton;
 
-    private static int buttonWidth = 575;
-    private static int buttonHeight = 180;
-    private static int buttonXSpace = 40;
-    private static int buttonYSpace = 400;
 
     public ArcadeMenuScreen(final ABNPGame game) {
         this.game = game;
@@ -180,11 +176,19 @@ public class ArcadeMenuScreen implements Screen {
     }
 
     private void getButtons() {
+
+        int buttonWidth = (int) (Gdx.graphics.getWidth()/3f);
+        int buttonXSpace = (int) (Gdx.graphics.getWidth()/9f);
+        int buttonTopSpace = (int) (Gdx.graphics.getHeight()/4f) + (int) (Gdx.graphics.getHeight()/3.75f);
+        int buttonMidSpace = (int) (Gdx.graphics.getHeight()/16f);
+        int buttonHeight = (int) (Gdx.graphics.getHeight()/4f);
+
         buttons = new Button[6];
-        playButton = new Button(buttonXSpace, Gdx.graphics.getHeight() - buttonYSpace, buttonWidth, buttonHeight, "Play", Fonts.BUTTONFONT);
-        shopButton = new Button(buttonXSpace, Gdx.graphics.getHeight() - buttonYSpace - buttonHeight - buttonXSpace, buttonWidth, buttonHeight, "Shop", Fonts.BUTTONFONT);
-        equipButton = new Button(Gdx.graphics.getWidth() - buttonXSpace - buttonWidth, Gdx.graphics.getHeight() - buttonYSpace, buttonWidth, buttonHeight, "Equip", Fonts.BUTTONFONT);
-        unlocksButton = new Button(Gdx.graphics.getWidth() - buttonXSpace - buttonWidth, Gdx.graphics.getHeight() - buttonYSpace - buttonHeight - buttonXSpace, buttonWidth, buttonHeight, "Unlocks", Fonts.BUTTONFONT);
+        playButton = new Button(buttonXSpace, Gdx.graphics.getHeight() - buttonTopSpace, Gdx.graphics.getWidth()/3, buttonHeight, "Play", Fonts.BUTTONFONT);
+        shopButton = new Button(buttonXSpace, Gdx.graphics.getHeight() - buttonTopSpace - buttonHeight - buttonMidSpace, buttonWidth, buttonHeight, "Shop", Fonts.BUTTONFONT);
+        equipButton = new Button(Gdx.graphics.getWidth() - buttonXSpace - buttonWidth, Gdx.graphics.getHeight() - buttonTopSpace, buttonWidth, buttonHeight, "Equip", Fonts.BUTTONFONT);
+        unlocksButton = new Button(Gdx.graphics.getWidth() - buttonXSpace - buttonWidth, Gdx.graphics.getHeight() - buttonTopSpace - buttonHeight - buttonMidSpace, buttonWidth, buttonHeight, "Unlocks", Fonts.BUTTONFONT);
+
         buttons[0] = playButton;
         buttons[1] = shopButton;
         buttons[2] = equipButton;
