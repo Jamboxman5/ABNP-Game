@@ -11,6 +11,8 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 
+import java.util.UUID;
+
 public abstract class Entity {
 	
 	protected final ABNPGame gp;
@@ -20,12 +22,13 @@ public abstract class Entity {
 	protected Vector2 position;
 	protected String name;
 	protected double speed;
-	protected double rotation;
+	protected float rotation;
 	protected Circle collision;
 	protected int animFrame;
 	
 	protected String direction;
 	protected final static float defaultSpriteScale = .25f;
+	protected String id;
 
 //	private int spriteCounter = 0;
 //	private int spriteNumber = 1;
@@ -33,6 +36,7 @@ public abstract class Entity {
 	public Entity(ABNPGame gamePanel) {
 		gp = gamePanel;
 		setDirection("forward");
+		id = UUID.randomUUID().toString();
 	}
 
 	public void setDirection(String dir) { direction = dir; }
@@ -116,9 +120,7 @@ public abstract class Entity {
 		return (int) (position.y - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY());
 	}
 
-	public void setRotation(double rotation) {
-		this.rotation = rotation;
-	}
+	public void setRotation(float i) { rotation = i; }
 	public Circle getCollision() { return collision; }
 
 	protected static Sprite setup(String imagePath, Float scale) {
@@ -149,6 +151,8 @@ public abstract class Entity {
 		shape.end();
 	}
 
+	public float getRotation() { return rotation; }
 
 
+	public String getID() { return id; }
 }

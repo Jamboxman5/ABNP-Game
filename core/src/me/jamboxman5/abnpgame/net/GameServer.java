@@ -4,7 +4,7 @@ import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.net.packets.*;
-import me.jamboxman5.abnpgame.net.packets.Packet.PacketTypes;
+import me.jamboxman5.abnpgame.net.packets.Packet.PacketType;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -54,7 +54,7 @@ public class GameServer extends Thread {
 	
 	private void parsePacket(byte[] data, InetAddress address, int port) {
 		String message = new String(data).trim();
-		PacketTypes type = Packet.lookupPacket(message.substring(0,2));
+		PacketType type = Packet.lookupPacket(message.substring(0,2));
 		Packet packet = null;
 		switch (type) {
 		default:

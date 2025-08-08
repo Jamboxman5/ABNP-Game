@@ -43,5 +43,5 @@ public class Packet02Move extends Packet {
 	public String getUsername() { return username; }
 	public double getX() { return x; }
 	public double getY() { return y; }
-	public double getRotation() { return rotation; }
+	public float getRotation() { return (float) rotation; }
 }

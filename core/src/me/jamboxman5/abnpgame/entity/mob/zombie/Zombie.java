@@ -138,6 +138,8 @@ public class Zombie extends Mob {
 
         }
 
+        setRotation((float) (Math.toDegrees(getAngleToPoint(target)) + 360) + jitter);
+
         arrive(new Vector2(gp.getPlayer().getCollision().x, gp.getPlayer().getCollision().y), 300, 1);
         if (collision.overlaps(gp.getPlayer().getCollision())) gp.getPlayer().damage(damage);
 
@@ -158,7 +160,7 @@ public class Zombie extends Mob {
         batch.begin();
         Sprite toDraw = activeSprites.get(animFrame);
 
-        batch.setTransformMatrix(new Matrix4().translate((float) x, (float) y, 0).rotate(0f, 0f, 1f, (float) (Math.toDegrees(getAngleToPoint(target)) + 360) + jitter));
+        batch.setTransformMatrix(new Matrix4().translate((float) x, (float) y, 0).rotate(0f, 0f, 1f, getRotation()));
         toDraw.setPosition((-toDraw.getWidth() / 2), (-toDraw.getHeight() / 2));
         toDraw.draw(batch);
         batch.setTransformMatrix(new Matrix4());

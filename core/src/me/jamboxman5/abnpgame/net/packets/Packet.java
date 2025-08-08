@@ -5,10 +5,18 @@ import me.jamboxman5.abnpgame.net.GameServer;
 
 public abstract class Packet {
 
-	public static enum PacketTypes {
-		INVALID(-1), LOGIN(00), DISCONNECT(01), MOVE(02), MAP(03), WEAPON(04);
+	public static enum PacketType {
+
+		INVALID(-1),
+		LOGIN(00),
+		DISCONNECT(01),
+		MOVE(02),
+		MAP(03),
+		WEAPON(04),
+		ATTACK(05);
+
 		private int packetID;
-		private PacketTypes(int packetId) {
+		private PacketType(int packetId) {
 			this.packetID = packetId;
 			
 		}
@@ -34,20 +42,20 @@ public abstract class Packet {
 		return message.substring(2);
 	}
 	
-	public static PacketTypes lookupPacket(int id) {
-		for (PacketTypes p : PacketTypes.values()) {
+	public static PacketType lookupPacket(int id) {
+		for (PacketType p : PacketType.values()) {
 			if (p.getID() == id) {
 				return p;
 			}
 		}
-		return PacketTypes.INVALID;
+		return PacketType.INVALID;
 	}
 	
-	public static PacketTypes lookupPacket(String packetID) {
+	public static PacketType lookupPacket(String packetID) {
 		try {
 			return lookupPacket(Integer.parseInt(packetID));
 		} catch (NumberFormatException e) {
-			return PacketTypes.INVALID;
+			return PacketType.INVALID;
 		}
 	}
 }

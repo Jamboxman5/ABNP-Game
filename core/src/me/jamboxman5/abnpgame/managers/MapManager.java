@@ -184,7 +184,7 @@ public class MapManager {
 		return -1;
 	}
 	
-	public void movePlayer(String username, double x, double y, double rotation) {
+	public void movePlayer(String username, double x, double y, float rotation) {
 		int index = getConnectedPlayerIndex(username);
 		if (index < 0) return;
 		entities.get(index).setWorldX(x);

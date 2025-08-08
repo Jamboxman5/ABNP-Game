@@ -295,8 +295,6 @@ public class Player extends Survivor {
 	public WeaponLoadout getWeaponLoadout() { return weapons; }
 	public int getScreenX() { return Gdx.graphics.getWidth()/2; }
 	public int getScreenY() { return Gdx.graphics.getHeight()/2; }
-	public void setRotation(double i) { rotation = i; }
-	public double getRotation() { return rotation; }
 	public void setName(String newName) { gamerTag = newName; }
 	public String getName() { return gamerTag; }
 	
