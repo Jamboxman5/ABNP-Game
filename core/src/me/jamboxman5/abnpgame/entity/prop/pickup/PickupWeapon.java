@@ -53,6 +53,6 @@ public class PickupWeapon extends Pickup {
     }
 
     public static void initSprites() {
-        crateSprite = setup("entity/prop/crate", null);
+        crateSprite = setup("entity/prop/crate", -.9f);
     }
 }

@@ -52,7 +52,7 @@ public abstract class Entity {
 	public abstract void draw(SpriteBatch batch, ShapeRenderer shape);
 	
 	public static Sprite setup(String imagePath, float scale) {
-		Texture t = new Texture(Gdx.files.internal(imagePath));
+		Texture t = new Texture(Gdx.files.internal(imagePath + ".png/"));
 		Sprite s = new Sprite(t);
 		s.scale(scale);
 		return s;
