@@ -2,7 +2,6 @@ package me.jamboxman5.abnpgame.entity.prop.pickup;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.main.ABNPGame;
@@ -10,10 +9,11 @@ import me.jamboxman5.abnpgame.weapon.Weapon;
 
 public class PickupWeapon extends Pickup {
 
+    static Sprite crateSprite;
     Weapon pickedUp;
 
     public PickupWeapon(final Weapon pickupWeapon, Vector2 position, float rotation) {
-        super(defaultPickupSprite,
+        super(crateSprite,
                 position,
                 rotation,
                 generateCollision(),
@@ -50,5 +50,9 @@ public class PickupWeapon extends Pickup {
 
     public Weapon getWeapon() {
         return pickedUp;
+    }
+
+    public static void initSprites() {
+        crateSprite = setup("entity/prop/crate", null);
     }
 }

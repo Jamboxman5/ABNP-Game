@@ -51,7 +51,7 @@ public abstract class Entity {
 	public abstract void update(float delta);
 	public abstract void draw(SpriteBatch batch, ShapeRenderer shape);
 	
-	public Sprite setup(String imagePath, float scale) {
+	public static Sprite setup(String imagePath, float scale) {
 		Texture t = new Texture(Gdx.files.internal(imagePath));
 		Sprite s = new Sprite(t);
 		s.scale(scale);

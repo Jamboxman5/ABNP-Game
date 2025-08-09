@@ -15,6 +15,7 @@ import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieNormal;
 import me.jamboxman5.abnpgame.entity.prop.pickup.Pickup;
+import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
 import me.jamboxman5.abnpgame.map.Map;
@@ -64,6 +65,7 @@ public class GameScreen implements Screen, InputProcessor {
         Zombie.initSprites();
         RifleM4A1.initSounds();
         RifleM4A1.initSprites();
+        PickupWeapon.initSprites();
         Pickup.initSprites();
 
 
