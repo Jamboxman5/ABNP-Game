@@ -3,6 +3,7 @@ package me.jamboxman5.abnpgame.entity.mob.zombie;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -107,7 +108,7 @@ public class Zombie extends Mob {
 
         animCounter++;
 
-        collision.setPosition(new Vector2(position.x, position.y).rotateAroundDeg(position, (float) (Math.toDegrees(getAngleToPoint(gp.getPlayer().getPosition())) + 360)));
+        ((Circle)collision).setPosition(new Vector2(position.x, position.y).rotateAroundDeg(position, (float) (Math.toDegrees(getAngleToPoint(gp.getPlayer().getPosition())) + 360)));
 
 
         if (animCounter == 3) {
@@ -116,11 +117,11 @@ public class Zombie extends Mob {
 
             if (velocity.len() > 0) {
                 activeSprites = walkSprites;
-                if (collision.overlaps(gp.getPlayer().getCollision())) {
+                if (getCollision().overlaps(gp.getPlayer().getCollision())) {
                     activeSprites = attackSprites;
                 }
             } else {
-                if (collision.overlaps(gp.getPlayer().getCollision())) {
+                if (((Circle)collision).overlaps(gp.getPlayer().getCollision())) {
                     activeSprites = attackSprites;
                 } else {
                     activeSprites = idleSprites;
@@ -141,7 +142,7 @@ public class Zombie extends Mob {
         setRotation((float) (Math.toDegrees(getAngleToPoint(target)) + 360) + jitter);
 
         arrive(new Vector2(gp.getPlayer().getCollision().x, gp.getPlayer().getCollision().y), 300, 1);
-        if (collision.overlaps(gp.getPlayer().getCollision())) gp.getPlayer().damage(damage);
+        if (getCollision().overlaps(gp.getPlayer().getCollision())) gp.getPlayer().damage(damage);
 
         if (isDead()) {
             gp.getPlayer().giveMoney(rewardMoney);

@@ -33,7 +33,7 @@ public class Ally extends Survivor {
     public void update(float delta) {
         super.update(delta);
 
-        collision.setPosition(new Vector2(position.x, position.y+10).rotateAroundDeg(position, (float) (Math.toDegrees(getAngleToPoint(target)) + 360)));
+        getCollision().setPosition(new Vector2(position.x, position.y+10).rotateAroundDeg(position, (float) (Math.toDegrees(getAngleToPoint(target)) + 360)));
 
         target = gp.getPlayer().getPosition();
 

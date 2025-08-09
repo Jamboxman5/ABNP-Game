@@ -59,7 +59,7 @@ public class Player extends Survivor {
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
 
-		collision.setPosition(new Vector2(position.x, position.y+10).rotateAroundDeg(position, (float) (Math.toDegrees(getDrawingAngle()) + 360)));
+		((Circle)collision).setPosition(new Vector2(position.x, position.y+10).rotateAroundDeg(position, (float) (Math.toDegrees(getDrawingAngle()) + 360)));
 
 		animFrame -= 1;
 		
@@ -234,16 +234,6 @@ public class Player extends Survivor {
 		batch.end();
 
 
-	}
-
-	public void drawCollision(ShapeRenderer shape) {
-		int x = (int) (collision.x - gp.getPlayer().getWorldX() + screenX);
-		int y = (int) (collision.y - gp.getPlayer().getWorldY() + screenY);
-
-		shape.begin(ShapeRenderer.ShapeType.Line);
-		shape.setColor(Color.RED);
-		shape.circle(x, y, collision.radius);
-		shape.end();
 	}
 
 	private void setDefaults() {

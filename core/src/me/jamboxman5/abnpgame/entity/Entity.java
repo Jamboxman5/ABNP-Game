@@ -8,6 +8,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
+import com.badlogic.gdx.math.Polygon;
+import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 
@@ -23,7 +25,7 @@ public abstract class Entity {
 	protected String name;
 	protected double speed;
 	protected float rotation;
-	protected Circle collision;
+	protected Shape2D collision;
 	protected int animFrame;
 	
 	protected String direction;
@@ -121,7 +123,7 @@ public abstract class Entity {
 	}
 
 	public void setRotation(float i) { rotation = i; }
-	public Circle getCollision() { return collision; }
+	public Shape2D getCollision() { return collision; }
 
 	protected static Sprite setup(String imagePath, Float scale) {
 		Texture t = new Texture(Gdx.files.internal(imagePath + ".png/"));
@@ -141,14 +143,40 @@ public abstract class Entity {
 	}
 
 	public void drawCollision(ShapeRenderer shape) {
-		int x = (int) (((collision.x - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
-		int y = (int) (((collision.y - gp.getPlayer().getWorldY())*.5) + gp.getPlayer().getScreenY());
+
+		if (collision instanceof Circle) {
+			Circle collision = (Circle) getCollision();
+			int x = (int) (((collision.x - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
+			int y = (int) (((collision.y - gp.getPlayer().getWorldY())*.5) + gp.getPlayer().getScreenY());
 
 
-		shape.begin(ShapeRenderer.ShapeType.Line);
-		shape.setColor(Color.RED);
-		shape.circle(x, y, collision.radius);
-		shape.end();
+			shape.begin(ShapeRenderer.ShapeType.Line);
+			shape.setColor(Color.RED);
+			shape.circle(x, y, collision.radius);
+			shape.end();
+		} else {
+			Polygon collision = (Polygon) getCollision();
+			int x = (int) (((collision.getX() - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
+			int y = (int) (((collision.getY() - gp.getPlayer().getWorldY())*.5) + gp.getPlayer().getScreenY());
+
+			float[] verts = collision.getTransformedVertices();
+
+			float[] screenVerts = new float[verts.length];
+
+			for (int i = 0; i < verts.length; i += 2) {
+				screenVerts[i] = verts[i] + x;
+				screenVerts[i + 1] = verts[i + 1] + y;
+			}
+
+			shape.begin(ShapeRenderer.ShapeType.Line);
+			shape.setColor(Color.RED);
+
+			shape.polygon(screenVerts);
+
+			shape.end();
+		}
+
+
 	}
 
 	public float getRotation() { return rotation; }
