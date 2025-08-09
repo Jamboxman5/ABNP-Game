@@ -14,7 +14,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieNormal;
-import me.jamboxman5.abnpgame.entity.prop.Pickup;
+import me.jamboxman5.abnpgame.entity.prop.pickup.Pickup;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
 import me.jamboxman5.abnpgame.map.Map;
@@ -23,6 +23,7 @@ import me.jamboxman5.abnpgame.script.MissionScript;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
+import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 
 public class GameScreen implements Screen, InputProcessor {
     final ABNPGame game;
@@ -61,6 +62,8 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         Zombie.initSprites();
+        RifleM4A1.initSounds();
+        RifleM4A1.initSprites();
         Pickup.initSprites();
 
 

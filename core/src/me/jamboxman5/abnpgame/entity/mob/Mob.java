@@ -113,8 +113,11 @@ public abstract class Mob extends LivingEntity {
 
 	}
 
+	@Override
+	public Circle getCollision() { return (Circle) collision; }
+
 	public void pursue(Mob pursuing) {
-		Vector2 target = new Vector2(pursuing.getCollision().x, pursuing.getCollision().y);
+		Vector2 target = new Vector2(((Circle)pursuing.getCollision()).x, ((Circle)pursuing.getCollision()).y);
 		Vector2 prediction = pursuing.velocity.cpy();
 		prediction.scl(10);
 		target.add(prediction);

@@ -8,9 +8,10 @@ import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieNormal;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieRunner;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieTank;
-import me.jamboxman5.abnpgame.entity.prop.Pickup;
+import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
+import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 
 public class BasicScript extends MissionScript {
 
@@ -31,7 +32,7 @@ public class BasicScript extends MissionScript {
             Thread.sleep(10000);
             UIManager.pushBufferMessage("Begin!");
 
-            game.getMapManager().addEntity(new Pickup(new Vector2(0, 0), 0f));
+            game.getMapManager().addEntity(new PickupWeapon(new RifleM4A1(), new Vector2(0,0), 90));
 
             for (int i = 0; i < 10; i++) {
                 zombiesRemaining = (50 - i) + game.getMapManager().entities.size;

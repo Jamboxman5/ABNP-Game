@@ -94,7 +94,7 @@ public abstract class Weapon {
 		return new RifleM4A1();
 	}
 
-	protected Sprite setup(String imagePath, Float scale) {
+	protected static Sprite setup(String imagePath, Float scale) {
 		Texture t = new Texture(Gdx.files.internal(imagePath + ".png/"));
 		Sprite s = new Sprite(t);
 		if (scale == null) {
