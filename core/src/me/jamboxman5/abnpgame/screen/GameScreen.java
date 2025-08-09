@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieNormal;
+import me.jamboxman5.abnpgame.entity.prop.Pickup;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
 import me.jamboxman5.abnpgame.map.Map;
@@ -60,7 +61,7 @@ public class GameScreen implements Screen, InputProcessor {
 
 
         Zombie.initSprites();
-
+        Pickup.initSprites();
 
 
 //        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Crosshair);

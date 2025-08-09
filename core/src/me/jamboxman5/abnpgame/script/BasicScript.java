@@ -8,6 +8,7 @@ import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieNormal;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieRunner;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieTank;
+import me.jamboxman5.abnpgame.entity.prop.Pickup;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
 
@@ -29,6 +30,8 @@ public class BasicScript extends MissionScript {
             UIManager.pushBufferMessage("Prepare for the first wave!");
             Thread.sleep(10000);
             UIManager.pushBufferMessage("Begin!");
+
+            game.getMapManager().addEntity(new Pickup(new Vector2(0, 0), 0f));
 
             for (int i = 0; i < 10; i++) {
                 zombiesRemaining = (50 - i) + game.getMapManager().entities.size;
