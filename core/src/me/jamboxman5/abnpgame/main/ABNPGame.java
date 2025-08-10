@@ -6,14 +6,20 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.data.DataManager;
+import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.entity.mob.player.Player;
 import me.jamboxman5.abnpgame.managers.MapManager;
 import me.jamboxman5.abnpgame.net.GameClient;
+import me.jamboxman5.abnpgame.net.GameServer;
+import me.jamboxman5.abnpgame.net.packets.Packet00Login;
+import me.jamboxman5.abnpgame.net.packets.Packet02Move;
 import me.jamboxman5.abnpgame.screen.ui.screens.GameOverScreen;
 import me.jamboxman5.abnpgame.screen.ui.screens.MainMenuScreen;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
+
+import javax.swing.*;
 
 public class ABNPGame extends Game {
 
@@ -28,6 +34,7 @@ public class ABNPGame extends Game {
     public boolean debugMode = false;
 
     private GameClient socketClient;
+    private GameServer socketServer;
 
     public void create() {
         instance = this;
@@ -59,6 +66,34 @@ public class ABNPGame extends Game {
 
     }
 
+    public void setupMultiplayerGame(boolean hosting) {
+
+        String name = JOptionPane.showInputDialog("Input Gamertag: ");
+        if (name == null) name = "";
+        if (name.equalsIgnoreCase("")) name = "Spare Brains";
+
+        if (hosting && socketServer == null) {
+            socketServer = new GameServer(this);
+            socketServer.start();
+        }
+
+        setClient(new GameClient(this, "192.168.1.24"));
+        getClient().start();
+
+        Packet00Login loginPacket = new Packet00Login(name, player.getWorldX(), player.getWorldY());
+
+        if (socketServer != null) {
+            socketServer.addConnection(new OnlinePlayer(this, player, null, -1), loginPacket);
+        }
+
+        loginPacket.writeData(getClient());
+
+    }
+
+    public void setClient(GameClient socketClient) {
+        this.socketClient = socketClient;
+    }
+
     public void generatePlayer() {
         player = DataManager.loadLocalPlayer();
     }
@@ -80,6 +115,7 @@ public class ABNPGame extends Game {
 
 
     public GameClient getClient() { return socketClient; }
+    public GameServer getServer() { return socketServer; }
 
 
     public void gameOver() {

@@ -106,6 +106,7 @@ public class GameServer extends Thread {
 				return i;
 			}
 		}
+
 		return 0;
 	}
 
@@ -133,6 +134,7 @@ public class GameServer extends Thread {
 	}
 
 	public void sendData(byte[] data, InetAddress ipAddress, int port) {
+		System.out.println(ipAddress);
 		DatagramPacket packet = new DatagramPacket(data, data.length, ipAddress, port);
 		try {
 			socket.send(packet);

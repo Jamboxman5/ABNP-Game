@@ -26,7 +26,15 @@ public class OnlinePlayer extends Player {
 		setWorldX(x);
 		setWorldY(y);
 	}
-	
+
+	public OnlinePlayer(ABNPGame game, Player player, InetAddress ipAddress, int port) {
+		super(game, player.getUsername());
+		this.ipAddress = ipAddress;
+		this.port = port;
+
+
+	}
+
 	@Override
 	public void update(float delta) {
 		if (gp.getPlayer() == this) {

@@ -24,7 +24,9 @@ import me.jamboxman5.abnpgame.script.MissionScript;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
+import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
+import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 
 public class GameScreen implements Screen, InputProcessor {
     final ABNPGame game;
@@ -65,6 +67,10 @@ public class GameScreen implements Screen, InputProcessor {
         Zombie.initSprites();
         RifleM4A1.initSounds();
         RifleM4A1.initSprites();
+        Pistol1911.initSounds();
+        Pistol1911.initSprites();
+        ShotgunWinchester12.initSounds();
+        ShotgunWinchester12.initSprites();
         PickupWeapon.initSprites();
         Pickup.initSprites();
 

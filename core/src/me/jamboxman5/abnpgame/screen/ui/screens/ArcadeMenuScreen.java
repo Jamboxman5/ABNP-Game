@@ -219,7 +219,7 @@ public class ArcadeMenuScreen implements Screen {
             @Override
             public void run() {
                 Screen old = game.getScreen();
-                game.setScreen(new MapSelectMenuScreen(game));
+                game.setScreen(new ArcadeModeSelectScreen(game));
                 old.dispose();
             }
         });
