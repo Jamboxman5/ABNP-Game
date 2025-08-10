@@ -41,7 +41,6 @@ public class RifleM4A1 extends Firearm {
 		this.reloadSpeedMS = 2300;
 		this.magSize = 30;
 		this.range = 1000;
-		this.activeSprites = idleSprites;
 		this.loaded = loadedAmmo;
 		this.currentAmmo = ammo;
 		this.name = "M4A1";
