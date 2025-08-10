@@ -22,7 +22,7 @@ public class Button {
     boolean fill;
     float textScale;
     Color color;
-    TextAlign align = TextAlign.CENTER;
+    TextAlign align;
     Runnable buttonAction;
 
     public Button(int x, int y, int width, int height, String text, BitmapFont font) {
@@ -97,8 +97,8 @@ public class Button {
         else font = Fonts.BUTTONFONT;
 //        if (this.color != null) color = this.color;
         if (fill)
-            Fonts.drawScaled(font, textScale, text, batch, x, y);
-        else Fonts.drawScaled(font, textScale, text, batch, x, y+bounds.height/2);
+            Fonts.drawScaled(font, textScale, text, batch, x, y - (Fonts.getTextHeight("/", font, 1f)/2f));
+        else Fonts.drawScaled(font, textScale, text, batch, x, y+(bounds.height/2));
         batch.end();
     }
 

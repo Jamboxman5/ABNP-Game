@@ -9,8 +9,8 @@ public class Settings {
     public static float musVolume = .15f;
 
     //DISPLAY SETTINGS
-    public static int screenWidth = 1366;
-    public static int screenHeight = 768;
+    public static int screenWidth = 2560;
+    public static int screenHeight = 1440;
     public static float guiScale = 1.5f;
 
     public static float minZoom = .65f;
