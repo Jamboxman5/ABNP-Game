@@ -9,7 +9,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.Entity;
 import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
-import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.entity.projectile.Projectile;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.main.ABNPGame;
@@ -164,33 +163,33 @@ public class MapManager {
 
 	public Array<Entity> getEntities() { return entities; }
 
-	public void removeConnectedPlayer(String username) {
-		for (int i = 0; i < entities.size; i++) {
-			if (entities.get(i) instanceof OnlinePlayer &&
-				((OnlinePlayer)entities.get(i)).getUsername().equals(username)) {
-				entities.removeIndex(i);
-				break;
-			}
-		}
-	}
-	
-	private int getConnectedPlayerIndex(String username) {
-		for (int i = 0; i < entities.size; i++) {
-			if (entities.get(i) instanceof OnlinePlayer && 
-				((OnlinePlayer)entities.get(i)).getUsername().equals(username)) {
-				return i;
-			}
-		}
-		return -1;
-	}
-	
-	public void movePlayer(String username, double x, double y, float rotation) {
-		int index = getConnectedPlayerIndex(username);
-		if (index < 0) return;
-		entities.get(index).setWorldX(x);
-		entities.get(index).setWorldY(y);
-		entities.get(index).setRotation(rotation);
-	}
+//	public void removeConnectedPlayer(String username) {
+//		for (int i = 0; i < entities.size; i++) {
+//			if (entities.get(i) instanceof OnlinePlayer &&
+//				((OnlinePlayer)entities.get(i)).getUsername().equals(username)) {
+//				entities.removeIndex(i);
+//				break;
+//			}
+//		}
+//	}
+//
+//	private int getConnectedPlayerIndex(String username) {
+//		for (int i = 0; i < entities.size; i++) {
+//			if (entities.get(i) instanceof OnlinePlayer &&
+//				((OnlinePlayer)entities.get(i)).getUsername().equals(username)) {
+//				return i;
+//			}
+//		}
+//		return -1;
+//	}
+//
+//	public void movePlayer(String username, double x, double y, float rotation) {
+//		int index = getConnectedPlayerIndex(username);
+//		if (index < 0) return;
+//		entities.get(index).setWorldX(x);
+//		entities.get(index).setWorldY(y);
+//		entities.get(index).setRotation(rotation);
+//	}
 
 	public void setMap(Map newMap) {
 		if (newMap != null) newMap.load();
@@ -210,13 +209,13 @@ public class MapManager {
 	
 	public Array<Map> getMapList() { return maps; }
 
-	public void setWeapon(String username, Weapon weapon) {
-		int idx = getConnectedPlayerIndex(username);
-		if (idx < 0) return;
-		Weapon oldWeapon = ((OnlinePlayer)entities.get(idx)).getWeaponLoadout().getActiveWeapon();
-		((OnlinePlayer)entities.get(idx)).getWeaponLoadout().addWeapon(weapon, true);
-		((OnlinePlayer)entities.get(idx)).getWeaponLoadout().removeWeapon(oldWeapon);
-	}
+//	public void setWeapon(String username, Weapon weapon) {
+//		int idx = getConnectedPlayerIndex(username);
+//		if (idx < 0) return;
+//		Weapon oldWeapon = ((OnlinePlayer)entities.get(idx)).getWeaponLoadout().getActiveWeapon();
+//		((OnlinePlayer)entities.get(idx)).getWeaponLoadout().addWeapon(weapon, true);
+//		((OnlinePlayer)entities.get(idx)).getWeaponLoadout().removeWeapon(oldWeapon);
+//	}
 
 	public void clearMap() {
 		entities = new Array<>();
