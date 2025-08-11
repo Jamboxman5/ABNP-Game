@@ -7,17 +7,19 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.map.Map;
+import me.jamboxman5.abnpgame.map.MapType;
 
 public class Verdammtenstadt extends Map {
 
-    private static final FileHandle texture = (Gdx.files.internal("map/" + "Verdammtenstadt" + ".png/"));
+    private static Texture texture;
 
     public Verdammtenstadt() {
         super("Verdammtenstadt", new Vector2(1426, 1374));
+        type = MapType.VERDAMMTENSTADT;
     }
 
     public void load() {
-        img = new Sprite(new Texture(texture));
+        img = new Sprite(texture);
         img.scale(1.4f);
     }
 
@@ -29,5 +31,9 @@ public class Verdammtenstadt extends Map {
                 new Vector2(-800, 970),
                 new Vector2(190, 280)};
         return spawnPoints;
+    }
+
+    public static void setTexture(Texture texture) {
+        Verdammtenstadt.texture = texture;
     }
 }

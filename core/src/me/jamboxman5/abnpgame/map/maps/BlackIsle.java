@@ -6,20 +6,23 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.map.Map;
+import me.jamboxman5.abnpgame.map.MapType;
 
 import java.io.File;
 
 public class BlackIsle extends Map {
 
-    private static final FileHandle texture = (Gdx.files.internal("map/" + "Black_Isle" + ".png/"));
+    private static Texture texture;
 
     public BlackIsle() {
+
         super("Black Isle", new Vector2(3040, 1800));
+        type = MapType.BLACKISLE;
     }
 
     @Override
     public void load() {
-        img = new Sprite(new Texture(texture));
+        img = new Sprite(texture);
         img.scale(1.4f);
     }
 
@@ -32,4 +35,8 @@ public class BlackIsle extends Map {
                 new Vector2(4150, 3800)};
         return spawnPoints;
     }
+    public static void setTexture(Texture texture) {
+        BlackIsle.texture = texture;
+    }
+
 }

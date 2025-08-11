@@ -6,18 +6,20 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.map.Map;
+import me.jamboxman5.abnpgame.map.MapType;
 
 public class Karnivale extends Map {
 
-    private static final FileHandle texture = (Gdx.files.internal("map/" + "Karnivale" + ".png/"));
+    private static Texture texture;
 
     public Karnivale() {
         super("Karnivale", new Vector2(-315, 850));
+        type = MapType.KARNIVALE;
     }
 
     @Override
     public void load() {
-        img = new Sprite(new Texture(texture));
+        img = new Sprite(texture);
         img.scale(1.4f);
     }
 
@@ -29,5 +31,9 @@ public class Karnivale extends Map {
                 new Vector2(-2300, 250),
                 new Vector2(1750, 550)};
         return spawnPoints;
+    }
+
+    public static void setTexture(Texture texture) {
+        Karnivale.texture = texture;
     }
 }

@@ -6,19 +6,20 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.map.Map;
+import me.jamboxman5.abnpgame.map.MapType;
 
 public class Airbase extends Map {
 
-    private static final FileHandle texture = (Gdx.files.internal("map/" + "Airbase" + ".png/"));
+    private static Texture texture;
 
     public Airbase() {
         super("Airbase", new Vector2(-220, 330));
-
+        type = MapType.AIRBASE;
     }
 
     @Override
     public void load() {
-        img = new Sprite(new Texture(texture));
+        img = new Sprite(texture);
         img.scale(1.4f);
     }
 
@@ -30,5 +31,9 @@ public class Airbase extends Map {
                 new Vector2(200, 3150),
                 new Vector2(-2200, 2300)};
         return spawnPoints;
+    }
+
+    public static void setTexture(Texture texture) {
+        Airbase.texture = texture;
     }
 }
