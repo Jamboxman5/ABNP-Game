@@ -2,6 +2,7 @@ package me.jamboxman5.abnpgame.main;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -11,15 +12,28 @@ import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.mob.player.Player;
+import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
+import me.jamboxman5.abnpgame.entity.prop.pickup.Pickup;
+import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
 import me.jamboxman5.abnpgame.managers.MapManager;
+import me.jamboxman5.abnpgame.map.Map;
+import me.jamboxman5.abnpgame.map.maps.*;
 import me.jamboxman5.abnpgame.net.p2p.DiscreteServer;
-import me.jamboxman5.abnpgame.net.packets.Login;
-import me.jamboxman5.abnpgame.net.packets.Move;
+import me.jamboxman5.abnpgame.net.packets.PacketLogin;
+import me.jamboxman5.abnpgame.net.packets.PacketMap;
+import me.jamboxman5.abnpgame.net.packets.PacketMove;
+import me.jamboxman5.abnpgame.net.packets.Packet;
+import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ui.screens.GameOverScreen;
 import me.jamboxman5.abnpgame.screen.ui.screens.MainMenuScreen;
+import me.jamboxman5.abnpgame.script.BasicScript;
 import me.jamboxman5.abnpgame.util.Fonts;
+import me.jamboxman5.abnpgame.util.NetUtil;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
+import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
+import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
+import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 
 import javax.swing.*;
 import java.io.IOException;
@@ -46,10 +60,12 @@ public class ABNPGame extends Game {
         uiShapeRenderer = new ShapeRenderer();
         shapeRenderer = new ShapeRenderer();
         mapManager = new MapManager(this);
-        Fonts.initFonts();
-        Sounds.initSounds();
+
+        loadAssets();
+
         Sounds.updateVolumes();
         generatePlayer();
+
 
         this.setScreen(new MainMenuScreen(this));
 
@@ -64,9 +80,20 @@ public class ABNPGame extends Game {
         uiCanvas.dispose();
         shapeRenderer.dispose();
         uiShapeRenderer.dispose();
+        if (server != null) {
+            try {
+                server.stop();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         Sounds.dispose();
         Fonts.dispose();
 
+    }
+
+    public void sendPacketTCP(Packet packet) {
+        client.sendTCP(packet);
     }
 
     public void setupMultiplayerGame(boolean hosting) {
@@ -87,12 +114,47 @@ public class ABNPGame extends Game {
         client = new Client();
         Kryo kryo = client.getKryo();
 
-        kryo.register(Login.class);
-        kryo.register(Move.class);
+        NetUtil.registerPackets(kryo);
 
         client.addListener(new Listener() {
             public void received(Connection conn, Object obj) {
-                System.out.println("Received: " + obj);
+                if (obj instanceof PacketMap) {
+                    PacketMap map = (PacketMap) obj;
+                    System.out.println("Received map " + map.type + "...");
+
+                    Map selected = new Farmhouse();
+
+                    switch(map.type) {
+                        case AIRBASE: {
+                            selected = new Airbase();
+                            break;
+                        }
+                        case BLACKISLE: {
+                            selected = new BlackIsle();
+                            break;
+
+                        }
+                        case FARMHOUSE: {
+                            selected = new Farmhouse();
+                            break;
+
+                        }
+                        case KARNIVALE: {
+                            selected = new Karnivale();
+                            break;
+
+                        }
+                        case VERDAMMTENSTADT: {
+                            selected = new Verdammtenstadt();
+                            break;
+                        }
+                    }
+
+                    Screen old = getScreen();
+                    setScreen(new GameScreen(ABNPGame.getInstance(), selected, new BasicScript()));
+//                    old.dispose();
+                }
+
             }
         });
 
@@ -100,11 +162,11 @@ public class ABNPGame extends Game {
         try {
             client.connect(5000, "localhost", 54555, 54777);
 
-            Login login = new Login();
+            PacketLogin login = new PacketLogin();
             login.username = name;
             client.sendTCP(login);
 
-            Move move = new Move();
+            PacketMove move = new PacketMove();
             move.x = 69;
             move.y = 420;
             move.rotation = 13.37f;
@@ -114,6 +176,28 @@ public class ABNPGame extends Game {
             e.printStackTrace();
         }
 
+    }
+
+    public void loadAssets() {
+        Zombie.initSprites();
+        RifleM4A1.initSounds();
+        RifleM4A1.initSprites();
+        Pistol1911.initSounds();
+        Pistol1911.initSprites();
+        ShotgunWinchester12.initSounds();
+        ShotgunWinchester12.initSprites();
+        PickupWeapon.initSprites();
+        Pickup.initSprites();
+        Fonts.initFonts();
+        Sounds.initSounds();
+        Map.loadMaps();
+    }
+
+    public void closeMultiplayerGame() throws IOException {
+        if (client != null) client.stop();
+        if (server != null) server.stop();
+        client = null;
+        server = null;
     }
 
     public void generatePlayer() {
@@ -140,5 +224,9 @@ public class ABNPGame extends Game {
         this.getScreen().dispose();
         setScreen(new GameOverScreen(this));
 //        generatePlayer();
+    }
+
+    public boolean isMultiplayer() {
+        return (server != null);
     }
 }

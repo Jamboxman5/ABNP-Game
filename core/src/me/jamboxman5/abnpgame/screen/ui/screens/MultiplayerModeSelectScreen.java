@@ -166,6 +166,7 @@ public class MultiplayerModeSelectScreen implements Screen {
                     public void run() {
                         Screen old = game.getScreen();
                         game.setupMultiplayerGame(true);
+                        System.out.println("BALLS");
                         game.setScreen(new MapSelectMenuScreen(game));
                         old.dispose();
                     }
@@ -176,7 +177,7 @@ public class MultiplayerModeSelectScreen implements Screen {
             public void run() {
                 Screen old = game.getScreen();
                 game.setupMultiplayerGame(false);
-                game.setScreen(new MapSelectMenuScreen(game));
+                game.setScreen(new LoadingScreen(game));
                 old.dispose();
             }
         });

@@ -4,8 +4,10 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import me.jamboxman5.abnpgame.net.packets.Login;
-import me.jamboxman5.abnpgame.net.packets.Move;
+import me.jamboxman5.abnpgame.net.packets.PacketLogin;
+import me.jamboxman5.abnpgame.net.packets.PacketMap;
+import me.jamboxman5.abnpgame.net.packets.PacketMove;
+import me.jamboxman5.abnpgame.util.NetUtil;
 
 import java.io.IOException;
 
@@ -20,18 +22,21 @@ public class DiscreteServer {
     public void start() throws IOException {
         Kryo kryo = server.getKryo();
 
-        kryo.register(Login.class);
-        kryo.register(Move.class);
+        NetUtil.registerPackets(kryo);
 
         server.addListener(new Listener() {
             public void received(Connection conn, Object obj) {
-                if (obj instanceof Login) {
-                    Login login = (Login) obj;
+                if (obj instanceof PacketLogin) {
+                    PacketLogin login = (PacketLogin) obj;
                     System.out.println("User connected: " + login.username);
                 }
-                if (obj instanceof Move) {
-                    Move move = (Move) obj;
+                if (obj instanceof PacketMove) {
+                    PacketMove move = (PacketMove) obj;
                     System.out.println("Move: " + move.x + "," + move.y + " | " + move.rotation);
+                }
+                if (obj instanceof PacketMap) {
+                    PacketMap map = (PacketMap) obj;
+                    server.sendToAllTCP(map);
                 }
             }
         });

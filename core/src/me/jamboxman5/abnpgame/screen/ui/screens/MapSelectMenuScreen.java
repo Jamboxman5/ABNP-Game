@@ -1,6 +1,5 @@
 package me.jamboxman5.abnpgame.screen.ui.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -12,19 +11,13 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.maps.*;
+import me.jamboxman5.abnpgame.net.packets.PacketMap;
 import me.jamboxman5.abnpgame.screen.GameScreen;
-import me.jamboxman5.abnpgame.screen.ScreenInfo;
 import me.jamboxman5.abnpgame.screen.ui.elements.Button;
 import me.jamboxman5.abnpgame.script.BasicScript;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.IOException;
 
 public class MapSelectMenuScreen implements Screen {
 
@@ -46,6 +39,7 @@ public class MapSelectMenuScreen implements Screen {
     public Button back;
     public Button activeButton;
 
+    private boolean dispose = false;
 
     public MapSelectMenuScreen(final ABNPGame game) {
         this.game = game;
@@ -53,6 +47,10 @@ public class MapSelectMenuScreen implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
+    }
+
+    public void markForDisposal() {
+        dispose = true;
     }
 
     @Override
@@ -108,6 +106,7 @@ public class MapSelectMenuScreen implements Screen {
                 lastButton = System.currentTimeMillis();
             }
         }
+        if (dispose) dispose();
     }
 
     public void drawBKG(SpriteBatch batch) {
@@ -193,9 +192,15 @@ public class MapSelectMenuScreen implements Screen {
         return new Runnable() {
             @Override
             public void run() {
-                Screen old = game.getScreen();
-                game.setScreen(new GameScreen(game, selected, new BasicScript()));
-                old.dispose();
+                if (game.isMultiplayer()) {
+                    PacketMap packet = new PacketMap();
+                    packet.type = selected.getMapType();
+                    game.sendPacketTCP(packet);
+                } else {
+                    Screen old = game.getScreen();
+                    game.setScreen(new GameScreen(game, selected, new BasicScript()));
+                    old.dispose();
+                }
             }
         };
     }

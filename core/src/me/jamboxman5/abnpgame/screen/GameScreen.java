@@ -48,7 +48,6 @@ public class GameScreen implements Screen, InputProcessor {
     public GameScreen(final ABNPGame game, Map activeMap, MissionScript controller) {
         this.game = game;
 
-        shape = new ShapeRenderer();
         gameCamera = new OrthographicCamera();
         uiCamera = new OrthographicCamera();
         debugToggleTime = System.currentTimeMillis();
@@ -62,17 +61,6 @@ public class GameScreen implements Screen, InputProcessor {
 //        UIManager.setupElements();
 
         gameController = controller;
-
-
-        Zombie.initSprites();
-        RifleM4A1.initSounds();
-        RifleM4A1.initSprites();
-        Pistol1911.initSounds();
-        Pistol1911.initSprites();
-        ShotgunWinchester12.initSounds();
-        ShotgunWinchester12.initSprites();
-        PickupWeapon.initSprites();
-        Pickup.initSprites();
 
 
 //        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Crosshair);

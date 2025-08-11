@@ -32,7 +32,7 @@ public abstract class Map {
 
 	public static void loadMaps() {
 		Airbase.setTexture(new Texture(Gdx.files.internal("map/" + "Airbase" + ".png/")));
-		BlackIsle.setTexture(new Texture(Gdx.files.internal("map/" + "BlackIsle" + ".png/")));
+		BlackIsle.setTexture(new Texture(Gdx.files.internal("map/" + "Black_Isle" + ".png/")));
 		Farmhouse.setTexture(new Texture(Gdx.files.internal("map/" + "Farmhouse" + ".png/")));
 		Karnivale.setTexture(new Texture(Gdx.files.internal("map/" + "Karnivale" + ".png/")));
 		Verdammtenstadt.setTexture(new Texture(Gdx.files.internal("map/" + "Verdammtenstadt" + ".png/")));
