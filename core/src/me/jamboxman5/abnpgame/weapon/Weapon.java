@@ -76,11 +76,6 @@ public abstract class Weapon {
 	}
 
 
-
-
-	public enum WeaponType {
-		M1911, M4A1, WINCHESTER12;
-	}
 	public WeaponType getType() { return type; }
 	public static Weapon getByType(WeaponType type) {
 		switch(type) {

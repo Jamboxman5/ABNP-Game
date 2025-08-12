@@ -2,10 +2,8 @@ package me.jamboxman5.abnpgame.util;
 
 import com.esotericsoftware.kryo.Kryo;
 import me.jamboxman5.abnpgame.map.MapType;
-import me.jamboxman5.abnpgame.net.packets.Packet;
-import me.jamboxman5.abnpgame.net.packets.PacketLogin;
-import me.jamboxman5.abnpgame.net.packets.PacketMap;
-import me.jamboxman5.abnpgame.net.packets.PacketMove;
+import me.jamboxman5.abnpgame.net.packets.*;
+import me.jamboxman5.abnpgame.weapon.WeaponType;
 
 public class NetUtil {
 
@@ -14,7 +12,9 @@ public class NetUtil {
         kryo.register(PacketLogin.class);
         kryo.register(PacketMove.class);
         kryo.register(PacketMap.class);
+        kryo.register(PacketWeaponChange.class);
         kryo.register(MapType.class);
+        kryo.register(WeaponType.class);
     }
 
 }

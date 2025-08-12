@@ -3,7 +3,6 @@ package me.jamboxman5.abnpgame.entity.mob.player;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -12,6 +11,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.main.ABNPGame;
+import me.jamboxman5.abnpgame.net.packets.PacketMove;
 import me.jamboxman5.abnpgame.util.InputKeys;
 import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
@@ -30,7 +30,7 @@ public class Player extends Survivor {
 	protected int staminaRegenRate = 1;
 	protected long lastStaminaRegen = 0;
 
-	public Player(ABNPGame gamePanel, String name) {
+	public Player(ABNPGame gamePanel, String name, String uuid) {
 		super(gamePanel, 
 			  name, 
 			  gamePanel.getMapManager().getActiveMap().getPlayerSpawn(),
@@ -38,7 +38,9 @@ public class Player extends Survivor {
 			  defaultSpeed);
 
 		gamerTag = name;
-		
+		this.uuid = uuid;
+		System.out.println("Generated player: " + uuid);
+
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
 
@@ -54,6 +56,8 @@ public class Player extends Survivor {
 
 		super.update(delta);
 
+		if (gp.getPlayer().getID() != uuid) return;
+
 		aimTarget = gp.getWorldMousePointer();
 
 		screenX = Gdx.graphics.getWidth()/2;
@@ -68,7 +72,10 @@ public class Player extends Survivor {
 			animFrame = weapons.getActiveWeapon().idleSprites.size-1;
 		}
 
+		boolean rotating = false;
+		float oldRotation = getRotation();
 		setRotation(getAngleToCursor());
+		if (getRotation() != oldRotation) rotating = true;
 		
 		if (Gdx.input.isKeyPressed(InputKeys.FORWARD)) {
             setDirection("forward");
@@ -174,6 +181,16 @@ public class Player extends Survivor {
 
 		if (isDead()) {
 			gp.gameOver();
+		}
+
+		if ((isMoving || rotating) && gp.isMultiplayer()) {
+			PacketMove move = new PacketMove();
+			move.uuid = uuid;
+			move.x = getWorldX();
+			move.y = getWorldY();
+			move.rotation = getDrawingAngle();
+			move.jitter = jitter;
+			gp.sendPacketUDP(move);
 		}
 		
 	}

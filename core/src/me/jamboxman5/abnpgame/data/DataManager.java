@@ -10,6 +10,7 @@ import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
+import me.jamboxman5.abnpgame.weapon.WeaponType;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponMod;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
@@ -21,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.UUID;
 
 public class DataManager {
 
@@ -57,7 +59,7 @@ public class DataManager {
 
         for (int i = 0; i < weaponsArr.size(); i++) {
             JsonObject weaponOBJ = weaponsArr.get(i).getAsJsonObject();
-            Weapon.WeaponType type = Weapon.WeaponType.valueOf(weaponOBJ.get("type").getAsString());
+            WeaponType type = WeaponType.valueOf(weaponOBJ.get("type").getAsString());
             Weapon weapon = Weapon.getByType(type);
             JsonArray modsArr = weaponOBJ.get("mods").getAsJsonArray();
             WeaponModLoadout loadout = new WeaponModLoadout();
@@ -86,7 +88,7 @@ public class DataManager {
         }
 
         WeaponLoadout loadout = new WeaponLoadout(weapons, ammos);
-        Player player = new Player(ABNPGame.getInstance(), name);
+        Player player = new Player(ABNPGame.getInstance(), name, UUID.randomUUID().toString());
         player.setWeaponLoadout(loadout);
         player.setMoney(money);
         player.setExp(exp);

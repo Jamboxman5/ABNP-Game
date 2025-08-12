@@ -11,6 +11,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import me.jamboxman5.abnpgame.data.DataManager;
+import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.entity.mob.player.Player;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.entity.prop.pickup.Pickup;
@@ -19,10 +20,7 @@ import me.jamboxman5.abnpgame.managers.MapManager;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.maps.*;
 import me.jamboxman5.abnpgame.net.p2p.DiscreteServer;
-import me.jamboxman5.abnpgame.net.packets.PacketLogin;
-import me.jamboxman5.abnpgame.net.packets.PacketMap;
-import me.jamboxman5.abnpgame.net.packets.PacketMove;
-import me.jamboxman5.abnpgame.net.packets.Packet;
+import me.jamboxman5.abnpgame.net.packets.*;
 import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ui.screens.GameOverScreen;
 import me.jamboxman5.abnpgame.screen.ui.screens.MainMenuScreen;
@@ -37,6 +35,7 @@ import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.UUID;
 
 public class ABNPGame extends Game {
 
@@ -72,6 +71,7 @@ public class ABNPGame extends Game {
     }
 
     public void render() {
+
         super.render(); // important!
     }
 
@@ -80,12 +80,10 @@ public class ABNPGame extends Game {
         uiCanvas.dispose();
         shapeRenderer.dispose();
         uiShapeRenderer.dispose();
-        if (server != null) {
-            try {
-                server.stop();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        try {
+            closeMultiplayerGame();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         Sounds.dispose();
         Fonts.dispose();
@@ -154,6 +152,19 @@ public class ABNPGame extends Game {
                     setScreen(new GameScreen(ABNPGame.getInstance(), selected, new BasicScript()));
 //                    old.dispose();
                 }
+                if (obj instanceof PacketWeaponChange) {
+                    mapManager.updateOnlinePlayerWeapon((PacketWeaponChange) obj);
+                }
+                if (obj instanceof PacketMove) {
+                    PacketMove move = (PacketMove) obj;
+                    System.out.println("Move: " + move.uuid + " - (" + move.x + "," + move.y + ") | angle: " + move.rotation);
+                    mapManager.updateOnlinePlayerPosition((PacketMove) obj);
+                }
+                if (obj instanceof PacketLogin) {
+                    PacketLogin login = (PacketLogin) obj;
+                    OnlinePlayer joining = new OnlinePlayer(ABNPGame.getInstance(), login.username, login.uuid);
+                    mapManager.addOnlinePlayer(joining);
+                }
 
             }
         });
@@ -164,13 +175,9 @@ public class ABNPGame extends Game {
 
             PacketLogin login = new PacketLogin();
             login.username = name;
+            login.uuid = player.getID();
             client.sendTCP(login);
 
-            PacketMove move = new PacketMove();
-            move.x = 69;
-            move.y = 420;
-            move.rotation = 13.37f;
-            client.sendUDP(move);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -227,6 +234,9 @@ public class ABNPGame extends Game {
     }
 
     public boolean isMultiplayer() {
-        return (server != null);
+        return (server != null || client != null);
+    }
+
+    public void sendPacketUDP(Packet p) { client.sendUDP(p);
     }
 }

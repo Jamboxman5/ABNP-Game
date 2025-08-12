@@ -43,7 +43,7 @@ public class ShotgunWinchester12 extends Firearm {
 		this.currentAmmo = ammo;
 		this.name = "Winchester 12GA";
 		this.firingVelocity = 150;
-		this.type = WeaponType.WINCHESTER12;
+		this.type = me.jamboxman5.abnpgame.weapon.WeaponType.WINCHESTER12;
 		this.xOffset = 18;
 		this.yOffset = 12;
 		this.recoil = 5;

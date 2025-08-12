@@ -7,13 +7,17 @@ import com.esotericsoftware.kryonet.Server;
 import me.jamboxman5.abnpgame.net.packets.PacketLogin;
 import me.jamboxman5.abnpgame.net.packets.PacketMap;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
+import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
 import me.jamboxman5.abnpgame.util.NetUtil;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public class DiscreteServer {
 
     private Server server;
+
+    HashMap<Connection, PacketLogin> connections;
 
     public DiscreteServer() {
         server = new Server();
@@ -22,21 +26,35 @@ public class DiscreteServer {
     public void start() throws IOException {
         Kryo kryo = server.getKryo();
 
+        connections = new HashMap<Connection, PacketLogin>();
+
         NetUtil.registerPackets(kryo);
 
         server.addListener(new Listener() {
             public void received(Connection conn, Object obj) {
                 if (obj instanceof PacketLogin) {
                     PacketLogin login = (PacketLogin) obj;
-                    System.out.println("User connected: " + login.username);
+                    connections.put(conn, login);
+                    System.out.println("User connected: " + login.username + " (" + login.uuid + ")");
+                    server.sendToAllExceptTCP(conn.getID(), login);
+                    for (Connection c : getServer().getConnections()) {
+                        if (c.getID() != conn.getID()) {
+                            server.sendToTCP(conn.getID(), connections.get(c));
+                        }
+                    }
+
                 }
                 if (obj instanceof PacketMove) {
                     PacketMove move = (PacketMove) obj;
-                    System.out.println("Move: " + move.x + "," + move.y + " | " + move.rotation);
+                    server.sendToAllExceptUDP(conn.getID(), move);
                 }
                 if (obj instanceof PacketMap) {
                     PacketMap map = (PacketMap) obj;
                     server.sendToAllTCP(map);
+                }
+                if (obj instanceof PacketWeaponChange) {
+                    PacketWeaponChange weaponChange = (PacketWeaponChange) obj;
+                    server.sendToAllTCP(weaponChange);
                 }
             }
         });

@@ -43,7 +43,7 @@ public class Pistol1911 extends Firearm {
 		this.currentAmmo = ammo;
 		this.name = "M1911";
 		this.firingVelocity = 150;
-		this.type = WeaponType.M1911;
+		this.type = me.jamboxman5.abnpgame.weapon.WeaponType.M1911;
 		this.xOffset = 13;
 		this.yOffset = 15;
 		this.recoil = 2;

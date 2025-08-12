@@ -19,8 +19,10 @@ import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
 import me.jamboxman5.abnpgame.map.Map;
+import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
 import me.jamboxman5.abnpgame.screen.ui.screens.MainMenuScreen;
 import me.jamboxman5.abnpgame.script.MissionScript;
+import me.jamboxman5.abnpgame.util.InputKeys;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
@@ -69,7 +71,6 @@ public class GameScreen implements Screen, InputProcessor {
     @Override
     public void show() {
 
-        game.generatePlayer();
         game.getPlayer().setPosition(game.getMapManager().getActiveMap().getPlayerSpawn());
 
         Sounds.AMBIENCE.stop();
@@ -301,6 +302,12 @@ public class GameScreen implements Screen, InputProcessor {
     public boolean scrolled(float amountX, float amountY) {
         if (amountY >= 1) game.getPlayer().getWeaponLoadout().nextWeapon();
         if (amountY <= -1) game.getPlayer().getWeaponLoadout().previousWeapon();
+        if (game.isMultiplayer()) {
+            PacketWeaponChange packet = new PacketWeaponChange();
+            packet.uuid = game.getPlayer().getID();
+            packet.type = game.getPlayer().getWeaponLoadout().getActiveWeapon().getType();
+            game.sendPacketTCP(packet);
+        }
         return false;
     }
 }

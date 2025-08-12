@@ -9,11 +9,15 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.Entity;
 import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
+import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
+import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.entity.projectile.Projectile;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.maps.Verdammtenstadt;
+import me.jamboxman5.abnpgame.net.packets.PacketMove;
+import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 
 import java.util.HashMap;
@@ -232,4 +236,31 @@ public class MapManager {
 	}
 
 	public void addAlly(Ally sarge) { survivors.add(sarge);}
+
+	public void addOnlinePlayer(OnlinePlayer joining) {
+		survivors.add(joining);
+	}
+
+	public void updateOnlinePlayerPosition(PacketMove packet) {
+		for (Entity s : survivors) {
+			if (s instanceof OnlinePlayer) {
+				OnlinePlayer player = (OnlinePlayer) s;
+				if (packet.uuid.equals(player.getID())) {
+					System.out.println("UPDATING POSITION");
+					player.updatePos(packet);
+				}
+			}
+		}
+	}
+
+	public void updateOnlinePlayerWeapon(PacketWeaponChange packet) {
+		for (Entity s : survivors) {
+			if (s instanceof OnlinePlayer) {
+				OnlinePlayer player = (OnlinePlayer) s;
+				if (packet.uuid.equals(player.getID())) {
+					player.updateWeapon(packet);
+				}
+			}
+		}
+	}
 }

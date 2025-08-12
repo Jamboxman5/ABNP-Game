@@ -30,7 +30,7 @@ public abstract class Entity {
 	
 	protected String direction;
 	protected final static float defaultSpriteScale = .25f;
-	protected String id;
+	protected String uuid;
 
 //	private int spriteCounter = 0;
 //	private int spriteNumber = 1;
@@ -38,7 +38,7 @@ public abstract class Entity {
 	public Entity(ABNPGame gamePanel) {
 		gp = gamePanel;
 		setDirection("forward");
-		id = UUID.randomUUID().toString();
+//		uuid = UUID.randomUUID().toString();
 	}
 
 	public void setDirection(String dir) { direction = dir; }
@@ -182,5 +182,5 @@ public abstract class Entity {
 	public float getRotation() { return rotation; }
 
 
-	public String getID() { return id; }
+	public String getID() { return uuid; }
 }
