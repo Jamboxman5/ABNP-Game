@@ -106,6 +106,9 @@ public class ABNPGame extends Game {
         }
 
         String name = JOptionPane.showInputDialog("Input Gamertag: ");
+        String address;
+        if (!hosting) address = JOptionPane.showInputDialog("Input Server Address: ");
+        else address = "localhost";
         if (name == null) name = "";
         if (name.equalsIgnoreCase("")) name = "Spare Brains";
 
@@ -175,7 +178,7 @@ public class ABNPGame extends Game {
 
         client.start();
         try {
-            client.connect(5000, "192.168.1.24", 13331, 13331);
+            client.connect(5000, address, 13331, 13331);
 
             PacketLogin login = new PacketLogin();
             login.username = name;
