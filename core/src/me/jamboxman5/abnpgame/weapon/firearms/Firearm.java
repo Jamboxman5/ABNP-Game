@@ -6,6 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
+import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.main.ABNPGame;
@@ -34,7 +35,7 @@ public class Firearm extends Weapon {
 			if (canReload()) reload();
 			else {
 				if (!reloading && (System.currentTimeMillis() - lastMisfire) > 250) {
-					outOfAmmoSound.play();
+					outOfAmmoSound.play(Settings.sfxVolume);
 					lastMisfire = System.currentTimeMillis();
 				}
 				return false;
@@ -53,10 +54,17 @@ public class Firearm extends Weapon {
 		boolean drawFirst = true;
 
 		Vector2 shootPos = shooter.getPosition().cpy();
-		if (shooter instanceof Ally) {
+		if ((shooter instanceof Ally) || (shooter instanceof OnlinePlayer)) {
 			drawFirst = false;
 		}
 
+		if (shooter instanceof OnlinePlayer) {
+			OnlinePlayer p = (OnlinePlayer) shooter;
+			currentAmmo.shoot(p.getRotation() + offset,
+					this,
+					shootPos, drawFirst);
+			return true;
+		}
 		currentAmmo.shoot(shooter.getAimAngle() + offset,
 						  this, 
 						 shootPos, drawFirst);

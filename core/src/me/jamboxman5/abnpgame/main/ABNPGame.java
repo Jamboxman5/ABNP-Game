@@ -165,13 +165,17 @@ public class ABNPGame extends Game {
                     OnlinePlayer joining = new OnlinePlayer(ABNPGame.getInstance(), login.username, login.uuid);
                     mapManager.addOnlinePlayer(joining);
                 }
+                if (obj instanceof PacketShoot) {
+                    PacketShoot shoot = (PacketShoot) obj;
+                    mapManager.onlinePlayerShoot(shoot);
+                }
 
             }
         });
 
         client.start();
         try {
-            client.connect(5000, "localhost", 54555, 54777);
+            client.connect(5000, "192.168.1.24", 13331, 13331);
 
             PacketLogin login = new PacketLogin();
             login.username = name;

@@ -4,10 +4,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import com.esotericsoftware.kryonet.Server;
-import me.jamboxman5.abnpgame.net.packets.PacketLogin;
-import me.jamboxman5.abnpgame.net.packets.PacketMap;
-import me.jamboxman5.abnpgame.net.packets.PacketMove;
-import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
+import me.jamboxman5.abnpgame.net.packets.*;
 import me.jamboxman5.abnpgame.util.NetUtil;
 
 import java.io.IOException;
@@ -54,12 +51,16 @@ public class DiscreteServer {
                 }
                 if (obj instanceof PacketWeaponChange) {
                     PacketWeaponChange weaponChange = (PacketWeaponChange) obj;
-                    server.sendToAllTCP(weaponChange);
+                    server.sendToAllExceptTCP(conn.getID(), weaponChange);
+                }
+                if (obj instanceof PacketShoot) {
+                    PacketShoot shoot = (PacketShoot) obj;
+                    server.sendToAllExceptTCP(conn.getID(), shoot);
                 }
             }
         });
 
-        server.bind(54555, 54777);
+        server.bind(13331, 13331);
         server.start();
         System.out.println("SERVER STARTED!");
     }

@@ -17,6 +17,7 @@ import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.maps.Verdammtenstadt;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
+import me.jamboxman5.abnpgame.net.packets.PacketShoot;
 import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 
@@ -242,25 +243,35 @@ public class MapManager {
 	}
 
 	public void updateOnlinePlayerPosition(PacketMove packet) {
-		for (Entity s : survivors) {
-			if (s instanceof OnlinePlayer) {
-				OnlinePlayer player = (OnlinePlayer) s;
-				if (packet.uuid.equals(player.getID())) {
-					System.out.println("UPDATING POSITION");
-					player.updatePos(packet);
-				}
-			}
+		OnlinePlayer p = findOnlinePlayer(packet.uuid);
+		if (p != null) {
+			p.updatePos(packet);
 		}
 	}
 
 	public void updateOnlinePlayerWeapon(PacketWeaponChange packet) {
+		OnlinePlayer p = findOnlinePlayer(packet.uuid);
+		if (p != null) {
+			p.updateWeapon(packet);
+		}
+	}
+
+	public void onlinePlayerShoot(PacketShoot packet) {
+		OnlinePlayer p = findOnlinePlayer(packet.uuid);
+		if (p != null) {
+			p.shoot();
+		}
+	}
+
+	private OnlinePlayer findOnlinePlayer(String uuid) {
 		for (Entity s : survivors) {
 			if (s instanceof OnlinePlayer) {
 				OnlinePlayer player = (OnlinePlayer) s;
-				if (packet.uuid.equals(player.getID())) {
-					player.updateWeapon(packet);
+				if (uuid.equals(player.getID())) {
+					return player;
 				}
 			}
 		}
+		return null;
 	}
 }

@@ -26,6 +26,18 @@ public class OnlinePlayer extends Player {
         this.uuid = uuid;
     }
 
+    @Override
+    public void update(float delta) {
+        animFrame -= 1;
+
+        if (animFrame < 0) {
+            weapons.getActiveWeapon().idle();
+            animFrame = weapons.getActiveWeapon().idleSprites.size-1;
+        }
+    }
+
+    public Weapon getActiveWeapon() { return activeWeapon; }
+
     public void updatePos(PacketMove packet) {
         setWorldX(packet.x);
         setWorldY(packet.y);
@@ -69,5 +81,9 @@ public class OnlinePlayer extends Player {
     @Override
     public boolean hasCollided(double xComp, double yComp) {
         return false;
+    }
+
+    public void shoot() {
+        activeWeapon.attack(this, Math.toRadians(jitter));
     }
 }

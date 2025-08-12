@@ -13,6 +13,7 @@ public class NetUtil {
         kryo.register(PacketMove.class);
         kryo.register(PacketMap.class);
         kryo.register(PacketWeaponChange.class);
+        kryo.register(PacketShoot.class);
         kryo.register(MapType.class);
         kryo.register(WeaponType.class);
     }

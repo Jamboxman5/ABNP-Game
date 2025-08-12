@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
+import me.jamboxman5.abnpgame.net.packets.PacketShoot;
 import me.jamboxman5.abnpgame.util.InputKeys;
 import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
@@ -66,7 +67,7 @@ public class Player extends Survivor {
 		((Circle)collision).setPosition(new Vector2(position.x, position.y+10).rotateAroundDeg(position, (float) (Math.toDegrees(getDrawingAngle()) + 360)));
 
 		animFrame -= 1;
-		
+
 		if (animFrame < 0) {
 			weapons.getActiveWeapon().idle();
 			animFrame = weapons.getActiveWeapon().idleSprites.size-1;
@@ -172,6 +173,12 @@ public class Player extends Survivor {
 
 		if (Gdx.input.isTouched()) {
 			if (weapons.getActiveWeapon().attack(this, Math.toRadians(jitter))) {
+
+				if (gp.isMultiplayer()) {
+					PacketShoot shoot = new PacketShoot();
+					shoot.uuid = uuid;
+					gp.sendPacketTCP(shoot);
+				}
 
 				jitter = (float) (Math.random() * weapons.getActiveWeapon().getRecoil());
 				if (Math.random() > .5) jitter = -jitter;

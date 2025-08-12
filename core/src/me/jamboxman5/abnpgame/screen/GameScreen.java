@@ -214,9 +214,9 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void resize(int width, int height) {
-        Settings.screenWidth = width;
-        Settings.screenHeight = height;
-        game.canvas.setProjectionMatrix(gameCamera.combined);
+//        Settings.screenWidth = width;
+//        Settings.screenHeight = height;
+//        game.canvas.setProjectionMatrix(gameCamera.combined);
 
 //        viewport.update(width, height);
     }
