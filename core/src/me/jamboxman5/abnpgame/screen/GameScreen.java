@@ -30,6 +30,8 @@ import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 
+import java.io.IOException;
+
 public class GameScreen implements Screen, InputProcessor {
     final ABNPGame game;
 
@@ -133,6 +135,11 @@ public class GameScreen implements Screen, InputProcessor {
                 gameController.lastSpawn = System.currentTimeMillis();
                 gameController.spawnCounter++;
                 if (gameController.spawnCounter >= game.getMapManager().getActiveMap().getZombieSpawns().length) gameController.spawnCounter = 0;
+                if (game.isMultiplayer()) try {
+                    game.closeMultiplayerGame();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
@@ -51,6 +52,8 @@ public class ABNPGame extends Game {
 
     DiscreteServer server;
     Client client;
+
+    Array<String> connectedPlayers;
 
     public void create() {
         instance = this;
@@ -104,6 +107,8 @@ public class ABNPGame extends Game {
                 e.printStackTrace();
             }
         }
+
+        connectedPlayers = new Array<>();
 
         String name = JOptionPane.showInputDialog("Input Gamertag: ");
         String address;
@@ -167,6 +172,7 @@ public class ABNPGame extends Game {
                     PacketLogin login = (PacketLogin) obj;
                     OnlinePlayer joining = new OnlinePlayer(ABNPGame.getInstance(), login.username, login.uuid);
                     mapManager.addOnlinePlayer(joining);
+                    connectedPlayers.add(login.username);
                 }
                 if (obj instanceof PacketShoot) {
                     PacketShoot shoot = (PacketShoot) obj;
@@ -184,7 +190,7 @@ public class ABNPGame extends Game {
             login.username = name;
             login.uuid = player.getID();
             client.sendTCP(login);
-
+            connectedPlayers.add(name);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -212,6 +218,7 @@ public class ABNPGame extends Game {
         if (server != null) server.stop();
         client = null;
         server = null;
+        connectedPlayers = null;
     }
 
     public void generatePlayer() {
@@ -243,7 +250,15 @@ public class ABNPGame extends Game {
     public boolean isMultiplayer() {
         return (server != null || client != null);
     }
+    public boolean isHosting() {
+        return (server != null);
+    }
 
     public void sendPacketUDP(Packet p) { client.sendUDP(p);
+    }
+
+    public Array<String> getConnectedPlayers() {
+        if (connectedPlayers == null) return new Array<>();
+        else return connectedPlayers;
     }
 }

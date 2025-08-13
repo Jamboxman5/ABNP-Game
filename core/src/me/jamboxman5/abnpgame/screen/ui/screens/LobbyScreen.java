@@ -10,6 +10,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
+import me.jamboxman5.abnpgame.map.maps.*;
+import me.jamboxman5.abnpgame.net.packets.PacketMap;
 import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ui.elements.Button;
 import me.jamboxman5.abnpgame.script.BasicScript;
@@ -17,35 +19,34 @@ import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
 
-import java.io.IOException;
-
-public class MultiplayerModeSelectScreen implements Screen {
+public class LobbyScreen implements Screen {
 
     Texture menuBKG;
     final ABNPGame game;
     OrthographicCamera camera;
 
-    private final String title = "Select Online Mode:";
+    private final String title = "Lobby";
     private final int alignX = Gdx.graphics.getWidth() - 40;
     private final int spacer = 70;
     private long lastButton = System.currentTimeMillis();
 
     public Button[] buttons;
-
-    public Button host;
-    public Button join;
-
+    public Button start;
     public Button back;
-
     public Button activeButton;
 
+    private boolean dispose = false;
 
-    public MultiplayerModeSelectScreen(final ABNPGame game) {
+    public LobbyScreen(final ABNPGame game) {
         this.game = game;
         menuBKG = new Texture(Gdx.files.internal("ui/bkg/Menu_Background_1.png"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
+    }
+
+    public void markForDisposal() {
+        dispose = true;
     }
 
     @Override
@@ -101,6 +102,7 @@ public class MultiplayerModeSelectScreen implements Screen {
                 lastButton = System.currentTimeMillis();
             }
         }
+        if (dispose) dispose();
     }
 
     public void drawBKG(SpriteBatch batch) {
@@ -111,6 +113,7 @@ public class MultiplayerModeSelectScreen implements Screen {
 
     public void drawButtons(SpriteBatch batch, ShapeRenderer renderer) {
         for (Button b : buttons) {
+            if (b == start && !game.isHosting()) continue;
             b.draw(batch, renderer, (activeButton == b));
         }
     }
@@ -122,6 +125,16 @@ public class MultiplayerModeSelectScreen implements Screen {
         int y = Gdx.graphics.getHeight() - 220;
 
         Fonts.drawScaled(Fonts.TITLEFONT, .6f, title, batch, x, y + Fonts.getTextHeight(title, Fonts.TITLEFONT, 1f));
+
+        int spacer = 60;
+        y -= 200;
+
+        for (String s : game.getConnectedPlayers()) {
+
+            Fonts.drawScaled(Fonts.SELECTIONFONT, 1f, s, batch, x, y + Fonts.getTextHeight(title, Fonts.TITLEFONT, 1f));
+            y -= spacer;
+        }
+
 //
 //        y -= 90;
 //        Fonts.drawScaled(Fonts.SUBTITLEFONT, .841f, subTitle, batch, x, y+ Fonts.getTextHeight(title, Fonts.SUBTITLEFONT, 1f));
@@ -137,68 +150,38 @@ public class MultiplayerModeSelectScreen implements Screen {
     }
 
     private void getButtons() {
-        buttons = new Button[3];
-        int x = (int) (alignX - Fonts.getTextWidth("Host Game", Fonts.BUTTONFONT, 1f));
+        buttons = new Button[2];
+        int x = (int) (alignX - Fonts.getTextWidth("Start", Fonts.BUTTONFONT, 1f));
         int y = spacer*(buttons.length-1);
-        host = new Button(x, y, "Host Game", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
-        x = (int) (alignX - Fonts.getTextWidth("Join Game", Fonts.BUTTONFONT, 1f));
-        y -= spacer;
-        join = new Button(x, y, "Join Game", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
-
+        start = new Button(x, y, "Start", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
 
         x = Gdx.graphics.getWidth() - alignX;
         back = new Button(x, y, "Back", Fonts.BUTTONFONT, Button.TextAlign.LEFT);
 
         buttons[0] = back;
-        buttons[1] = host;
-        buttons[2] = join;
+        buttons[1] = start;
 
                 back.setAction(new Runnable() {
                     @Override
                     public void run() {
                         Screen old = game.getScreen();
-                        game.setScreen(new ArcadeModeSelectScreen(game));
+                        game.setScreen(new MainMenuScreen(game));
                         old.dispose();
-                        if (game.isMultiplayer()) try {
-                            game.closeMultiplayerGame();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+
                     }
                 });
 
-                host.setAction(new Runnable() {
-                    @Override
-                    public void run() {
-                        Screen old = game.getScreen();
-                        game.setupMultiplayerGame(true);
-                        System.out.println("BALLS");
-                        game.setScreen(new LobbyScreen(game));
-                        old.dispose();
-                    }
-                });
-
-        join.setAction(new Runnable() {
+        start.setAction(new Runnable() {
             @Override
             public void run() {
                 Screen old = game.getScreen();
-                game.setupMultiplayerGame(false);
-                game.setScreen(new LobbyScreen(game));
+                game.setScreen(new MapSelectMenuScreen(game));
                 old.dispose();
+
             }
         });
 
-    }
 
-    private Runnable getMapSelectButtonAction(final Map selected) {
-        return new Runnable() {
-            @Override
-            public void run() {
-                Screen old = game.getScreen();
-                game.setScreen(new GameScreen(game, selected, new BasicScript()));
-                old.dispose();
-            }
-        };
     }
 
     public void updateActiveButton(Vector2 p) {
