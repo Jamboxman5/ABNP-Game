@@ -19,6 +19,8 @@ import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
 
+import java.io.IOException;
+
 public class LobbyScreen implements Screen {
 
     Texture menuBKG;
@@ -167,7 +169,11 @@ public class LobbyScreen implements Screen {
                         Screen old = game.getScreen();
                         game.setScreen(new MainMenuScreen(game));
                         old.dispose();
-
+                        if (game.isMultiplayer()) try {
+                            game.closeMultiplayerGame();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
 

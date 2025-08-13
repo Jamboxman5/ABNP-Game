@@ -135,11 +135,7 @@ public class GameScreen implements Screen, InputProcessor {
                 gameController.lastSpawn = System.currentTimeMillis();
                 gameController.spawnCounter++;
                 if (gameController.spawnCounter >= game.getMapManager().getActiveMap().getZombieSpawns().length) gameController.spawnCounter = 0;
-                if (game.isMultiplayer()) try {
-                    game.closeMultiplayerGame();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+
             }
         }
         if (Gdx.input.isKeyPressed(Input.Keys.ENTER)) {
@@ -172,6 +168,11 @@ public class GameScreen implements Screen, InputProcessor {
                 dispose();
 
                 gameController.lastSpawn = System.currentTimeMillis();
+                if (game.isMultiplayer()) try {
+                    game.closeMultiplayerGame();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

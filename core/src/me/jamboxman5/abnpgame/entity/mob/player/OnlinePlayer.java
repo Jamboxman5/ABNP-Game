@@ -9,6 +9,7 @@ import me.jamboxman5.abnpgame.entity.mob.Mob;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
 import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
+import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 import me.jamboxman5.abnpgame.weapon.WeaponType;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
@@ -72,6 +73,9 @@ public class OnlinePlayer extends Player {
         toDraw.draw(batch);
         batch.setTransformMatrix(new Matrix4());
 
+        float nameScale = .3f;
+        int nameX = (int) (x - ((x - Fonts.getXForCenteredText(x, name, Fonts.INFOFONT)) * nameScale));
+        Fonts.drawScaled(Fonts.INFOFONT, nameScale, name, batch, nameX, y + 40);
 
         batch.end();
 
