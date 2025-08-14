@@ -20,10 +20,12 @@ import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
 import me.jamboxman5.abnpgame.managers.MapManager;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.maps.*;
+import me.jamboxman5.abnpgame.net.listeners.*;
 import me.jamboxman5.abnpgame.net.p2p.DiscreteServer;
 import me.jamboxman5.abnpgame.net.packets.*;
 import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ui.screens.GameOverScreen;
+import me.jamboxman5.abnpgame.screen.ui.screens.LoadingScreen;
 import me.jamboxman5.abnpgame.screen.ui.screens.MainMenuScreen;
 import me.jamboxman5.abnpgame.script.BasicScript;
 import me.jamboxman5.abnpgame.util.Fonts;
@@ -54,6 +56,8 @@ public class ABNPGame extends Game {
     DiscreteServer server;
     Client client;
 
+    Array<Screen> disposal;
+
     Array<String> connectedPlayers;
     HashMap<String, String> connectedPlayerNames;
 
@@ -65,19 +69,31 @@ public class ABNPGame extends Game {
         shapeRenderer = new ShapeRenderer();
         mapManager = new MapManager(this);
 
-        loadAssets();
+        this.setScreen(new LoadingScreen(this));
 
+        loadAssets();
         Sounds.updateVolumes();
         generatePlayer();
 
+        disposal = new Array<>();
 
+        Screen old = getScreen();
         this.setScreen(new MainMenuScreen(this));
-
+        old.dispose();
     }
 
     public void render() {
 
         super.render(); // important!
+        for (Screen s : disposal) {
+            s.dispose();
+        }
+
+
+    }
+
+    public void disposeScreen(Screen s) {
+        disposal.add(s);
     }
 
     public void dispose() {
@@ -120,93 +136,45 @@ public class ABNPGame extends Game {
         if (name == null) name = "";
         if (name.equalsIgnoreCase("")) name = "Spare Brains";
 
+        player.setName(name);
         client = new Client();
         Kryo kryo = client.getKryo();
 
         NetUtil.registerPackets(kryo);
-
-        client.addListener(new Listener() {
-            public void received(Connection conn, Object obj) {
-                if (obj instanceof PacketMap) {
-                    PacketMap map = (PacketMap) obj;
-                    System.out.println("Received map " + map.type + "...");
-
-                    Map selected = new Farmhouse();
-
-                    switch(map.type) {
-                        case AIRBASE: {
-                            selected = new Airbase();
-                            break;
-                        }
-                        case BLACKISLE: {
-                            selected = new BlackIsle();
-                            break;
-
-                        }
-                        case FARMHOUSE: {
-                            selected = new Farmhouse();
-                            break;
-
-                        }
-                        case KARNIVALE: {
-                            selected = new Karnivale();
-                            break;
-
-                        }
-                        case VERDAMMTENSTADT: {
-                            selected = new Verdammtenstadt();
-                            break;
-                        }
-                    }
-
-                    Screen old = getScreen();
-                    setScreen(new GameScreen(ABNPGame.getInstance(), selected, new BasicScript()));
-//                    old.dispose();
-                }
-                if (obj instanceof PacketWeaponChange) {
-                    mapManager.updateOnlinePlayerWeapon((PacketWeaponChange) obj);
-                }
-                if (obj instanceof PacketMove) {
-                    PacketMove move = (PacketMove) obj;
-                    System.out.println("Move: " + move.uuid + " - (" + move.x + "," + move.y + ") | angle: " + move.rotation);
-                    mapManager.updateOnlinePlayerPosition((PacketMove) obj);
-                }
-                if (obj instanceof PacketLogin) {
-                    PacketLogin login = (PacketLogin) obj;
-                    OnlinePlayer joining = new OnlinePlayer(ABNPGame.getInstance(), login.username, login.uuid);
-                    mapManager.addOnlinePlayer(joining);
-                    connectedPlayers.add(login.uuid);
-                    connectedPlayerNames.put(login.uuid, login.username);
-                }
-                if (obj instanceof PacketShoot) {
-                    PacketShoot shoot = (PacketShoot) obj;
-                    mapManager.onlinePlayerShoot(shoot);
-                }
-                if (obj instanceof PacketDisconnect) {
-                    PacketDisconnect disconnect = (PacketDisconnect) obj;
-                    connectedPlayers.removeValue(disconnect.uuid, false);
-                    connectedPlayerNames.remove(disconnect.uuid);
-                    mapManager.removeOnlinePlayer(disconnect);
-                }
-
-            }
-        });
+        NetUtil.registerListeners(client);
 
         client.start();
+
         try {
             client.connect(5000, address, 13331, 13331);
+            sendLogin();
 
-            PacketLogin login = new PacketLogin();
-            login.username = name;
-            login.uuid = player.getID();
-            client.sendTCP(login);
-            connectedPlayers.add(player.getID());
-            connectedPlayerNames.put(player.getID(), name);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+    }
+
+    private void sendLogin() {
+        PacketLogin login = new PacketLogin();
+        login.username = player.getUsername();
+        login.uuid = player.getID();
+        client.sendTCP(login);
+        connectedPlayers.add(player.getID());
+        connectedPlayerNames.put(player.getID(), player.getUsername());
+    }
+
+    public void disconnectPlayer(PacketDisconnect disconnect) {
+        connectedPlayers.removeValue(disconnect.uuid, false);
+        connectedPlayerNames.remove(disconnect.uuid);
+        mapManager.removeOnlinePlayer(disconnect);
+    }
+
+    public void connectPlayer(OnlinePlayer joining) {
+        mapManager.addOnlinePlayer(joining);
+        connectedPlayers.add(joining.getID());
+        connectedPlayerNames.put(joining.getID(), joining.getName());
     }
 
     public void loadAssets() {
