@@ -131,9 +131,9 @@ public class LobbyScreen implements Screen {
         int spacer = 60;
         y -= 200;
 
-        for (String s : game.getConnectedPlayers()) {
+        for (String s : game.getClientManager().getConnectedPlayers()) {
 
-            Fonts.drawScaled(Fonts.SELECTIONFONT, 1f, game.getConnectedPlayerName(s), batch, x, y + Fonts.getTextHeight(title, Fonts.TITLEFONT, 1f));
+            Fonts.drawScaled(Fonts.SELECTIONFONT, 1f, game.getClientManager().getConnectedPlayerName(s), batch, x, y + Fonts.getTextHeight(title, Fonts.TITLEFONT, 1f));
             y -= spacer;
         }
 

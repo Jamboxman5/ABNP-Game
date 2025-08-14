@@ -314,7 +314,7 @@ public class GameScreen implements Screen, InputProcessor {
             PacketWeaponChange packet = new PacketWeaponChange();
             packet.uuid = game.getPlayer().getID();
             packet.type = game.getPlayer().getWeaponLoadout().getActiveWeapon().getType();
-            game.sendPacketTCP(packet);
+            game.getClientManager().sendPacketTCP(packet);
         }
         return false;
     }

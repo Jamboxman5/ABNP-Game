@@ -10,7 +10,7 @@ public class PacketDisconnectListener extends Listener {
     @Override
     public void received(Connection conn, Object obj) {
         if (obj instanceof PacketDisconnect) {
-            ABNPGame.getInstance().disconnectPlayer((PacketDisconnect) obj);
+            ABNPGame.getInstance().getClientManager().disconnectPlayer((PacketDisconnect) obj);
         }
     }
 

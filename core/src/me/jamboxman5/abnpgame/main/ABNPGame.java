@@ -20,6 +20,7 @@ import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
 import me.jamboxman5.abnpgame.managers.MapManager;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.maps.*;
+import me.jamboxman5.abnpgame.net.ClientManager;
 import me.jamboxman5.abnpgame.net.listeners.*;
 import me.jamboxman5.abnpgame.net.p2p.DiscreteServer;
 import me.jamboxman5.abnpgame.net.packets.*;
@@ -54,12 +55,11 @@ public class ABNPGame extends Game {
     public boolean debugMode = false;
 
     DiscreteServer server;
-    Client client;
+    ClientManager clientManager;
 
     Array<Screen> disposal;
 
-    Array<String> connectedPlayers;
-    HashMap<String, String> connectedPlayerNames;
+
 
     public void create() {
         instance = this;
@@ -68,6 +68,7 @@ public class ABNPGame extends Game {
         uiShapeRenderer = new ShapeRenderer();
         shapeRenderer = new ShapeRenderer();
         mapManager = new MapManager(this);
+        clientManager = new ClientManager(this);
 
         this.setScreen(new LoadingScreen(this));
 
@@ -111,9 +112,6 @@ public class ABNPGame extends Game {
 
     }
 
-    public void sendPacketTCP(Packet packet) {
-        client.sendTCP(packet);
-    }
 
     public void setupMultiplayerGame(boolean hosting) {
 
@@ -126,9 +124,6 @@ public class ABNPGame extends Game {
             }
         }
 
-        connectedPlayers = new Array<>();
-        connectedPlayerNames = new HashMap<>();
-
         String name = JOptionPane.showInputDialog("Input Gamertag: ");
         String address;
         if (!hosting) address = JOptionPane.showInputDialog("Input Server Address: ");
@@ -137,45 +132,14 @@ public class ABNPGame extends Game {
         if (name.equalsIgnoreCase("")) name = "Spare Brains";
 
         player.setName(name);
-        client = new Client();
-        Kryo kryo = client.getKryo();
 
-        NetUtil.registerPackets(kryo);
-        NetUtil.registerListeners(client);
-
-        client.start();
-
-        try {
-            client.connect(5000, address, 13331, 13331);
-            sendLogin();
-
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        clientManager.connect(player, address);
 
     }
 
-    private void sendLogin() {
-        PacketLogin login = new PacketLogin();
-        login.username = player.getUsername();
-        login.uuid = player.getID();
-        client.sendTCP(login);
-        connectedPlayers.add(player.getID());
-        connectedPlayerNames.put(player.getID(), player.getUsername());
-    }
 
-    public void disconnectPlayer(PacketDisconnect disconnect) {
-        connectedPlayers.removeValue(disconnect.uuid, false);
-        connectedPlayerNames.remove(disconnect.uuid);
-        mapManager.removeOnlinePlayer(disconnect);
-    }
 
-    public void connectPlayer(OnlinePlayer joining) {
-        mapManager.addOnlinePlayer(joining);
-        connectedPlayers.add(joining.getID());
-        connectedPlayerNames.put(joining.getID(), joining.getName());
-    }
+
 
     public void loadAssets() {
         Zombie.initSprites();
@@ -193,12 +157,9 @@ public class ABNPGame extends Game {
     }
 
     public void closeMultiplayerGame() throws IOException {
-        if (client != null) client.stop();
+        clientManager.disconnect();
         if (server != null) server.stop();
-        client = null;
         server = null;
-        connectedPlayers = null;
-        connectedPlayerNames = null;
         mapManager.removeOnlinePlayers();
     }
 
@@ -211,7 +172,7 @@ public class ABNPGame extends Game {
     public void setPlayer(Player newPlayer) { player = newPlayer; }
 
     public MapManager getMapManager() { return mapManager; }
-
+    public ClientManager getClientManager() { return clientManager; }
     public Vector2 getMousePointer() {
         return new Vector2(Gdx.input.getX(), Settings.screenHeight - Gdx.input.getY());
     }
@@ -229,22 +190,14 @@ public class ABNPGame extends Game {
     }
 
     public boolean isMultiplayer() {
-        return (server != null || client != null);
+        return (server != null || clientManager.isConnected());
     }
     public boolean isHosting() {
         return (server != null);
     }
 
-    public void sendPacketUDP(Packet p) { client.sendUDP(p);
-    }
 
-    public Array<String> getConnectedPlayers() {
-        if (connectedPlayers == null) return new Array<>();
-        else return connectedPlayers;
-    }
 
-    public String getConnectedPlayerName(String uuid) {
-        if (connectedPlayerNames.containsKey(uuid)) return connectedPlayerNames.get(uuid);
-        else return "PLAYER NOT FOUND";
-    }
+
+
 }

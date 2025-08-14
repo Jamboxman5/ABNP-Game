@@ -19,7 +19,7 @@ public class PacketLoginListener extends Listener {
         if (obj instanceof PacketLogin) {
             PacketLogin login = (PacketLogin) obj;
             OnlinePlayer joining = new OnlinePlayer(ABNPGame.getInstance(), login.username, login.uuid);
-            ABNPGame.getInstance().connectPlayer(joining);
+            ABNPGame.getInstance().getClientManager().connectPlayer(joining);
         }
     }
 }

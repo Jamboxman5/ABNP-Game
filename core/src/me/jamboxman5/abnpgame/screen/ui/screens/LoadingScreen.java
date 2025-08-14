@@ -129,7 +129,7 @@ public class LoadingScreen implements Screen {
                 if (game.isMultiplayer()) {
                     PacketMap packet = new PacketMap();
                     packet.type = selected.getMapType();
-                    game.sendPacketTCP(packet);
+                    game.getClientManager().sendPacketTCP(packet);
                 } else {
                     Screen old = game.getScreen();
                     game.setScreen(new GameScreen(game, selected, new BasicScript()));

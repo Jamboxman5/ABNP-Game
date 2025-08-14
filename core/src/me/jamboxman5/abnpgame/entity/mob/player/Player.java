@@ -175,7 +175,7 @@ public class Player extends Survivor {
 			if (gp.isMultiplayer()) {
 				PacketShoot shoot = new PacketShoot();
 				shoot.uuid = uuid;
-				gp.sendPacketTCP(shoot);
+				gp.getClientManager().sendPacketTCP(shoot);
 				weapons.getActiveWeapon().fakeAttack(this);
 			} else if (weapons.getActiveWeapon().attack(this, Math.toRadians(jitter))) {
 
@@ -196,7 +196,7 @@ public class Player extends Survivor {
 			move.y = getWorldY();
 			move.rotation = getDrawingAngle();
 			move.jitter = jitter;
-			gp.sendPacketUDP(move);
+			gp.getClientManager().sendPacketUDP(move);
 		}
 		
 	}
