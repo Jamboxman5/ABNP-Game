@@ -172,13 +172,12 @@ public class Player extends Survivor {
 
 
 		if (Gdx.input.isTouched()) {
-			if (weapons.getActiveWeapon().attack(this, Math.toRadians(jitter))) {
-
-				if (gp.isMultiplayer()) {
-					PacketShoot shoot = new PacketShoot();
-					shoot.uuid = uuid;
-					gp.sendPacketTCP(shoot);
-				}
+			if (gp.isMultiplayer()) {
+				PacketShoot shoot = new PacketShoot();
+				shoot.uuid = uuid;
+				gp.sendPacketTCP(shoot);
+				weapons.getActiveWeapon().fakeAttack(this);
+			} else if (weapons.getActiveWeapon().attack(this, Math.toRadians(jitter))) {
 
 				jitter = (float) (Math.random() * weapons.getActiveWeapon().getRecoil());
 				if (Math.random() > .5) jitter = -jitter;

@@ -50,6 +50,7 @@ public abstract class Weapon {
 	public Sprite getHudSprite() { return hudSprite; }
 	public String getName() { return name; }
 	public abstract boolean attack(Survivor attacker, double radians);
+	public abstract boolean fakeAttack(Survivor attacker);
 	protected boolean canAttack() {
 	    if (reloading) return false;
 	    if ((System.currentTimeMillis() - lastAttack) < attackRateMS) return false;

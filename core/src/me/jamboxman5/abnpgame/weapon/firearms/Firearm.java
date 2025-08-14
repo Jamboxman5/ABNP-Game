@@ -77,6 +77,17 @@ public class Firearm extends Weapon {
 		return true;
 	}
 
+	public boolean fakeShoot(Survivor shooter) {
+		if (!canAttack()) return false;
+
+		activeSprites = shootSprites;
+		shooter.setAnimFrame(shootSprites.size-1);
+		attackSound.play(Settings.sfxVolume);
+		this.lastAttack = System.currentTimeMillis();
+
+		return true;
+	}
+
 	public boolean canReload() {
 		return (!reloading && (loaded < magSize) && (currentAmmo.getAmmoCount() > 0));
 	}
@@ -111,6 +122,10 @@ public class Firearm extends Weapon {
 	@Override
 	public boolean attack(Survivor attacker, double offset) {
 		return shoot(attacker, offset);
+	}
+	@Override
+	public boolean fakeAttack(Survivor attacker) {
+		return fakeShoot(attacker);
 	}
 	public int getFiringVelocity() { return firingVelocity; }
 	public int getRange() { return range; }

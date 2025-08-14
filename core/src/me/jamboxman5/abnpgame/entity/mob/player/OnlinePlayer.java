@@ -88,6 +88,6 @@ public class OnlinePlayer extends Player {
     }
 
     public void shoot() {
-        activeWeapon.attack(this, Math.toRadians(jitter));
+        activeWeapon.fakeAttack(this);
     }
 }
