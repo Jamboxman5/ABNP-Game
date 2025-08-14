@@ -60,6 +60,22 @@ public class DiscreteServer {
             }
         });
 
+        server.addListener(new Listener() {
+            @Override
+            public void disconnected(Connection connection) {
+
+                PacketLogin login = connections.get(connection);
+
+                PacketDisconnect packet = new PacketDisconnect();
+                packet.uuid = login.uuid;
+                packet.username = login.username;
+
+                server.sendToAllExceptTCP(connection.getID(), packet);
+
+                System.out.println("Player " + login.username + " disconnected.");
+            }
+        });
+
         server.bind(13331, 13331);
         server.start();
         System.out.println("SERVER STARTED!");

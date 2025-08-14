@@ -36,6 +36,7 @@ import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.UUID;
 
 public class ABNPGame extends Game {
@@ -54,6 +55,7 @@ public class ABNPGame extends Game {
     Client client;
 
     Array<String> connectedPlayers;
+    HashMap<String, String> connectedPlayerNames;
 
     public void create() {
         instance = this;
@@ -109,6 +111,7 @@ public class ABNPGame extends Game {
         }
 
         connectedPlayers = new Array<>();
+        connectedPlayerNames = new HashMap<>();
 
         String name = JOptionPane.showInputDialog("Input Gamertag: ");
         String address;
@@ -172,11 +175,18 @@ public class ABNPGame extends Game {
                     PacketLogin login = (PacketLogin) obj;
                     OnlinePlayer joining = new OnlinePlayer(ABNPGame.getInstance(), login.username, login.uuid);
                     mapManager.addOnlinePlayer(joining);
-                    connectedPlayers.add(login.username);
+                    connectedPlayers.add(login.uuid);
+                    connectedPlayerNames.put(login.uuid, login.username);
                 }
                 if (obj instanceof PacketShoot) {
                     PacketShoot shoot = (PacketShoot) obj;
                     mapManager.onlinePlayerShoot(shoot);
+                }
+                if (obj instanceof PacketDisconnect) {
+                    PacketDisconnect disconnect = (PacketDisconnect) obj;
+                    connectedPlayers.removeValue(disconnect.uuid, false);
+                    connectedPlayerNames.remove(disconnect.uuid);
+                    mapManager.removeOnlinePlayer(disconnect);
                 }
 
             }
@@ -190,7 +200,8 @@ public class ABNPGame extends Game {
             login.username = name;
             login.uuid = player.getID();
             client.sendTCP(login);
-            connectedPlayers.add(name);
+            connectedPlayers.add(player.getID());
+            connectedPlayerNames.put(player.getID(), name);
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -219,6 +230,8 @@ public class ABNPGame extends Game {
         client = null;
         server = null;
         connectedPlayers = null;
+        connectedPlayerNames = null;
+        mapManager.removeOnlinePlayers();
     }
 
     public void generatePlayer() {
@@ -260,5 +273,10 @@ public class ABNPGame extends Game {
     public Array<String> getConnectedPlayers() {
         if (connectedPlayers == null) return new Array<>();
         else return connectedPlayers;
+    }
+
+    public String getConnectedPlayerName(String uuid) {
+        if (connectedPlayerNames.containsKey(uuid)) return connectedPlayerNames.get(uuid);
+        else return "PLAYER NOT FOUND";
     }
 }

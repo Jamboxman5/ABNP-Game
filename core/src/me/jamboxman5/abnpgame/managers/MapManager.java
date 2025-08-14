@@ -16,6 +16,7 @@ import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.maps.Verdammtenstadt;
+import me.jamboxman5.abnpgame.net.packets.PacketDisconnect;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
 import me.jamboxman5.abnpgame.net.packets.PacketShoot;
 import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
@@ -273,5 +274,18 @@ public class MapManager {
 			}
 		}
 		return null;
+	}
+
+	public void removeOnlinePlayer(PacketDisconnect disconnect) {
+		OnlinePlayer p = findOnlinePlayer(disconnect.uuid);
+		disposingSurvivors.add(p);
+	}
+
+	public void removeOnlinePlayers() {
+		for (Entity s : survivors) {
+			if (s instanceof OnlinePlayer) {
+				disposingSurvivors.add(s);
+			}
+		}
 	}
 }

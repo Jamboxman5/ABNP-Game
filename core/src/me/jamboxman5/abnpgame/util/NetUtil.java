@@ -16,6 +16,7 @@ public class NetUtil {
         kryo.register(PacketShoot.class);
         kryo.register(MapType.class);
         kryo.register(WeaponType.class);
+        kryo.register(PacketDisconnect.class);
     }
 
 }
