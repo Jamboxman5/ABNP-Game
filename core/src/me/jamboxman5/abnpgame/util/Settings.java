@@ -1,6 +1,8 @@
 package me.jamboxman5.abnpgame.util;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 public class Settings {
 
@@ -16,6 +18,26 @@ public class Settings {
     public static float minZoom = .65f;
     public static float maxZoom = minZoom - .25f;
 
-
     public static float hudMargin = 20;
+
+    public static Array<Vector2> resolutions = new Array<>(new Vector2[]{
+            new Vector2(800, 600),
+            new Vector2(1280, 720),
+            new Vector2(1366, 768),
+            new Vector2(1920, 1080),
+            new Vector2(2560, 1440)
+    });
+
+    public static Vector2 getResolution() {
+        for (Vector2 res : resolutions) {
+            if (res.x == screenWidth && res.y == screenHeight) return res;
+        }
+        return new Vector2(-1, -1);
+    }
+
+    public static void setResolution(Vector2 res) {
+        screenWidth = Math.round(res.x);
+        screenHeight = Math.round(res.y);
+        Gdx.graphics.setWindowedMode(screenWidth, screenHeight);
+    }
 }

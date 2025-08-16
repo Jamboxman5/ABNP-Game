@@ -1,27 +1,20 @@
 package me.jamboxman5.abnpgame.screen.ui.screens;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import me.jamboxman5.abnpgame.main.ABNPGame;
-import me.jamboxman5.abnpgame.managers.MenuManager;
-import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ui.elements.Button;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
-
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class MainMenuScreen implements Screen {
 
@@ -37,8 +30,8 @@ public class MainMenuScreen implements Screen {
     OrthographicCamera camera;
 
     public Button[] buttons;
-    public Button campaignButton;
-    public Button arcadeButton;
+    public Button playButton;
+    public Button settingsButton;
     public Button quitButton;
     public Button activeButton;
 
@@ -166,35 +159,35 @@ public class MainMenuScreen implements Screen {
 
     private void getButtons(ABNPGame gp, ShapeRenderer renderer) {
         buttons = new Button[3];
-        int x = (int) (alignX - Fonts.getTextWidth("Campaign", Fonts.BUTTONFONT, 1f));
+        int x = (int) (alignX - Fonts.getTextWidth("Play", Fonts.BUTTONFONT, 1f));
         int y = spacer*(buttons.length);
-        campaignButton = new Button(x, y, "Campaign", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
-        x = (int) (alignX - Fonts.getTextWidth("Arcade", Fonts.BUTTONFONT, 1f));
+        playButton = new Button(x, y, "Play", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
+        x = (int) (alignX - Fonts.getTextWidth("Settings", Fonts.BUTTONFONT, 1f));
         y -= spacer;
-        arcadeButton = new Button(x, y, "Arcade", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
+        settingsButton = new Button(x, y, "Settings", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
         x = (int) (alignX - Fonts.getTextWidth("Quit", Fonts.BUTTONFONT, 1f));
         y -= spacer;
         quitButton = new Button(x, y, "Quit", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
 
-        buttons[0] = campaignButton;
-        buttons[1] = arcadeButton;
+        buttons[0] = playButton;
+        buttons[1] = settingsButton;
         buttons[2] = quitButton;
 
-        campaignButton.setAction(new Runnable() {
+        playButton.setAction(new Runnable() {
             @Override
             public void run() {
                 Screen old = game.getScreen();
-                game.setScreen(new MapSelectMenuScreen(game));
+                game.setScreen(new ArcadeMenuScreen(game));
                 old.dispose();
 
             }
         });
 
-        arcadeButton.setAction(new Runnable() {
+        settingsButton.setAction(new Runnable() {
             @Override
             public void run() {
                 Screen old = game.getScreen();
-                game.setScreen(new ArcadeMenuScreen(game));
+                game.setScreen(new SettingsMenuScreen(game));
                 old.dispose();
 
             }
