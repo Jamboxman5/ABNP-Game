@@ -7,8 +7,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.mob.player.Player;
+import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
@@ -109,6 +111,71 @@ public class UIManager {
         weaponIMG.draw(batch);
         weaponIMG.setScale(nativeScale);
 
+        batch.end();
+
+    }
+
+    public static void drawRadar(SpriteBatch batch, ShapeRenderer shape, ABNPGame game) {
+        Weapon activeWeapon = game.getPlayer().getWeaponLoadout().getActiveWeapon();
+
+        float side = 140 * guiScale;
+        float margin = 20;
+        Vector2 center = new Vector2(margin + (side/2f), margin + (side/2f));
+        Rectangle mapBounds = new Rectangle(margin+4, margin+4, side-8, side-8);
+
+        Sprite pointer;
+
+        shape.begin(ShapeRenderer.ShapeType.Filled);
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+        shape.setColor(0f, (float)(50.0/255.0), 0f, .6f);
+        shape.rect(margin, margin, side, side);
+
+        float zoomFactor = .1f;
+
+        // draw map entities
+        MapManager map = game.getMapManager();
+        Player player = game.getPlayer();
+        shape.setColor(Color.RED);
+        for (Zombie z : map.getZombies()) {
+            Vector2 displacement = z.getPosition().cpy().sub(player.getPosition()).scl(zoomFactor).add(center);
+            if (mapBounds.contains(displacement)) shape.circle(displacement.x, displacement.y, 2);
+
+        }
+
+        shape.setColor(Color.GREEN);
+        shape.setAutoShapeType(true);
+        shape.set(ShapeRenderer.ShapeType.Line);
+        shape.rect(mapBounds.x, mapBounds.y, mapBounds.width, mapBounds.height);
+        shape.setColor(Color.WHITE);
+        shape.line(center, center.cpy().add(new Vector2(1, 0).rotateRad((float) player.getAdjustedRotation()).scl(10f)));
+        shape.end();
+
+        batch.begin();
+
+//        if (activeWeapon instanceof Firearm) {
+//
+//            Firearm activeFirearm = (Firearm) activeWeapon;
+//            String ammo = activeFirearm.getLoadedAmmo() + " / " + activeFirearm.getAmmoCount();
+//
+//            x = Fonts.getXForRightAlignedText((int) (camera.viewportWidth - (30*guiScale)), ammo, Fonts.INFOFONT, .55f * guiScale);
+//            y = y - height + (25*guiScale);
+//
+//            Fonts.drawScaled(Fonts.INFOFONT, .55f * guiScale, ammo, batch,x, y);
+//            x = camera.viewportWidth - width - 20 + (15*guiScale);
+//            Fonts.drawScaled(Fonts.INFOFONT, .55f * guiScale, activeFirearm.getName(), batch,x, y);
+//        }
+//
+//
+//
+//        x = camera.viewportWidth - 20 - (width/2);
+//        y = camera.viewportHeight - (65*guiScale);
+//        weaponIMG.setCenter(x, y);
+//        float nativeScale = weaponIMG.getScaleX();
+//        weaponIMG.setScale(guiScale/2.5f);
+//        weaponIMG.draw(batch);
+//        weaponIMG.setScale(nativeScale);
+//
         batch.end();
 
     }

@@ -75,13 +75,13 @@ public class Zombie extends Mob {
     public static void loadSprites(AssetManager assets) {
 
         // Dead sprite
-        deadSprite = new Sprite(assets.get("entity/zombie/misc/Splatter.png", Texture.class));
+        deadSprite = setup("entity/zombie/misc/Splatter.png", assets, defaultSpriteScale);
 
         // Idle sprites
         idleSprites = new Array<>();
         for (int i = 0; i <= 16; i++) {
             idleSprites.add(new Sprite(
-                    assets.get("entity/zombie/default/idle/skeleton-idle_" + i + ".png", Texture.class)
+                    setup("entity/zombie/default/idle/skeleton-idle_" + i + ".png", assets, defaultSpriteScale)
             ));
         }
 
@@ -89,7 +89,7 @@ public class Zombie extends Mob {
         walkSprites = new Array<>();
         for (int i = 0; i <= 16; i++) {
             walkSprites.add(new Sprite(
-                    assets.get("entity/zombie/default/move/skeleton-move_" + i + ".png", Texture.class)
+                    setup("entity/zombie/default/move/skeleton-move_" + i + ".png", assets, defaultSpriteScale)
             ));
         }
 
@@ -97,7 +97,7 @@ public class Zombie extends Mob {
         attackSprites = new Array<>();
         for (int i = 0; i <= 8; i++) {
             attackSprites.add(new Sprite(
-                    assets.get("entity/zombie/default/attack/skeleton-attack_" + i + ".png", Texture.class)
+                    setup("entity/zombie/default/attack/skeleton-attack_" + i + ".png", assets, defaultSpriteScale)
             ));
         }
     }

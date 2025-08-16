@@ -196,6 +196,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         UIManager.drawWeaponHud(game.uiCanvas, game.uiShapeRenderer, game, gameCamera);
         UIManager.drawHealthBar(game.uiCanvas, game.uiShapeRenderer, game.getPlayer());
+        UIManager.drawRadar(game.uiCanvas, game.uiShapeRenderer, game);
         UIManager.drawMessageBuffer(game.uiCanvas);
         if (game.debugMode) UIManager.drawDebugInfo(game, game.uiShapeRenderer, game.uiCanvas, Gdx.graphics.getDeltaTime());
         if (gameController.gameOver) {

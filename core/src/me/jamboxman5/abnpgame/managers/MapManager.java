@@ -288,4 +288,12 @@ public class MapManager {
 			}
 		}
 	}
+
+	public Array<Zombie> getZombies() {
+		Array<Zombie> zombs = new Array<>();
+		for (Entity e : entities) {
+			if (e instanceof Zombie) zombs.add((Zombie) e);
+		}
+		return zombs;
+	}
 }
