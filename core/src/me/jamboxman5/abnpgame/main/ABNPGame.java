@@ -3,6 +3,7 @@ package me.jamboxman5.abnpgame.main;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -51,6 +52,7 @@ public class ABNPGame extends Game {
     public ShapeRenderer shapeRenderer;
     private Player player;
     private MapManager mapManager;
+    private AssetManager assetManager;
     private float zoom = 1;
     public boolean debugMode = false;
 
@@ -69,18 +71,18 @@ public class ABNPGame extends Game {
         shapeRenderer = new ShapeRenderer();
         mapManager = new MapManager(this);
         clientManager = new ClientManager(this);
+        assetManager = new AssetManager();
+
+        Fonts.initFonts();
 
         this.setScreen(new LoadingScreen(this));
 
         loadAssets();
-        Sounds.updateVolumes();
-        generatePlayer();
+//        generatePlayer();
 
         disposal = new Array<>();
 
-        Screen old = getScreen();
-        this.setScreen(new MainMenuScreen(this));
-        old.dispose();
+
     }
 
     public void render() {
@@ -98,7 +100,7 @@ public class ABNPGame extends Game {
     }
 
     public void dispose() {
-        canvas .dispose();
+        canvas.dispose();
         uiCanvas.dispose();
         shapeRenderer.dispose();
         uiShapeRenderer.dispose();
@@ -131,29 +133,21 @@ public class ABNPGame extends Game {
         if (name == null) name = "";
         if (name.equalsIgnoreCase("")) name = "Spare Brains";
 
-        player.setName(name);
+        player.setUsername(name);
 
         clientManager.connect(player, address);
 
     }
 
-
-
-
-
     public void loadAssets() {
-        Zombie.initSprites();
-        RifleM4A1.initSounds();
-        RifleM4A1.initSprites();
-        Pistol1911.initSounds();
-        Pistol1911.initSprites();
-        ShotgunWinchester12.initSounds();
-        ShotgunWinchester12.initSprites();
-        PickupWeapon.initSprites();
-        Pickup.initSprites();
-        Fonts.initFonts();
-        Sounds.initSounds();
-        Map.loadMaps();
+        Zombie.loadAssets(assetManager);
+        RifleM4A1.loadAssets(assetManager);
+        Pistol1911.loadAssets(assetManager);
+        ShotgunWinchester12.loadAssets(assetManager);
+        PickupWeapon.loadAssets(assetManager);
+        Pickup.loadAssets(assetManager);
+        Sounds.loadAssets(assetManager);
+        Map.loadAssets(assetManager);
     }
 
     public void closeMultiplayerGame() throws IOException {
@@ -195,6 +189,8 @@ public class ABNPGame extends Game {
     public boolean isHosting() {
         return (server != null);
     }
+
+    public AssetManager getAssetManager() { return assetManager; }
 
 
 

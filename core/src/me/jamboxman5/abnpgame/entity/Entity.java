@@ -2,6 +2,7 @@ package me.jamboxman5.abnpgame.entity;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -50,25 +51,6 @@ public abstract class Entity {
 
 	public abstract void update(float delta);
 	public abstract void draw(SpriteBatch batch, ShapeRenderer shape);
-	
-	public static Sprite setup(String imagePath, float scale) {
-		Texture t = new Texture(Gdx.files.internal(imagePath + ".png/"));
-		Sprite s = new Sprite(t);
-		s.scale(scale);
-		return s;
-//        BufferedImage image = null;
-//
-//        try {
-//        	InputStream src = getClass().getResourceAsStream("/me/jamboxman5/abnpgame" + imagePath + ".png");
-//            image = ImageIO.read(src);
-//
-//        } catch (IOException | IllegalArgumentException e) {
-//            e.printStackTrace();
-//            System.out.println(imagePath);
-//        }
-//
-//        return Utilities.scaleImage(image, (int)(image.getWidth() * scale), (int)(image.getHeight() * scale));
-    }
 	
 	public void moveIfCollisionNotDetected() {
 //        if (!isCollisionOn() && !gamePanel.getKeyHandler().isEnterPressed() && !gamePanel.getKeyHandler().isSpacePressed()) {
@@ -125,9 +107,8 @@ public abstract class Entity {
 	public void setRotation(float i) { rotation = i; }
 	public Shape2D getCollision() { return collision; }
 
-	protected static Sprite setup(String imagePath, Float scale) {
-		Texture t = new Texture(Gdx.files.internal(imagePath + ".png/"));
-		Sprite s = new Sprite(t);
+	protected static Sprite setup(String imagePath, AssetManager assets, Float scale) {
+		Sprite s = new Sprite(assets.get(imagePath, Texture.class));
 		if (scale == null) {
 			s.setScale(defaultSpriteScale);
 		} else {

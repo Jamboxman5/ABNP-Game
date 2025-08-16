@@ -1,5 +1,7 @@
 package me.jamboxman5.abnpgame.entity.mob.zombie;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -54,51 +56,50 @@ public class Zombie extends Mob {
 
     }
 
-    public static void initSprites() {
-        deadSprite = setup("entity/zombie/misc/Splatter", null);
-        idleSprites = new Array<>(new Sprite[]{setup("entity/zombie/default/idle/skeleton-idle_0", null),
-                setup("entity/zombie/default/idle/skeleton-idle_1", null),
-                setup("entity/zombie/default/idle/skeleton-idle_2", null),
-                setup("entity/zombie/default/idle/skeleton-idle_3", null),
-                setup("entity/zombie/default/idle/skeleton-idle_4", null),
-                setup("entity/zombie/default/idle/skeleton-idle_5", null),
-                setup("entity/zombie/default/idle/skeleton-idle_6", null),
-                setup("entity/zombie/default/idle/skeleton-idle_7", null),
-                setup("entity/zombie/default/idle/skeleton-idle_8", null),
-                setup("entity/zombie/default/idle/skeleton-idle_9", null),
-                setup("entity/zombie/default/idle/skeleton-idle_10", null),
-                setup("entity/zombie/default/idle/skeleton-idle_11", null),
-                setup("entity/zombie/default/idle/skeleton-idle_12", null),
-                setup("entity/zombie/default/idle/skeleton-idle_13", null),
-                setup("entity/zombie/default/idle/skeleton-idle_14", null),
-                setup("entity/zombie/default/idle/skeleton-idle_15", null),
-                setup("entity/zombie/default/idle/skeleton-idle_16", null)});
-        walkSprites = new Array<>(new Sprite[]{setup("entity/zombie/default/move/skeleton-move_0", null),
-                setup("entity/zombie/default/move/skeleton-move_1", null),
-                setup("entity/zombie/default/move/skeleton-move_2", null),
-                setup("entity/zombie/default/move/skeleton-move_3", null),
-                setup("entity/zombie/default/move/skeleton-move_4", null),
-                setup("entity/zombie/default/move/skeleton-move_5", null),
-                setup("entity/zombie/default/move/skeleton-move_6", null),
-                setup("entity/zombie/default/move/skeleton-move_7", null),
-                setup("entity/zombie/default/move/skeleton-move_8", null),
-                setup("entity/zombie/default/move/skeleton-move_9", null),
-                setup("entity/zombie/default/move/skeleton-move_10", null),
-                setup("entity/zombie/default/move/skeleton-move_11", null),
-                setup("entity/zombie/default/move/skeleton-move_12", null),
-                setup("entity/zombie/default/move/skeleton-move_13", null),
-                setup("entity/zombie/default/move/skeleton-move_14", null),
-                setup("entity/zombie/default/move/skeleton-move_15", null),
-                setup("entity/zombie/default/move/skeleton-move_16", null)});
-        attackSprites = new Array<>(new Sprite[]{setup("entity/zombie/default/attack/skeleton-attack_0", null),
-                setup("entity/zombie/default/attack/skeleton-attack_1", null),
-                setup("entity/zombie/default/attack/skeleton-attack_2", null),
-                setup("entity/zombie/default/attack/skeleton-attack_3", null),
-                setup("entity/zombie/default/attack/skeleton-attack_4", null),
-                setup("entity/zombie/default/attack/skeleton-attack_5", null),
-                setup("entity/zombie/default/attack/skeleton-attack_6", null),
-                setup("entity/zombie/default/attack/skeleton-attack_7", null),
-                setup("entity/zombie/default/attack/skeleton-attack_8", null)});
+    public static void loadAssets(AssetManager assets) {
+        assets.load("entity/zombie/misc/Splatter.png", Texture.class);
+
+        for (int i = 0; i <= 16; i++) {
+            assets.load("entity/zombie/default/idle/skeleton-idle_" + i + ".png", Texture.class);
+        }
+
+        for (int i = 0; i <= 16; i++) {
+            assets.load("entity/zombie/default/move/skeleton-move_" + i + ".png", Texture.class);
+        }
+
+        for (int i = 0; i <= 8; i++) {
+            assets.load("entity/zombie/default/attack/skeleton-attack_" + i + ".png", Texture.class);
+        }
+    }
+
+    public static void loadSprites(AssetManager assets) {
+
+        // Dead sprite
+        deadSprite = new Sprite(assets.get("entity/zombie/misc/Splatter.png", Texture.class));
+
+        // Idle sprites
+        idleSprites = new Array<>();
+        for (int i = 0; i <= 16; i++) {
+            idleSprites.add(new Sprite(
+                    assets.get("entity/zombie/default/idle/skeleton-idle_" + i + ".png", Texture.class)
+            ));
+        }
+
+        // Walk sprites
+        walkSprites = new Array<>();
+        for (int i = 0; i <= 16; i++) {
+            walkSprites.add(new Sprite(
+                    assets.get("entity/zombie/default/move/skeleton-move_" + i + ".png", Texture.class)
+            ));
+        }
+
+        // Attack sprites
+        attackSprites = new Array<>();
+        for (int i = 0; i <= 8; i++) {
+            attackSprites.add(new Sprite(
+                    assets.get("entity/zombie/default/attack/skeleton-attack_" + i + ".png", Texture.class)
+            ));
+        }
     }
 
     @Override

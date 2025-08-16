@@ -1,5 +1,7 @@
 package me.jamboxman5.abnpgame.entity.prop.pickup;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Shape2D;
@@ -52,7 +54,12 @@ public class PickupWeapon extends Pickup {
         return pickedUp;
     }
 
-    public static void initSprites() {
-        crateSprite = setup("entity/prop/crate", -.9f);
+    public static void loadAssets(AssetManager assets) {
+        assets.load("entity/prop/crate.png", Texture.class);
+    }
+
+    public static void loadSprites(AssetManager assets) {
+        crateSprite = setup("entity/prop/crate.png", assets, -.9f);
+
     }
 }

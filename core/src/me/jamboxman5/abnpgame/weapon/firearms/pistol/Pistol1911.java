@@ -1,7 +1,9 @@
 package me.jamboxman5.abnpgame.weapon.firearms.pistol;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
@@ -53,24 +55,41 @@ public class Pistol1911 extends Firearm {
 
 	}
 
-	public static void initSprites() {
-		hudSprite = setup("weapon/pistol/1911", .35f);
-		idleSprites = new Array<>(new Sprite[]{setup("entity/player/handgun/Player_Handgun", null)});
-		shootSprites = new Array<>(new Sprite[]{setup("entity/player/handgun/Player_Handgun_Shoot_2", null),
-				setup("entity/player/handgun/Player_Handgun_Shoot_2", null),
-				setup("entity/player/handgun/Player_Handgun_Shoot_1", null),
-				setup("entity/player/handgun/Player_Handgun_Shoot_1", null),
-				setup("entity/player/handgun/Player_Handgun_Shoot_0", null),
-				setup("entity/player/handgun/Player_Handgun_Shoot_0", null),
-				setup("entity/player/handgun/Player_Handgun_Shoot_0", null)});
-		reloadSprites = new Array<>(new Sprite[]{setup("entity/player/handgun/Player_Handgun", null)});
+	public static void loadAssets(AssetManager assets) {
+		// Sprites (Textures)
+		assets.load("weapon/pistol/1911.png", Texture.class);
+		assets.load("entity/player/handgun/Player_Handgun.png", Texture.class);
+		assets.load("entity/player/handgun/Player_Handgun_Shoot_2.png", Texture.class);
+		assets.load("entity/player/handgun/Player_Handgun_Shoot_1.png", Texture.class);
+		assets.load("entity/player/handgun/Player_Handgun_Shoot_0.png", Texture.class);
 
-
+		// Sounds
+		assets.load("sound/sfx/weapon/pistol/Pistol_Shot.wav", Sound.class);
+		assets.load("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
 	}
 
-	public static void initSounds() {
-		attackSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/pistol/Pistol_Shot.wav"));
-		reloadSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav"));
+	public static void loadSprites(AssetManager assets) {
+		hudSprite = setup("weapon/pistol/1911.png", assets, .35f);
 
+		idleSprites = new Array<>(new Sprite[]{
+				setup("entity/player/handgun/Player_Handgun.png", assets, null)
+		});
+
+		shootSprites = new Array<>(new Sprite[]{
+				setup("entity/player/handgun/Player_Handgun_Shoot_2.png", assets, null),
+				setup("entity/player/handgun/Player_Handgun_Shoot_2.png", assets, null),
+				setup("entity/player/handgun/Player_Handgun_Shoot_1.png", assets, null),
+				setup("entity/player/handgun/Player_Handgun_Shoot_1.png", assets, null),
+				setup("entity/player/handgun/Player_Handgun_Shoot_0.png", assets, null),
+				setup("entity/player/handgun/Player_Handgun_Shoot_0.png", assets, null),
+				setup("entity/player/handgun/Player_Handgun_Shoot_0.png", assets, null)
+		});
+
+		reloadSprites = new Array<>(new Sprite[]{
+				setup("entity/player/handgun/Player_Handgun.png", assets, null)
+		});
+
+		attackSound = assets.get("sound/sfx/weapon/pistol/Pistol_Shot.wav", Sound.class);
+		reloadSound = assets.get("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
 	}
 }

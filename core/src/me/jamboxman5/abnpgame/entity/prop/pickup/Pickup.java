@@ -1,5 +1,7 @@
 package me.jamboxman5.abnpgame.entity.prop.pickup;
 
+import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.Array;
@@ -34,8 +36,12 @@ public class Pickup extends Prop {
         }
     }
 
-    public static void initSprites() {
-        defaultPickupSprite = setup("entity/zombie/misc/Splatter", null);
+    public static void loadAssets(AssetManager assets) {
+        assets.load("entity/zombie/misc/Splatter.png", Texture.class);
+    }
+
+    public static void loadSprites(AssetManager assets) {
+        defaultPickupSprite = setup("entity/zombie/misc/Splatter.png", assets, null);
     }
 
     public void pickUp() {

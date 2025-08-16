@@ -352,4 +352,8 @@ public class Player extends Survivor {
 
 	public float getStaminaRatio() { return ((float)stamina)/((float)maxStamina);
 	}
+
+	public void setUsername(String name) {
+		this.name = name;
+	}
 }

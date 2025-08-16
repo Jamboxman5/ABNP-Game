@@ -3,6 +3,7 @@ package me.jamboxman5.abnpgame.weapon;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -90,9 +91,9 @@ public abstract class Weapon {
 		return new RifleM4A1();
 	}
 
-	protected static Sprite setup(String imagePath, Float scale) {
-		Texture t = new Texture(Gdx.files.internal(imagePath + ".png/"));
-		Sprite s = new Sprite(t);
+	protected static Sprite setup(String imagePath, AssetManager assets, Float scale) {
+
+		Sprite s = new Sprite(assets.get(imagePath, Texture.class));
 		if (scale == null) {
 			s.setScale(playerSpriteScale);
 		} else {

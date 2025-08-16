@@ -22,6 +22,7 @@ import me.jamboxman5.abnpgame.net.packets.PacketShoot;
 import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 
+import java.nio.channels.ClosedSelectorException;
 import java.util.HashMap;
 
 public class MapManager {
@@ -121,7 +122,6 @@ public class MapManager {
 		}
 		disposingEntities = new Array<>();
 	}
-	
 	public void drawProjectiles(ShapeRenderer renderer) {
 		for (Projectile p : projectiles) { p.draw(renderer); }
 	}

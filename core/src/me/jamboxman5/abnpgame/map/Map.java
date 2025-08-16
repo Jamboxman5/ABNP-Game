@@ -1,6 +1,7 @@
 package me.jamboxman5.abnpgame.map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
@@ -30,11 +31,19 @@ public abstract class Map {
 
 	public MapType getMapType() { return type; }
 
-	public static void loadMaps() {
-		Airbase.setTexture(new Texture(Gdx.files.internal("map/" + "Airbase" + ".png/")));
-		BlackIsle.setTexture(new Texture(Gdx.files.internal("map/" + "Black_Isle" + ".png/")));
-		Farmhouse.setTexture(new Texture(Gdx.files.internal("map/" + "Farmhouse" + ".png/")));
-		Karnivale.setTexture(new Texture(Gdx.files.internal("map/" + "Karnivale" + ".png/")));
-		Verdammtenstadt.setTexture(new Texture(Gdx.files.internal("map/" + "Verdammtenstadt" + ".png/")));
+	public static void loadMaps(AssetManager assets) {
+		Airbase.setTexture(assets.get("map/" + "Airbase" + ".png/", Texture.class));
+		BlackIsle.setTexture(assets.get("map/" + "Black_Isle" + ".png/", Texture.class));
+		Farmhouse.setTexture(assets.get("map/" + "Farmhouse" + ".png/", Texture.class));
+		Karnivale.setTexture(assets.get("map/" + "Karnivale" + ".png/", Texture.class));
+		Verdammtenstadt.setTexture(assets.get("map/" + "Verdammtenstadt" + ".png/", Texture.class));
+	}
+
+	public static void loadAssets(AssetManager assets) {
+		assets.load("map/" + "Airbase" + ".png/", Texture.class);
+		assets.load("map/" + "Black_Isle" + ".png/", Texture.class);
+		assets.load("map/" + "Farmhouse" + ".png/", Texture.class);
+		assets.load("map/" + "Karnivale" + ".png/", Texture.class);
+		assets.load("map/" + "Verdammtenstadt" + ".png/", Texture.class);
 	}
 }
