@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.mob.player.Player;
+import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.util.Fonts;
@@ -131,6 +132,16 @@ public class UIManager {
                 shape.circle(displacement.x, displacement.y, 2);
             }
 
+        }
+
+        for (Survivor s : map.getSurvivors()) {
+            Vector2 displacement = s.getPosition().cpy().sub(player.getPosition()).scl(zoomFactor).add(center);
+            if (mapBounds.contains(displacement)) {
+                shape.setColor(Color.BLUE);
+                shape.circle(displacement.x, displacement.y, 3);
+                shape.setColor((220f/255f), (220f/255f), 1f, 1f);
+                shape.circle(displacement.x, displacement.y, 2);
+            }
         }
 
         shape.setColor(Color.GREEN);

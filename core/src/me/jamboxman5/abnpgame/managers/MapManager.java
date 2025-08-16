@@ -296,4 +296,12 @@ public class MapManager {
 		}
 		return zombs;
 	}
+
+	public Array<Survivor> getSurvivors() {
+		Array<Survivor> s = new Array<>();
+		for (Entity e : survivors) {
+			if (e != game.getPlayer()) s.add((Survivor) e);
+		}
+		return s;
+	}
 }
