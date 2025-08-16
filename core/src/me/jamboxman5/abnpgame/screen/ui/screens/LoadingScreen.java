@@ -2,12 +2,17 @@ package me.jamboxman5.abnpgame.screen.ui.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
+import me.jamboxman5.abnpgame.entity.prop.pickup.Pickup;
+import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.maps.*;
@@ -18,6 +23,9 @@ import me.jamboxman5.abnpgame.script.BasicScript;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
+import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
+import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
+import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 
 public class LoadingScreen implements Screen {
 
@@ -30,18 +38,17 @@ public class LoadingScreen implements Screen {
     private final int spacer = 70;
     private long lastButton = System.currentTimeMillis();
 
-    private boolean dispose = false;
+    private float progress;
+    private long loadedTime = 0;
+    private boolean spritesLoaded = false;
 
     public LoadingScreen(final ABNPGame game) {
         this.game = game;
+        progress = 0;
         menuBKG = new Texture(Gdx.files.internal("ui/bkg/Menu_Background_1.png"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
-    }
-
-    public void markForDisposal() {
-        dispose = true;
     }
 
     @Override
@@ -89,7 +96,18 @@ public class LoadingScreen implements Screen {
 
 
     public void update() {
-        if (dispose) dispose();
+        progress = game.getAssetManager().getProgress();
+
+        if (game.getAssetManager().update() && loadedTime == 0) loadedTime = System.currentTimeMillis();
+        if (loadedTime > 0 && !spritesLoaded) {
+            loadSprites();
+            game.generatePlayer();
+            spritesLoaded = true;
+        }
+        if (loadedTime != 0 && (System.currentTimeMillis() - loadedTime) > 200) {
+            game.setScreen(new MainMenuScreen(game));
+            game.disposeScreen(this);
+        }
 
     }
 
@@ -117,10 +135,50 @@ public class LoadingScreen implements Screen {
 
         drawBKG(game.uiCanvas);
         drawTitle(game.uiCanvas);
+        drawProgress(game.shapeRenderer);
+
+
 
     }
 
+    private void loadSprites() {
+        Zombie.loadSprites(game.getAssetManager());
+        RifleM4A1.loadSprites(game.getAssetManager());
+        Pistol1911.loadSprites(game.getAssetManager());
+        ShotgunWinchester12.loadSprites(game.getAssetManager());
+        PickupWeapon.loadSprites(game.getAssetManager());
+        Pickup.loadSprites(game.getAssetManager());
+        Sounds.loadSounds(game.getAssetManager());
+        Map.loadMaps(game.getAssetManager());
+        Sounds.updateVolumes();
 
+    }
+
+    public void drawProgress(ShapeRenderer renderer) {
+
+        int width = 900;
+        int height = 100;
+        int margin = 100;
+        int weight = 4;
+
+        renderer.begin(ShapeRenderer.ShapeType.Filled);
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+        renderer.setColor((float)(100.0/255.0), 0f, 0f, .6f);
+        renderer.rect((Gdx.graphics.getWidth()/2f) - (width/2f), margin, width, height);
+        renderer.setColor(Color.RED);
+        renderer.rect((Gdx.graphics.getWidth()/2f) - (width/2f), margin, width * progress, height);
+
+
+
+        renderer.setColor(Color.WHITE);
+        renderer.setAutoShapeType(true);
+        Gdx.gl.glLineWidth(weight);
+        renderer.set(ShapeRenderer.ShapeType.Line);
+        renderer.rect((Gdx.graphics.getWidth()/2f) - (width/2f), margin, width, height);
+
+        renderer.end();
+    }
 
     private Runnable getMapSelectButtonAction(final Map selected) {
         return new Runnable() {
