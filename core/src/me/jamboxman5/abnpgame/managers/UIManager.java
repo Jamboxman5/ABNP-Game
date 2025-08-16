@@ -21,6 +21,7 @@ public class UIManager {
 
     static Sprite WeaponHudOverlay;
     static float guiScale = Settings.guiScale;
+    static float margin = Settings.hudMargin;
     static Array<String> msgBuffer = new Array<>();
     static int messageBufferCounter = 0;
     public static float fadeOut = 0f;
@@ -33,14 +34,13 @@ public class UIManager {
     public static void drawMessageBuffer(SpriteBatch batch) {
         if (msgBuffer.size == 0) return;
         messageBufferCounter++;
-        int x = 20;
         int y = Gdx.graphics.getHeight()/2;
 
         batch.begin();
 
         for (int i = 0; i < msgBuffer.size; i++) {
 
-            Fonts.drawScaled(Fonts.INFOFONT, .8f, msgBuffer.get(i), batch, x, y);
+            Fonts.drawScaled(Fonts.INFOFONT, .8f, msgBuffer.get(i), batch, margin + 2*guiScale, y);
             y += 40;
 
         }
@@ -61,29 +61,17 @@ public class UIManager {
 
         float width = 300 * guiScale;
         float height = 120 * guiScale;
-        float x = Settings.screenWidth - 20 - width;
-        float y = Settings.screenHeight-20;
-
-//        Composite comp = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, .6f);
-//        Composite old = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1f);
-//        g2.setColor(new Color(100,0,0));
-//        g2.setStroke(new BasicStroke(4));
-//        g2.setComposite(comp);
-//        g2.fillRoundRect(x, y, width, height,8,8);
-//        g2.setComposite(old);
-//        g2.setColor(Color.white);
-//        g2.drawRoundRect(x, y, width, height, 8,8);
+        float x = Settings.screenWidth - margin - width;
+        float y = Settings.screenHeight-margin;
+        Rectangle bounds = new Rectangle(x, y-height, width, height);
 
         Sprite weaponIMG = activeWeapon.getHudSprite();
-
-
-//        shape.rect(x, y-height ,  width, height);
 
         shape.begin(ShapeRenderer.ShapeType.Filled);
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
         shape.setColor((float)(100.0/255.0), 0f, 0f, .6f);
-        drawRoundRect(shape, ShapeRenderer.ShapeType.Filled, new Color((float)(100.0/255.0), 0f, 0f,0.6f), new Rectangle(x, y-height, width, height), 8);
+        drawRoundRect(shape, ShapeRenderer.ShapeType.Filled, new Color((100f/255f), 0f, 0f,0.6f), bounds, 8);
         shape.end();
 
         batch.begin();
@@ -93,18 +81,18 @@ public class UIManager {
             Firearm activeFirearm = (Firearm) activeWeapon;
             String ammo = activeFirearm.getLoadedAmmo() + " / " + activeFirearm.getAmmoCount();
 
-            x = Fonts.getXForRightAlignedText((int) (camera.viewportWidth - (30*guiScale)), ammo, Fonts.INFOFONT, .55f * guiScale);
+            x = Fonts.getXForRightAlignedText((int) (Settings.screenWidth - margin - (10*guiScale)), ammo, Fonts.INFOFONT, .55f * guiScale);
             y = y - height + (25*guiScale);
 
             Fonts.drawScaled(Fonts.INFOFONT, .55f * guiScale, ammo, batch,x, y);
-            x = camera.viewportWidth - width - 20 + (15*guiScale);
+            x = Settings.screenWidth - margin - width + (15*guiScale);
             Fonts.drawScaled(Fonts.INFOFONT, .55f * guiScale, activeFirearm.getName(), batch,x, y);
         }
 
 
 
-        x = camera.viewportWidth - 20 - (width/2);
-        y = camera.viewportHeight - (65*guiScale);
+        x = bounds.x + bounds.width/2f;
+        y = bounds.y + 15 + bounds.height/2f;
         weaponIMG.setCenter(x, y);
         float nativeScale = weaponIMG.getScaleX();
         weaponIMG.setScale(guiScale/2.5f);
@@ -116,10 +104,8 @@ public class UIManager {
     }
 
     public static void drawRadar(SpriteBatch batch, ShapeRenderer shape, ABNPGame game) {
-        Weapon activeWeapon = game.getPlayer().getWeaponLoadout().getActiveWeapon();
 
         float side = 140 * guiScale;
-        float margin = 20;
         Vector2 center = new Vector2(margin + (side/2f), margin + (side/2f));
         Rectangle mapBounds = new Rectangle(margin+4, margin+4, side-8, side-8);
 
@@ -136,10 +122,14 @@ public class UIManager {
         // draw map entities
         MapManager map = game.getMapManager();
         Player player = game.getPlayer();
-        shape.setColor(Color.RED);
         for (Zombie z : map.getZombies()) {
             Vector2 displacement = z.getPosition().cpy().sub(player.getPosition()).scl(zoomFactor).add(center);
-            if (mapBounds.contains(displacement)) shape.circle(displacement.x, displacement.y, 2);
+            if (mapBounds.contains(displacement)) {
+                shape.setColor(Color.RED);
+                shape.circle(displacement.x, displacement.y, 3);
+                shape.setColor(1f, (220f/255f), (220f/255f), 1f);
+                shape.circle(displacement.x, displacement.y, 2);
+            }
 
         }
 
@@ -184,7 +174,6 @@ public class UIManager {
 
         int width = 300;
         int height = 40;
-        int margin = 30;
         int weight = 2;
 
         renderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -213,7 +202,7 @@ public class UIManager {
         batch.begin();
         Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "HP: " + (int)player.getHealth() + "/" + (int)player.getMaxHealth(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-margin-height + (5*guiScale) + Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
         Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "Stamina: " + (int)player.getStamina() + "/" + (int)player.getMaxStamina(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-margin-(height*2)-10 + (5*guiScale) + Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
-        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "Money: $" + player.getMoney(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-(margin*2)-(height*2) - (5*guiScale) - Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "Money: $" + player.getMoney(), batch,margin + 2*guiScale, Gdx.graphics.getHeight()-(margin*2)-(height*2) - (5*guiScale) - Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
         batch.end();
 
     }

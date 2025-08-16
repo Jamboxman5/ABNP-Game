@@ -17,5 +17,5 @@ public class Settings {
     public static float maxZoom = minZoom - .25f;
 
 
-
+    public static float hudMargin = 20;
 }
