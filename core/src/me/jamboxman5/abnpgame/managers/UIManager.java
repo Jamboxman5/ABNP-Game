@@ -195,8 +195,8 @@ public class UIManager {
 
     public static void drawHealthBar(SpriteBatch batch, ShapeRenderer renderer, Player player) {
 
-        int width = 300;
-        int height = 40;
+        int width = (int) (300 * guiScale);
+        int height = (int) (30 * guiScale);
         int weight = 2;
 
         renderer.begin(ShapeRenderer.ShapeType.Filled);
