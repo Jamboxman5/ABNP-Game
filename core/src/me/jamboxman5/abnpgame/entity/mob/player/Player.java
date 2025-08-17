@@ -19,7 +19,7 @@ import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 
 public class Player extends Survivor {
 	
-	private final static int defaultSpeed = 8;
+	private final static int defaultSpeed = 5;
 	private String gamerTag;
 	protected int money;
 	protected int stamina = 200;
@@ -223,11 +223,6 @@ public class Player extends Survivor {
 	
 
 		
-	}
-
-	public void updateScreenX() {
-		screenX = Gdx.graphics.getWidth()/2;
-		screenY = Gdx.graphics.getHeight()/2;
 	}
 
 	@Override
