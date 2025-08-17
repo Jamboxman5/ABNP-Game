@@ -33,13 +33,17 @@ public class LoadingScreen implements Screen {
     final ABNPGame game;
     OrthographicCamera camera;
 
-    private final String title = "Loading...";
+    private final String title = "Loading";
+    private String dots = "";
+    private int loadingCounter = 0;
+
     private final int alignX = Gdx.graphics.getWidth() - 40;
     private final int spacer = 70;
     private long lastButton = System.currentTimeMillis();
 
     private float progress;
     private long loadedTime = 0;
+    private long loadStart = 0;
     private boolean spritesLoaded = false;
 
     public LoadingScreen(final ABNPGame game) {
@@ -53,7 +57,7 @@ public class LoadingScreen implements Screen {
 
     @Override
     public void show() {
-
+        loadStart = System.currentTimeMillis();
     }
 
     @Override
@@ -96,7 +100,18 @@ public class LoadingScreen implements Screen {
 
 
     public void update() {
+        dots = "";
         progress = game.getAssetManager().getProgress();
+        long delta = System.currentTimeMillis() - loadStart;
+        if (delta >= 2000) {
+            loadStart = System.currentTimeMillis();
+            delta = 0;
+        }
+
+        int addDots = (int) (delta / 500);
+        for (int i = 0; i < addDots; i++) {
+            dots += ".";
+        }
 
         if (game.getAssetManager().update() && loadedTime == 0) loadedTime = System.currentTimeMillis();
         if (loadedTime > 0 && !spritesLoaded) {
@@ -121,10 +136,11 @@ public class LoadingScreen implements Screen {
     public void drawTitle(SpriteBatch batch) {
         batch.begin();
 
-        int x = 60;
-        int y = Gdx.graphics.getHeight() - 220;
+        float x = Fonts.getXForCenteredText(Settings.screenWidth/2, title, Fonts.SUBTITLEFONT);
+        float height = 20*Settings.guiScale;
+        float y = Settings.hudMargin*3 + height + Settings.hudMargin*3;
 
-        Fonts.drawScaled(Fonts.TITLEFONT, .6f, title, batch, x, y + Fonts.getTextHeight(title, Fonts.TITLEFONT, 1f));
+        Fonts.drawScaled(Fonts.SUBTITLEFONT, 1f, title + dots, batch, x, y + Fonts.getTextHeight(title, Fonts.SUBTITLEFONT, 1f));
 //
 //        y -= 90;
 //        Fonts.drawScaled(Fonts.SUBTITLEFONT, .841f, subTitle, batch, x, y+ Fonts.getTextHeight(title, Fonts.SUBTITLEFONT, 1f));
@@ -156,18 +172,18 @@ public class LoadingScreen implements Screen {
 
     public void drawProgress(ShapeRenderer renderer) {
 
-        int width = 900;
-        int height = 100;
-        int margin = 100;
+        float width = Settings.screenWidth - (Settings.hudMargin * 6);
+        float height = 20*Settings.guiScale;
+        float margin = Settings.hudMargin * 3;
         int weight = 4;
 
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
         renderer.setColor((float)(100.0/255.0), 0f, 0f, .6f);
-        renderer.rect((Gdx.graphics.getWidth()/2f) - (width/2f), margin, width, height);
+        renderer.rect((Settings.screenWidth/2f) - (width/2f), margin, width, height);
         renderer.setColor(Color.RED);
-        renderer.rect((Gdx.graphics.getWidth()/2f) - (width/2f), margin, width * progress, height);
+        renderer.rect((Settings.screenWidth/2f) - (width/2f), margin, width * progress, height);
 
 
 
@@ -175,7 +191,7 @@ public class LoadingScreen implements Screen {
         renderer.setAutoShapeType(true);
         Gdx.gl.glLineWidth(weight);
         renderer.set(ShapeRenderer.ShapeType.Line);
-        renderer.rect((Gdx.graphics.getWidth()/2f) - (width/2f), margin, width, height);
+        renderer.rect((Settings.screenWidth/2f) - (width/2f), margin, width, height);
 
         renderer.end();
     }
