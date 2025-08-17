@@ -18,6 +18,9 @@ public class DesktopLauncher {
 		config.setForegroundFPS(60);
 		config.setResizable(false);
 		config.setTitle("ABNPGame");
+
+		config.setWindowIcon("icons/GameIcon.png");
+
 		new Lwjgl3Application(new ABNPGame(), config);
 	}
 }
