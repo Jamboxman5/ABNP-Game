@@ -37,7 +37,6 @@ public class ArcadeMenuScreen implements Screen {
     public Button equipButton;
     public Button unlocksButton;
     public Button backButton1;
-    public Button backButton2;
     public Button activeButton;
 
 
@@ -180,7 +179,7 @@ public class ArcadeMenuScreen implements Screen {
         int buttonMidSpace = (int) (Settings.screenHeight/16f);
         int buttonHeight = (int) (Settings.screenHeight/4f);
 
-        buttons = new Button[6];
+        buttons = new Button[5];
         playButton = new Button(buttonXSpace, Settings.screenHeight - buttonTopSpace, Settings.screenWidth/3, buttonHeight, "Play", Fonts.BUTTONFONT);
         shopButton = new Button(buttonXSpace, Settings.screenHeight - buttonTopSpace - buttonHeight - buttonMidSpace, buttonWidth, buttonHeight, "Shop", Fonts.BUTTONFONT);
         equipButton = new Button(Settings.screenWidth - buttonXSpace - buttonWidth, Settings.screenHeight - buttonTopSpace, buttonWidth, buttonHeight, "Equip", Fonts.BUTTONFONT);
@@ -192,13 +191,11 @@ public class ArcadeMenuScreen implements Screen {
         buttons[3] = unlocksButton;
 
         int y = 80;
-        int x = 80;
+        int x = 40;
 
 
-        backButton1 = new Button(x, y - 25, "Main Menu", Fonts.BUTTONFONT, 1f);
-        backButton2 = new Button(x-40, y - 25, ">", Fonts.BUTTONFONT, Color.RED);
+        backButton1 = new Button(x, y - 25, "< Main Menu", Fonts.BUTTONFONT, 1f);
         buttons[4] = backButton1;
-        buttons[5] = backButton2;
 
         Runnable backAction = new Runnable() {
             @Override
@@ -210,7 +207,6 @@ public class ArcadeMenuScreen implements Screen {
         };
 
         backButton1.setAction(backAction);
-        backButton2.setAction(backAction);
 
         playButton.setAction(new Runnable() {
             @Override

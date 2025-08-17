@@ -10,12 +10,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import me.jamboxman5.abnpgame.data.SettingsData;
 import me.jamboxman5.abnpgame.main.ABNPGame;
-import me.jamboxman5.abnpgame.map.Map;
-import me.jamboxman5.abnpgame.map.maps.*;
-import me.jamboxman5.abnpgame.net.packets.PacketMap;
-import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ui.elements.Button;
-import me.jamboxman5.abnpgame.script.BasicScript;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
@@ -56,8 +51,6 @@ public class SettingsMenuScreen implements Screen {
     private int selectedMusVolume;
     private int selectedSfxVolume;
 
-    private boolean dispose = false;
-
     public SettingsMenuScreen(final ABNPGame game) {
         this.game = game;
         menuBKG = new Texture(Gdx.files.internal("ui/bkg/Menu_Background_1.png"));
@@ -71,10 +64,6 @@ public class SettingsMenuScreen implements Screen {
         selectedMusVolume = Math.round(Settings.musVolume * 10);
         selectedSfxVolume = Math.round(Settings.sfxVolume * 10);
 
-    }
-
-    public void markForDisposal() {
-        dispose = true;
     }
 
     @Override
@@ -130,7 +119,6 @@ public class SettingsMenuScreen implements Screen {
                 lastButton = System.currentTimeMillis();
             }
         }
-        if (dispose) dispose();
     }
 
     public void drawBKG(SpriteBatch batch) {
@@ -162,13 +150,13 @@ public class SettingsMenuScreen implements Screen {
 
         drawBKG(game.uiCanvas);
         drawTitle(game.uiCanvas);
-        drawLabels(game.uiCanvas, game.uiShapeRenderer);
+        drawLabels(game.uiCanvas);
         drawButtons(game.uiCanvas, game.uiShapeRenderer);
-        drawValues(game.uiCanvas, game.uiShapeRenderer);
+        drawValues(game.uiCanvas);
 
     }
 
-    public void drawValues(SpriteBatch batch, ShapeRenderer renderer) {
+    public void drawValues(SpriteBatch batch) {
         int half = Settings.screenWidth/2;
 
         batch.begin();
@@ -193,7 +181,7 @@ public class SettingsMenuScreen implements Screen {
         batch.end();
     }
 
-    public void drawLabels(SpriteBatch batch, ShapeRenderer renderer) {
+    public void drawLabels(SpriteBatch batch) {
         float margin = Settings.hudMargin;
         batch.begin();
 

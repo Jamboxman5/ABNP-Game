@@ -67,7 +67,7 @@ public class ShotgunWinchester12 extends Firearm {
 	}
 
 	public static void loadSprites(AssetManager assets) {
-		hudSprite = setup("weapon/shotgun/Winchester12.png", assets, .35f);
+		hudSprite = setup("weapon/shotgun/Winchester12.png", assets, .15f);
 
 		idleSprites = new Array<>(new Sprite[]{
 				setup("entity/player/shotgun/Player_Shotgun.png", assets, .25f)

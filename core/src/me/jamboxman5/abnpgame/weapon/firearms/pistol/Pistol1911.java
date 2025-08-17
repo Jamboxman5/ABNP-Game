@@ -69,7 +69,7 @@ public class Pistol1911 extends Firearm {
 	}
 
 	public static void loadSprites(AssetManager assets) {
-		hudSprite = setup("weapon/pistol/1911.png", assets, .35f);
+		hudSprite = setup("weapon/pistol/1911.png", assets, .1f);
 
 		idleSprites = new Array<>(new Sprite[]{
 				setup("entity/player/handgun/Player_Handgun.png", assets, null)

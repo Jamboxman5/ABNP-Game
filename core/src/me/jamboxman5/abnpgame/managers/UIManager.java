@@ -95,7 +95,7 @@ public class UIManager {
         y = bounds.y + 15 + bounds.height/2f;
         weaponIMG.setCenter(x, y);
         float nativeScale = weaponIMG.getScaleX();
-        weaponIMG.setScale(Settings.guiScale/2.5f);
+        weaponIMG.setScale(Settings.guiScale*nativeScale);
         weaponIMG.draw(batch);
         weaponIMG.setScale(nativeScale);
 
