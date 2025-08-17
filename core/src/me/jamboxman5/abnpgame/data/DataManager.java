@@ -5,6 +5,7 @@ import com.badlogic.gdx.utils.Array;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
 import me.jamboxman5.abnpgame.entity.mob.player.Player;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.main.ABNPGame;
@@ -55,8 +56,13 @@ public class DataManager {
 
         JsonObject weaponsOBJ = playerOBJ.get("weaponLoadout").getAsJsonObject();
         WeaponLoadout loadout = WeaponData.generateWeapons(weaponsOBJ);
+        Ally ally = null;
+        if (playerOBJ.has("ally")) ally = AllyData.loadFromJson(playerOBJ.getAsJsonObject("ally"));
 
         Player player = new Player(ABNPGame.getInstance(), name, uuid);
+
+        if (ally != null) player.addCompanion(ally);
+
         player.setWeaponLoadout(loadout);
         player.setMoney(money);
         player.setExp(exp);
@@ -89,6 +95,11 @@ public class DataManager {
         playerOBJ.addProperty("experience", p.getExp());
         playerOBJ.add("weaponLoadout", WeaponData.convertToJson(p.getWeaponLoadout()));
         playerOBJ.add("purchasedWeapons", new JsonArray());
+        if (p.getCompanions().size > 0) {
+            for (Ally a : p.getCompanions()) {
+                playerOBJ.add("ally", AllyData.convertToJson(a));
+            }
+        }
 
         shiftSave(playerOBJ.toString(), localPlayerPath);
 //        try {

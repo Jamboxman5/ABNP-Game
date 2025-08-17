@@ -38,5 +38,25 @@
 			}
 		]
 	},
+	"ally": {
+		"name": "Sarge",
+		"experience": 0,
+		"weaponLoadout": {
+			"weapons": [
+				{
+					"type": "M1911",
+					"loaded": 8,
+					"ammoType": "StandardAmmo",
+					"mods": []
+				}
+			],
+			"ammo": [
+				{
+					"type": "StandardAmmo",
+					"count": 100
+				}
+			]
+		}
+	},
 	"purchasedWeapons": []
 }

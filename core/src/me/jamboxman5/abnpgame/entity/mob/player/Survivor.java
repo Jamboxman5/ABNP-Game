@@ -14,6 +14,7 @@ public abstract class Survivor extends Mob {
 
     protected Vector2 aimTarget;
     protected float rotationSpeed;
+    protected int exp;
 
     public Survivor(ABNPGame gamePanel, String type, Vector2 startPos, int health, int maxHealth, int speed) {
         super(gamePanel, type, startPos, health, maxHealth, speed);
@@ -37,6 +38,10 @@ public abstract class Survivor extends Mob {
         shape.circle(end.x, end.y, 1, 4);
 
     }
+    public WeaponLoadout getWeaponLoadout() { return weapons; }
+    public void setWeaponLoadout(WeaponLoadout newLoadout) {
+        weapons = newLoadout;
+    }
 
     public void setAnimFrame(int i) {
         animFrame = i;
@@ -46,4 +51,6 @@ public abstract class Survivor extends Mob {
         return getAngleToPoint(aimTarget);
     }
     public Vector2 getAimVector() { return aimTarget; }
+    public void setExp(int exp) { this.exp = exp; }
+    public int getExp() { return exp; }
 }

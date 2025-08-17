@@ -10,6 +10,8 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
 import me.jamboxman5.abnpgame.net.packets.PacketShoot;
@@ -23,13 +25,14 @@ public class Player extends Survivor {
 	private String gamerTag;
 	protected int money;
 	protected int stamina = 200;
-	protected int exp;
 
 	protected boolean sprinting = false;
 	protected int maxStamina = 200;
 	protected int staminaRegenMS = 100;
 	protected int staminaRegenRate = 1;
 	protected long lastStaminaRegen = 0;
+
+	protected Array<Ally> companions;
 
 	public Player(ABNPGame gamePanel, String name, String uuid) {
 		super(gamePanel, 
@@ -44,6 +47,7 @@ public class Player extends Survivor {
 
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
+		companions = new Array<>();
 
 		footstep1 = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/entity/player/footsteps/Player_Footstep_1.wav"));
 		footstep2 = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/entity/player/footsteps/Player_Footstep_2.wav"));
@@ -317,7 +321,6 @@ public class Player extends Survivor {
 		}
 		
 	}
-	public WeaponLoadout getWeaponLoadout() { return weapons; }
 	public int getScreenX() { return Gdx.graphics.getWidth()/2; }
 	public int getScreenY() { return Gdx.graphics.getHeight()/2; }
 	public void setName(String newName) { gamerTag = newName; }
@@ -338,13 +341,9 @@ public class Player extends Survivor {
 		return getDrawingAngle();
 	}
 
-	public void setWeaponLoadout(WeaponLoadout newLoadout) {
-		weapons = newLoadout;
-	}
 
 	public void setMoney(int money) { this.money = money; }
-	public void setExp(int exp) { this.exp = exp; }
-	public int getExp() { return exp; }
+
 	public int getMoney() { return money; }
 	public void giveMoney(int money) { this.money += money; }
 
@@ -368,4 +367,10 @@ public class Player extends Survivor {
 	public void setUsername(String name) {
 		this.name = name;
 	}
+
+	public void addCompanion(Ally companion) {
+		companions.add(companion);
+	}
+
+	public Array<Ally> getCompanions() { return companions; }
 }

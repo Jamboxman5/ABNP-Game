@@ -13,9 +13,8 @@ public class Ally extends Survivor {
 
     protected Vector2 desiredTarget;
 
-    public Ally(ABNPGame gamePanel, String type, Vector2 startPos, int health, int maxHealth, int speed) {
-        super(gamePanel, type, startPos, health, maxHealth, speed);
-        target = gp.getPlayer().getPosition();
+    public Ally(ABNPGame gamePanel, String name) {
+        super(gamePanel, name, new Vector2(), 100, 100, 4);
         rotationSpeed = 180f;
     }
 
