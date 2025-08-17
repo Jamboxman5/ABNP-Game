@@ -162,6 +162,7 @@ public class SettingsMenuScreen implements Screen {
 
         drawBKG(game.uiCanvas);
         drawTitle(game.uiCanvas);
+        drawLabels(game.uiCanvas, game.uiShapeRenderer);
         drawButtons(game.uiCanvas, game.uiShapeRenderer);
         drawValues(game.uiCanvas, game.uiShapeRenderer);
 
@@ -172,7 +173,7 @@ public class SettingsMenuScreen implements Screen {
 
         batch.begin();
 
-        int y = 50;
+        int y = Settings.screenHeight/2;
         y += spacer;
         float x = Fonts.getXForCenteredText(half, getTextForResolution(), Fonts.BUTTONFONT);
         Fonts.drawScaled(Fonts.BUTTONFONT, 1f, getTextForResolution(), batch, x, y + Fonts.getTextHeight("/", Fonts.BUTTONFONT, 1f));
@@ -180,15 +181,35 @@ public class SettingsMenuScreen implements Screen {
 
         x = Fonts.getXForCenteredText(half, getTextForGuiScale(), Fonts.BUTTONFONT);
         Fonts.drawScaled(Fonts.BUTTONFONT, 1f, getTextForGuiScale(), batch, x, y + Fonts.getTextHeight("/", Fonts.BUTTONFONT, 1f));
-        y += spacer;
+        y = Settings.screenHeight/2;
 
         x = Fonts.getXForCenteredText(half, selectedMusVolume + "", Fonts.BUTTONFONT);
         Fonts.drawScaled(Fonts.BUTTONFONT, 1f, selectedMusVolume + "", batch, x, y + Fonts.getTextHeight("/", Fonts.BUTTONFONT, 1f));
-        y += spacer;
+        y -= spacer;
 
         x = Fonts.getXForCenteredText(half, selectedSfxVolume + "", Fonts.BUTTONFONT);
         Fonts.drawScaled(Fonts.BUTTONFONT, 1f, selectedSfxVolume + "", batch, x, y + Fonts.getTextHeight("/", Fonts.BUTTONFONT, 1f));
+
+        batch.end();
+    }
+
+    public void drawLabels(SpriteBatch batch, ShapeRenderer renderer) {
+        float margin = Settings.hudMargin;
+        batch.begin();
+
+        int y = Settings.screenHeight/2;
         y += spacer;
+        float x = margin;
+        Fonts.drawScaled(Fonts.BUTTONFONT, 1f, "Resolution:", batch, x, y + Fonts.getTextHeight("/", Fonts.BUTTONFONT, 1f));
+        y += spacer;
+
+        Fonts.drawScaled(Fonts.BUTTONFONT, 1f, "GUI Scale:", batch, x, y + Fonts.getTextHeight("/", Fonts.BUTTONFONT, 1f));
+        y = Settings.screenHeight/2;
+
+        Fonts.drawScaled(Fonts.BUTTONFONT, 1f, "Music Volume" + "", batch, x, y + Fonts.getTextHeight("/", Fonts.BUTTONFONT, 1f));
+        y -= spacer;
+
+        Fonts.drawScaled(Fonts.BUTTONFONT, 1f, "SFX Volume" + "", batch, x, y + Fonts.getTextHeight("/", Fonts.BUTTONFONT, 1f));
 
         batch.end();
     }
@@ -218,7 +239,7 @@ public class SettingsMenuScreen implements Screen {
 
         int quarter = Settings.screenWidth/4;
 
-        int y = 50;
+        int y = Settings.screenHeight/2;
         y += spacer;
         resLeft = new Button(quarter, y, "<", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
         resRight = new Button(quarter*3, y, ">", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
@@ -226,15 +247,14 @@ public class SettingsMenuScreen implements Screen {
 
         guiLeft = new Button(quarter, y, "<", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
         guiRight = new Button(quarter*3, y, ">", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
-        y += spacer;
+        y = Settings.screenHeight/2;
 
         musLeft = new Button(quarter, y, "<", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
         musRight = new Button(quarter*3, y, ">", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
-        y += spacer;
+        y -= spacer;
 
         sfxLeft = new Button(quarter, y, "<", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
         sfxRight = new Button(quarter*3, y, ">", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
-        y += spacer;
 
 
         int x = Gdx.graphics.getWidth() - alignX;
