@@ -81,48 +81,13 @@ public class DataManager {
     }
     public static void save(Player p) {
         JsonObject playerOBJ = new JsonObject();
-        JsonObject weaponLoadoutOBJ = new JsonObject();
-        JsonArray weaponsArr = new JsonArray();
 
-        for (Weapon weapon : p.getWeaponLoadout().getWeapons()) {
-            JsonObject weaponOBJ = new JsonObject();
-            weaponOBJ.addProperty("type", weapon.getType().toString());
-            if (weapon instanceof Firearm) {
-                Firearm firearm = (Firearm) weapon;
-                weaponOBJ.addProperty("loaded", firearm.getLoadedAmmo());
-                weaponOBJ.addProperty("ammoType", firearm.getAmmoType().toString());
-            }
-            JsonArray modsArr = new JsonArray();
-            for (WeaponMod mod : weapon.getModLoadout().getMods()) {
-                JsonObject modOBJ = new JsonObject();
-                modOBJ.addProperty("type", mod.getType().toString());
-                modsArr.add(modOBJ);
-            }
-            weaponOBJ.add("mods", modsArr);
-            weaponsArr.add(weaponOBJ);
-        }
-
-        weaponLoadoutOBJ.add("weapons", weaponsArr);
-
-        JsonArray ammoArray = new JsonArray();
-
-        Set<Ammo.AmmoType> typesCovered = new HashSet<>();
-        for (Firearm firearm : p.getWeaponLoadout().getFirearms()) {
-            if (!typesCovered.contains(firearm.getAmmoType())) {
-                typesCovered.add(firearm.getAmmoType());
-                JsonObject ammo = new JsonObject();
-                ammo.addProperty("type", firearm.getAmmoType().toString());
-                ammo.addProperty("count", firearm.getAmmoCount());
-                ammoArray.add(ammo);
-            }
-        }
-
-        weaponLoadoutOBJ.add("ammo", ammoArray);
 
         playerOBJ.addProperty("username", p.getUsername());
+        playerOBJ.addProperty("uuid", p.getID());
         playerOBJ.addProperty("money", p.getMoney());
         playerOBJ.addProperty("experience", p.getExp());
-        playerOBJ.add("weaponLoadout", weaponLoadoutOBJ);
+        playerOBJ.add("weaponLoadout", WeaponData.convertToJson(p.getWeaponLoadout()));
         playerOBJ.add("purchasedWeapons", new JsonArray());
 
         shiftSave(playerOBJ.toString(), localPlayerPath);

@@ -12,6 +12,9 @@ import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponMod;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class WeaponData {
 
     public static WeaponLoadout generateWeapons(String json) {
@@ -54,6 +57,50 @@ public class WeaponData {
             ammos.add(ammo);
         }
         return new WeaponLoadout(weapons, ammos);
+    }
+
+    protected static JsonObject convertToJson(WeaponLoadout loadout) {
+        JsonObject weaponLoadoutOBJ = new JsonObject();
+        JsonArray weaponsArr = new JsonArray();
+
+        for (Weapon weapon : loadout.getWeapons()) {
+            weaponsArr.add(convertToJson(weapon));
+        }
+
+        JsonArray ammoArray = new JsonArray();
+        for (Ammo ammo : loadout.getAmmos()) {
+            ammoArray.add(convertToJson(ammo));
+        }
+
+        weaponLoadoutOBJ.add("weapons", weaponsArr);
+        weaponLoadoutOBJ.add("ammo", ammoArray);
+
+        return weaponLoadoutOBJ;
+    }
+
+    protected static JsonObject convertToJson(Weapon weapon) {
+        JsonObject weaponOBJ = new JsonObject();
+        weaponOBJ.addProperty("type", weapon.getType().toString());
+        if (weapon instanceof Firearm) {
+            Firearm firearm = (Firearm) weapon;
+            weaponOBJ.addProperty("loaded", firearm.getLoadedAmmo());
+            weaponOBJ.addProperty("ammoType", firearm.getAmmoType().toString());
+        }
+        JsonArray modsArr = new JsonArray();
+        for (WeaponMod mod : weapon.getModLoadout().getMods()) {
+            JsonObject modOBJ = new JsonObject();
+            modOBJ.addProperty("type", mod.getType().toString());
+            modsArr.add(modOBJ);
+        }
+        weaponOBJ.add("mods", modsArr);
+        return weaponOBJ;
+    }
+
+    protected static JsonObject convertToJson(Ammo ammo) {
+        JsonObject ammoOBJ = new JsonObject();
+        ammoOBJ.addProperty("type", ammo.getType().toString());
+        ammoOBJ.addProperty("count", ammo.getAmmoCount());
+        return ammoOBJ;
     }
 
 }
