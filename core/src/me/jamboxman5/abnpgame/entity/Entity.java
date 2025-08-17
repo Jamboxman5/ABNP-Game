@@ -123,20 +123,22 @@ public abstract class Entity {
 	public void drawCollision(ShapeRenderer shape) {
 		ABNPGame gp = ABNPGame.getInstance();
 
+		shape.begin(ShapeRenderer.ShapeType.Filled);
+		shape.setAutoShapeType(true);
+		shape.setColor(Color.RED);
+		shape.circle(getWorldX(), getWorldY(), 2);
 
 		if (collision instanceof Circle) {
 			Circle circle = (Circle) getCollision();
 
-			shape.begin(ShapeRenderer.ShapeType.Line);
-			shape.setColor(Color.RED);
+			shape.set(ShapeRenderer.ShapeType.Line);
 			shape.circle(circle.x, circle.y, circle.radius); // world coords directly
 			shape.end();
 
 		} else if (collision instanceof Polygon) {
 			Polygon poly = (Polygon) getCollision();
 
-			shape.begin(ShapeRenderer.ShapeType.Line);
-			shape.setColor(Color.RED);
+			shape.set(ShapeRenderer.ShapeType.Line);
 			shape.polygon(poly.getTransformedVertices()); // already in world coords
 			shape.end();
 		}

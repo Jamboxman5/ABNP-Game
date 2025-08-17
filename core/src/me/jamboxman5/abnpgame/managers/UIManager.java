@@ -207,9 +207,9 @@ public class UIManager {
         renderer.setColor(Color.RED);
         renderer.rect(margin, Gdx.graphics.getHeight()-margin-height, width * player.getHealthRatio(), height);
 
-        renderer.setColor((float)(100.0/255.0), (float)(100.0/255.0), 0f, .6f);
+        renderer.setColor((float)(140.0/255.0), (float)(100.0/255.0), 0f, .6f);
         renderer.rect(margin, Gdx.graphics.getHeight()-(margin)-(height*2)-10, width, height);
-        renderer.setColor(Color.YELLOW);
+        renderer.setColor(Color.ORANGE);
         renderer.rect(margin, Gdx.graphics.getHeight()-(margin)-(height*2)-10, width * player.getStaminaRatio(), height);
 
 
