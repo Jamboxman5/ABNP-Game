@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.mob.player.Player;
 import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
+import me.jamboxman5.abnpgame.entity.prop.pickup.Pickup;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
@@ -123,6 +124,17 @@ public class UIManager {
         // draw map entities
         MapManager map = game.getMapManager();
         Player player = game.getPlayer();
+        for (Pickup p : map.getPickups()) {
+            Vector2 displacement = p.getPosition().cpy().sub(player.getPosition()).scl(zoomFactor).add(center);
+            if (mapBounds.contains(displacement)) {
+                shape.setColor(Color.YELLOW);
+                shape.circle(displacement.x, displacement.y, 3);
+                shape.setColor(1f, 1f, (220f/255f), 1f);
+                shape.circle(displacement.x, displacement.y, 2);
+            }
+
+        }
+
         for (Zombie z : map.getZombies()) {
             Vector2 displacement = z.getPosition().cpy().sub(player.getPosition()).scl(zoomFactor).add(center);
             if (mapBounds.contains(displacement)) {

@@ -13,6 +13,7 @@ import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.entity.projectile.Projectile;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
+import me.jamboxman5.abnpgame.entity.prop.pickup.Pickup;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.maps.Verdammtenstadt;
@@ -301,6 +302,14 @@ public class MapManager {
 		Array<Survivor> s = new Array<>();
 		for (Entity e : survivors) {
 			if (e != game.getPlayer()) s.add((Survivor) e);
+		}
+		return s;
+	}
+
+	public Array<Pickup> getPickups() {
+		Array<Pickup> s = new Array<>();
+		for (Entity e : entities) {
+			if (e instanceof Pickup) s.add((Pickup) e);
 		}
 		return s;
 	}

@@ -172,6 +172,7 @@ public class SettingsMenuScreen implements Screen {
         batch.begin();
 
         int y = 50;
+        y += spacer;
         float x = Fonts.getXForCenteredText(half, getTextForResolution(), Fonts.BUTTONFONT);
         Fonts.drawScaled(Fonts.BUTTONFONT, 1f, getTextForResolution(), batch, x, y + Fonts.getTextHeight("/", Fonts.BUTTONFONT, 1f));
         y += spacer;
@@ -217,6 +218,7 @@ public class SettingsMenuScreen implements Screen {
         int quarter = Settings.screenWidth/4;
 
         int y = 50;
+        y += spacer;
         resLeft = new Button(quarter, y, "<", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
         resRight = new Button(quarter*3, y, ">", Fonts.BUTTONFONT, Button.TextAlign.RIGHT);
         y += spacer;
