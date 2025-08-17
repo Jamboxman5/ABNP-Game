@@ -32,19 +32,27 @@ public class Prop extends Entity {
 
     @Override
     public void draw(SpriteBatch batch, ShapeRenderer shape) {
-        int x = (int) (((position.x - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
-        int y = (int) (((position.y - gp.getPlayer().getWorldY())*.5) + gp.getPlayer().getScreenY());
+        // Make sure the batch is using your camera projection
 
         batch.begin();
+
         Sprite toDraw = activeSprite;
 
-        batch.setTransformMatrix(new Matrix4().translate((float) x, (float) y, 0).rotate(0f, 0f, 1f, getRotation()));
-        toDraw.setPosition((-toDraw.getWidth() / 2), (-toDraw.getHeight() / 2));
+        // Translate to world position, rotate around center
+        batch.setTransformMatrix(
+                new Matrix4()
+                        .translate(position.x, position.y, 0)
+                        .rotate(0f, 0f, 1f, getRotation())
+        );
+
+        // Draw sprite centered on its position
+        toDraw.setPosition(-toDraw.getWidth() / 2f, -toDraw.getHeight() / 2f);
         toDraw.draw(batch);
+
+        // Reset transform so later things don’t inherit it
         batch.setTransformMatrix(new Matrix4());
 
-
         batch.end();
-
     }
+
 }

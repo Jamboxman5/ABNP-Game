@@ -8,9 +8,13 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Cursor;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FillViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.Viewport;
 import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieNormal;
@@ -30,6 +34,7 @@ import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 
+import javax.swing.text.View;
 import java.io.IOException;
 
 public class GameScreen implements Screen, InputProcessor {
@@ -37,6 +42,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     private final OrthographicCamera gameCamera;
     private final OrthographicCamera uiCamera;
+    private final Viewport viewport;
 
     long debugToggleTime;
 
@@ -47,11 +53,11 @@ public class GameScreen implements Screen, InputProcessor {
 
     Sound purchaseSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/menu/Purchase.wav"));
 
+
     MissionScript gameController;
 
     public GameScreen(final ABNPGame game, Map activeMap, MissionScript controller) {
         this.game = game;
-
         gameCamera = new OrthographicCamera();
         uiCamera = new OrthographicCamera();
         debugToggleTime = System.currentTimeMillis();
@@ -62,6 +68,7 @@ public class GameScreen implements Screen, InputProcessor {
         Gdx.input.setInputProcessor(this);
 
         game.getMapManager().setMap(activeMap);
+        viewport = new FitViewport(1280, 720, gameCamera);
 //        UIManager.setupElements();
 
         gameController = controller;
@@ -103,6 +110,7 @@ public class GameScreen implements Screen, InputProcessor {
         ScreenUtils.clear(0f, 0, 0f, 1);
 
         // tell the camera to update its matrices.
+        gameCamera.position.set(game.getPlayer().getWorldX(), game.getPlayer().getWorldY(), 0);
         gameCamera.update();
         uiCamera.update();
 
@@ -223,11 +231,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     @Override
     public void resize(int width, int height) {
-//        Settings.screenWidth = width;
-//        Settings.screenHeight = height;
-//        game.canvas.setProjectionMatrix(gameCamera.combined);
-
-//        viewport.update(width, height);
+            viewport.update(width, height, true);
     }
 
     @Override

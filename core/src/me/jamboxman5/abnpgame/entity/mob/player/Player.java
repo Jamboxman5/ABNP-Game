@@ -229,35 +229,52 @@ public class Player extends Survivor {
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
 	}
-	
+
 	@Override
 	public void draw(SpriteBatch batch, ShapeRenderer shape) {
-
-		int x = (int) (position.x - gp.getPlayer().getWorldX() + screenX);
-		int y = (int) (position.y - gp.getPlayer().getWorldY() + screenY);
 
 		if (weapons.getActiveWeapon().hasRedDotSight()) {
 			Gdx.gl.glEnable(GL30.GL_BLEND);
 			Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 			shape.begin(ShapeRenderer.ShapeType.Filled);
-			drawRedDotSight(shape, new Vector2(screenX, screenY), gp.getMousePointer());
+
+			// Convert start/end to world coords if needed
+			Vector2 start = new Vector2(
+					(getWorldX() - gp.getPlayer().getWorldX()) * 0.5f + gp.getPlayer().getScreenX(),
+					(getWorldY() - gp.getPlayer().getWorldY()) * 0.5f + gp.getPlayer().getScreenY()
+			);
+			drawRedDotSight(shape, start, gp.getMousePointer());
 			shape.end();
 		}
 
+
 		batch.begin();
 		Sprite toDraw = weapons.getActiveWeapon().getPlayerSprite(animFrame);
+
 		if (gp.getPlayer().equals(this)) {
-			batch.setTransformMatrix(new Matrix4().translate(x, y, 0).rotate(0f, 0f, 1f, (float) (Math.toDegrees(getDrawingAngle()) + 360) + jitter));
-			toDraw.setPosition((-toDraw.getWidth() / 2) + weapons.getActiveWeapon().getXOffset(), (-toDraw.getHeight() / 2) + weapons.getActiveWeapon().getYOffset());
+			// Translate + rotate around custom pivot
+			Matrix4 transform = new Matrix4()
+					.translate(position.x, position.y, 0) // move to player world position
+					.rotate(0f, 0f, 1f, (float) (Math.toDegrees(getDrawingAngle()) + 360) + jitter);
+
+			batch.setTransformMatrix(transform);
+
+			// Offset sprite so it rotates around the right pivot point
+			toDraw.setPosition(
+					-toDraw.getWidth() / 2f + weapons.getActiveWeapon().getXOffset(),
+					-toDraw.getHeight() / 2f + weapons.getActiveWeapon().getYOffset()
+			);
 
 			toDraw.draw(batch);
+
+			// Reset matrix so other things don’t inherit this rotation
 			batch.setTransformMatrix(new Matrix4());
-
 		}
+
 		batch.end();
-
-
 	}
+
+
 
 	private void setDefaults() {
 //		setSpeed(6.5);

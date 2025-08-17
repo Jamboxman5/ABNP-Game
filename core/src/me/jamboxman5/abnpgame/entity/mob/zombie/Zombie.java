@@ -161,11 +161,14 @@ public class Zombie extends Mob {
 
         batch.begin();
         Sprite toDraw = activeSprites.get(animFrame);
+        toDraw.setOriginCenter();
+        toDraw.setRotation(getRotation());
 
-        batch.setTransformMatrix(new Matrix4().translate((float) x, (float) y, 0).rotate(0f, 0f, 1f, getRotation()));
-        toDraw.setPosition((-toDraw.getWidth() / 2), (-toDraw.getHeight() / 2));
+        // position is in world coords, so just use it directly
+        toDraw.setPosition(position.x - toDraw.getWidth() / 2f,
+                position.y - toDraw.getHeight() / 2f);
+
         toDraw.draw(batch);
-        batch.setTransformMatrix(new Matrix4());
 
 
         batch.end();

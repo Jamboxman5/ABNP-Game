@@ -61,8 +61,9 @@ public class MapManager {
 //		int screenY = 0;
 
 		batch.begin();
-		activeMap.getImage().setScale(.5f);
-		activeMap.getImage().setOrigin(screenX, screenY);
+		activeMap.getImage().setScale(0.5f);
+		activeMap.getImage().setOrigin(0, 0);
+		activeMap.getImage().setPosition(0, 0); // map stays at world origin
 		activeMap.getImage().draw(batch);
 
 		batch.end();
@@ -134,32 +135,31 @@ public class MapManager {
 		if (splatters.size == 0) return;
 		splatterTimer++;
 
-
+		// Use camera projection instead of manual offsets
 		batch.begin();
 
 		for (int i = 0; i < splatters.size; i++) {
 			Vector3 position = splatterLocs.get(splatters.get(i));
-
-			int x = (int) (((position.x - game.getPlayer().getWorldX())*.5) + game.getPlayer().getScreenX());
-			int y = (int) (((position.y - game.getPlayer().getWorldY())*.5) + game.getPlayer().getScreenY());
 			float opacity = position.z;
 
-			splatters.get(i).setAlpha(opacity);
-			splatters.get(i).setCenter(x, y);
-			splatters.get(i).draw(batch);
+			Sprite splatter = splatters.get(i);
+			splatter.setAlpha(opacity);
+			splatter.setCenter(position.x, position.y); // world coords directly
+			splatter.draw(batch);
 
 			if (position.z > 0) position.z -= .002f;
-
 		}
+
 		if (splatterTimer > 600) {
-			splatterLocs.remove(splatters.get(splatters.size-1));
-			splatters.removeIndex(splatters.size-1);
+			splatterLocs.remove(splatters.get(splatters.size - 1));
+			splatters.removeIndex(splatters.size - 1);
 			splatterTimer = 0;
 		}
 
 		batch.end();
 	}
-	
+
+
 	public void disposeProjectile(Projectile p) {
 		disposingProjectiles.add(p);
 	}
@@ -169,34 +169,6 @@ public class MapManager {
 	public void addEntity(Entity entity) { entities.add(entity); }
 
 	public Array<Entity> getEntities() { return entities; }
-
-//	public void removeConnectedPlayer(String username) {
-//		for (int i = 0; i < entities.size; i++) {
-//			if (entities.get(i) instanceof OnlinePlayer &&
-//				((OnlinePlayer)entities.get(i)).getUsername().equals(username)) {
-//				entities.removeIndex(i);
-//				break;
-//			}
-//		}
-//	}
-//
-//	private int getConnectedPlayerIndex(String username) {
-//		for (int i = 0; i < entities.size; i++) {
-//			if (entities.get(i) instanceof OnlinePlayer &&
-//				((OnlinePlayer)entities.get(i)).getUsername().equals(username)) {
-//				return i;
-//			}
-//		}
-//		return -1;
-//	}
-//
-//	public void movePlayer(String username, double x, double y, float rotation) {
-//		int index = getConnectedPlayerIndex(username);
-//		if (index < 0) return;
-//		entities.get(index).setWorldX(x);
-//		entities.get(index).setWorldY(y);
-//		entities.get(index).setRotation(rotation);
-//	}
 
 	public void setMap(Map newMap) {
 		if (newMap != null) newMap.load();
@@ -215,14 +187,6 @@ public class MapManager {
 	}
 	
 	public Array<Map> getMapList() { return maps; }
-
-//	public void setWeapon(String username, Weapon weapon) {
-//		int idx = getConnectedPlayerIndex(username);
-//		if (idx < 0) return;
-//		Weapon oldWeapon = ((OnlinePlayer)entities.get(idx)).getWeaponLoadout().getActiveWeapon();
-//		((OnlinePlayer)entities.get(idx)).getWeaponLoadout().addWeapon(weapon, true);
-//		((OnlinePlayer)entities.get(idx)).getWeaponLoadout().removeWeapon(oldWeapon);
-//	}
 
 	public void clearMap() {
 		entities = new Array<>();

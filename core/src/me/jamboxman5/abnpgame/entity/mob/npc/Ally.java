@@ -103,27 +103,39 @@ public class Ally extends Survivor {
 
     @Override
     public void draw(SpriteBatch batch, ShapeRenderer shape) {
-        int x = (int) (((position.x - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
-        int y = (int) (((position.y - gp.getPlayer().getWorldY())*.5) + gp.getPlayer().getScreenY());
+        // Make sure the batch follows the camera
 
         batch.begin();
         Sprite toDraw = weapons.getActiveWeapon().getPlayerSprite(animFrame);
 
+        float angleDeg;
         if (aimTarget != null) {
-            batch.setTransformMatrix(new Matrix4().translate((float) x, (float) y, 0).rotate(0f, 0f, 1f, (float) (Math.toDegrees(getAngleToPoint(aimTarget)) + 360) + jitter));
+            angleDeg = (float) Math.toDegrees(getAngleToPoint(aimTarget)) + jitter;
         } else {
-            batch.setTransformMatrix(new Matrix4().translate((float) x, (float) y, 0).rotate(0f, 0f, 1f, (float) (Math.toDegrees(getAngleToPoint(target)) + 360) + jitter));
+            angleDeg = (float) Math.toDegrees(getAngleToPoint(target)) + jitter;
         }
 
-        toDraw.setPosition((-toDraw.getWidth() / 2) + weapons.getActiveWeapon().getXOffset(), (-toDraw.getHeight() / 2) + weapons.getActiveWeapon().getYOffset());
+        // Translate to world position, rotate around center
+        batch.setTransformMatrix(
+                new Matrix4()
+                        .translate(position.x, position.y, 0)
+                        .rotate(0f, 0f, 1f, angleDeg)
+        );
+
+        // Offset so sprite is centered, plus weapon offsets
+        toDraw.setPosition(
+                (-toDraw.getWidth() / 2f) + weapons.getActiveWeapon().getXOffset(),
+                (-toDraw.getHeight() / 2f) + weapons.getActiveWeapon().getYOffset()
+        );
+
         toDraw.draw(batch);
+
+        // Reset transform
         batch.setTransformMatrix(new Matrix4());
 
-
         batch.end();
-
-
     }
+
 
     @Override
     public boolean hasCollided(double xComp, double yComp) {

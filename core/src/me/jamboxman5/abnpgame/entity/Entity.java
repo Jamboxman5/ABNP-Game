@@ -1,7 +1,6 @@
 package me.jamboxman5.abnpgame.entity;
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -13,8 +12,6 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.main.ABNPGame;
-
-import java.util.UUID;
 
 public abstract class Entity {
 	
@@ -91,8 +88,8 @@ public abstract class Entity {
 	public void setSprite(Sprite img) { sprite = img; }
 	public Sprite getSprite() { return sprite; }
 	public double getSpeed() { return speed; }
-	public double getWorldX() { return position.x; }
-	public double getWorldY() { return position.y; }
+	public float getWorldX() { return position.x; }
+	public float getWorldY() { return position.y; }
 	public Vector2 getPosition() { return position; }
 	public String getDirection() { return direction; }
 
@@ -124,41 +121,27 @@ public abstract class Entity {
 	}
 
 	public void drawCollision(ShapeRenderer shape) {
+		ABNPGame gp = ABNPGame.getInstance();
+
 
 		if (collision instanceof Circle) {
-			Circle collision = (Circle) getCollision();
-			int x = (int) (((collision.x - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
-			int y = (int) (((collision.y - gp.getPlayer().getWorldY())*.5) + gp.getPlayer().getScreenY());
-
+			Circle circle = (Circle) getCollision();
 
 			shape.begin(ShapeRenderer.ShapeType.Line);
 			shape.setColor(Color.RED);
-			shape.circle(x, y, collision.radius);
+			shape.circle(circle.x, circle.y, circle.radius); // world coords directly
 			shape.end();
-		} else {
-			Polygon collision = (Polygon) getCollision();
-			int x = (int) (((collision.getX() - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
-			int y = (int) (((collision.getY() - gp.getPlayer().getWorldY())*.5) + gp.getPlayer().getScreenY());
 
-			float[] verts = collision.getTransformedVertices();
-
-			float[] screenVerts = new float[verts.length];
-
-			for (int i = 0; i < verts.length; i += 2) {
-				screenVerts[i] = verts[i] + x;
-				screenVerts[i + 1] = verts[i + 1] + y;
-			}
+		} else if (collision instanceof Polygon) {
+			Polygon poly = (Polygon) getCollision();
 
 			shape.begin(ShapeRenderer.ShapeType.Line);
 			shape.setColor(Color.RED);
-
-			shape.polygon(screenVerts);
-
+			shape.polygon(poly.getTransformedVertices()); // already in world coords
 			shape.end();
 		}
-
-
 	}
+
 
 	public float getRotation() { return rotation; }
 

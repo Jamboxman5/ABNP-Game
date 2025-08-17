@@ -308,7 +308,7 @@ public class SettingsMenuScreen implements Screen {
             @Override
             public void run() {
                 selectedGuiScale-=5;
-                if (selectedGuiScale < 10) selectedResolution = 25;
+                if (selectedGuiScale < 10) selectedGuiScale = 25;
             }
         });
 

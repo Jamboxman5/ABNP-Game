@@ -81,22 +81,28 @@ public class Bullet extends Projectile{
 			drawFirst = true;
 			return;
 		}
+
 		ABNPGame gp = ABNPGame.getInstance();
+
+		// Use the camera’s projection matrix
+
 		renderer.begin(ShapeRenderer.ShapeType.Filled);
-		int x = (int) (((worldX - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
-        int y = (int) (((worldY - gp.getPlayer().getWorldY())*.5) + gp.getPlayer().getScreenY());
 
-//        x *= gp.getZoom();
-//        y *= gp.getZoom();
-		int xComp = (int) (speed * Math.cos(rotation));
-		int yComp = (int) (speed * Math.sin(rotation));
-		renderer.setColor(new Color((255f/255f),(255f/255f),(180f/255f), 1f));
-//		g2.setStroke(new BasicStroke(2));
-		renderer.line(x-(xComp/2), y-(yComp/2), (int)x+xComp*2, (int)y+yComp*2);
+		// Use world coordinates directly
+		float x = (float) worldX;
+		float y = (float) worldY;
+
+		float xComp = (float) (speed * Math.cos(rotation));
+		float yComp = (float) (speed * Math.sin(rotation));
+
+		renderer.setColor(1f, 1f, 180f / 255f, 1f);
+		renderer.line(x - (xComp / 2f), y - (yComp / 2f),
+				x + xComp * 2f,   y + yComp * 2f);
+
 		renderer.end();
-
 	}
-	
+
+
 	public void shoot() {
 		
 	}
