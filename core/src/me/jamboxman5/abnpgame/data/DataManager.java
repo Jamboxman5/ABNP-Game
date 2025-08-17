@@ -51,44 +51,12 @@ public class DataManager {
         String name = playerOBJ.get("username").getAsString();
         int money = playerOBJ.get("money").getAsInt();
         int exp = playerOBJ.get("experience").getAsInt();
+        String uuid = playerOBJ.get("uuid").getAsString();
 
         JsonObject weaponsOBJ = playerOBJ.get("weaponLoadout").getAsJsonObject();
-        JsonArray weaponsArr = weaponsOBJ.get("weapons").getAsJsonArray();
+        WeaponLoadout loadout = WeaponData.generateWeapons(weaponsOBJ);
 
-        Array<Weapon> weapons = new Array<>();
-
-        for (int i = 0; i < weaponsArr.size(); i++) {
-            JsonObject weaponOBJ = weaponsArr.get(i).getAsJsonObject();
-            WeaponType type = WeaponType.valueOf(weaponOBJ.get("type").getAsString());
-            Weapon weapon = Weapon.getByType(type);
-            JsonArray modsArr = weaponOBJ.get("mods").getAsJsonArray();
-            WeaponModLoadout loadout = new WeaponModLoadout();
-            for (int j = 0; j < modsArr.size(); j++) {
-                JsonObject modOBJ = modsArr.get(j).getAsJsonObject();
-                WeaponMod.ModType modType = WeaponMod.ModType.valueOf(modOBJ.get("type").getAsString());
-                loadout.addMod(WeaponMod.getByType(modType));
-            }
-            weapon.setMods(loadout);
-            if (weapon instanceof Firearm) {
-                Firearm arm = (Firearm) weapon;
-                arm.setLoadedAmmo(weaponOBJ.get("loaded").getAsInt());
-            }
-            weapons.add(weapon);
-        }
-
-        JsonArray ammoArr = weaponsOBJ.get("ammo").getAsJsonArray();
-
-        Array<Ammo> ammos = new Array<>();
-
-        for (int i = 0; i < ammoArr.size(); i++) {
-            JsonObject ammoOBJ = ammoArr.get(i).getAsJsonObject();
-            Ammo ammo = Ammo.getByType(Ammo.AmmoType.valueOf(ammoOBJ.get("type").getAsString()));
-            ammo.setCount(ammoOBJ.get("count").getAsInt());
-            ammos.add(ammo);
-        }
-
-        WeaponLoadout loadout = new WeaponLoadout(weapons, ammos);
-        Player player = new Player(ABNPGame.getInstance(), name, UUID.randomUUID().toString());
+        Player player = new Player(ABNPGame.getInstance(), name, uuid);
         player.setWeaponLoadout(loadout);
         player.setMoney(money);
         player.setExp(exp);
@@ -101,7 +69,9 @@ public class DataManager {
             InputStream defaultInput = Gdx.files.internal("data/player/defaultPlayerData.json/").read();
             assert defaultInput != null;
             String json = load(defaultInput);
-            shiftSave(json, localPlayerPath);
+            JsonObject playerOBJ = JsonParser.parseString(json).getAsJsonObject();
+            playerOBJ.addProperty("uuid", UUID.randomUUID().toString());
+            shiftSave(playerOBJ.toString(), localPlayerPath);
             return loadLocalPlayer();
 
         } catch (IOException e) {

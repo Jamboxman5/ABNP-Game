@@ -27,7 +27,7 @@ public class BasicScript extends MissionScript {
             Sound winSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/menu/Win.wav"));
 
             final ABNPGame game = ABNPGame.getInstance();
-            game.getMapManager().addAlly(new Ally(game, "Sarge", game.getMapManager().getActiveMap().getPlayerSpawn().cpy().add(new Vector2(0,1)), 50, 50, 5));
+//            game.getMapManager().addAlly(new Ally(game, "Sarge", game.getMapManager().getActiveMap().getPlayerSpawn().cpy().add(new Vector2(0,1)), 50, 50, 5));
 
             gameOver = false;
 

@@ -30,13 +30,52 @@
 		"ammo": [
 			{
 				"type": "StandardAmmo",
-				"count": 100
+				"count": 10000
 			},
 			{
 				"type": "ShellAmmo",
-				"count": 100
+				"count": 10000
 			}
 		]
 	},
-	"purchasedWeapons": []
+	"purchasedWeapons": [],
+	"ally": {
+		"experience": 0,
+		"weaponLoadout": {
+			"weapons": [
+				{
+					"type": "M1911",
+					"loaded": 8,
+					"ammoType": "StandardAmmo",
+					"mods": []
+				},
+				{
+					"type": "M4A1",
+					"loaded": 30,
+					"ammoType": "StandardAmmo",
+					"mods": [
+						{
+							"type": "RedDotSight"
+						}
+					]
+				},
+				{
+					"type": "WINCHESTER12",
+					"loaded": 6,
+					"ammoType": "ShellAmmo",
+					"mods": []
+				}
+			],
+			"ammo": [
+				{
+					"type": "StandardAmmo",
+					"count": 10000
+				},
+				{
+					"type": "ShellAmmo",
+					"count": 10000
+				}
+			]
+		}
+	}
 }
