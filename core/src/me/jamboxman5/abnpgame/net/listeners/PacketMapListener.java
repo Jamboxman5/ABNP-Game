@@ -48,7 +48,7 @@ public class PacketMapListener extends Listener {
             }
             ABNPGame game = ABNPGame.getInstance();
             Screen old = game.getScreen();
-            game.setScreen(new GameScreen(game, selected, new BasicScript()));
+            game.queueScreen(new GameScreen(game, selected, new BasicScript()));
             game.disposeScreen(old);
         }
     }

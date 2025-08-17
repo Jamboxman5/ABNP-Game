@@ -61,6 +61,7 @@ public class ABNPGame extends Game {
     ClientManager clientManager;
 
     Array<Screen> disposal;
+    Array<Screen> queue;
 
 
 
@@ -83,6 +84,7 @@ public class ABNPGame extends Game {
 //        generatePlayer();
 
         disposal = new Array<>();
+        queue = new Array<>();
 
 
     }
@@ -93,12 +95,20 @@ public class ABNPGame extends Game {
         for (Screen s : disposal) {
             s.dispose();
         }
+        if (queue.size > 0) {
+            disposal.add(getScreen());
+            setScreen(queue.get(0));
+            queue.removeIndex(0);
+        }
 
 
     }
 
     public void disposeScreen(Screen s) {
         disposal.add(s);
+    }
+    public void queueScreen(Screen s) {
+        queue.add(s);
     }
 
     public void dispose() {
