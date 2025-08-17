@@ -38,7 +38,7 @@ public class RifleM4A1 extends Firearm {
 		super.reloadSound = reloadSound;
 
 		this.attackRateMS = 86;
-		this.damage = 30;
+		this.damage = 45;
 		this.equippedMods = mods;
 		this.reloadSpeedMS = 2300;
 		this.magSize = 30;
@@ -65,7 +65,7 @@ public class RifleM4A1 extends Firearm {
 		assets.load("entity/player/rifle/Player_Rifle_Shoot_0.png", Texture.class);
 
 		// Sounds
-		assets.load("sound/sfx/weapon/rifle/Assault_Rifle_Shot.wav", Sound.class);
+		assets.load("sound/sfx/weapon/rifle/Rifle_M4A1_Shot.wav", Sound.class);
 		assets.load("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
 	}
 
@@ -90,7 +90,7 @@ public class RifleM4A1 extends Firearm {
 				setup("entity/player/rifle/Player_Rifle.png", assets, .25f)
 		});
 
-		attackSound = assets.get("sound/sfx/weapon/rifle/Assault_Rifle_Shot.wav", Sound.class);
+		attackSound = assets.get("sound/sfx/weapon/rifle/Rifle_M4A1_Shot.wav", Sound.class);
 		reloadSound = assets.get("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
 	}
 
