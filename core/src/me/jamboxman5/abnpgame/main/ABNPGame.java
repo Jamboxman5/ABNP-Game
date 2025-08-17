@@ -192,6 +192,7 @@ public class ABNPGame extends Game {
         DataManager.save(getPlayer());
         this.getScreen().dispose();
         setScreen(new GameOverScreen(this));
+        player.heal();
 //        generatePlayer();
     }
 
