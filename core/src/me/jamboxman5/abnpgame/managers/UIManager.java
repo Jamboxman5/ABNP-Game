@@ -21,8 +21,6 @@ import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 
 public class UIManager {
 
-    static Sprite WeaponHudOverlay;
-    static float guiScale = Settings.guiScale;
     static float margin = Settings.hudMargin;
     static Array<String> msgBuffer = new Array<>();
     static int messageBufferCounter = 0;
@@ -42,7 +40,7 @@ public class UIManager {
 
         for (int i = 0; i < msgBuffer.size; i++) {
 
-            Fonts.drawScaled(Fonts.INFOFONT, .8f, msgBuffer.get(i), batch, margin + 2*guiScale, y);
+            Fonts.drawScaled(Fonts.INFOFONT, .8f, msgBuffer.get(i), batch, margin + 2*Settings.guiScale, y);
             y += 40;
 
         }
@@ -61,8 +59,8 @@ public class UIManager {
     public static void drawWeaponHud(SpriteBatch batch, ShapeRenderer shape, ABNPGame game, OrthographicCamera camera) {
         Weapon activeWeapon = game.getPlayer().getWeaponLoadout().getActiveWeapon();
 
-        float width = 300 * guiScale;
-        float height = 120 * guiScale;
+        float width = 300 * Settings.guiScale;
+        float height = 120 * Settings.guiScale;
         float x = Settings.screenWidth - margin - width;
         float y = Settings.screenHeight-margin;
         Rectangle bounds = new Rectangle(x, y-height, width, height);
@@ -83,12 +81,12 @@ public class UIManager {
             Firearm activeFirearm = (Firearm) activeWeapon;
             String ammo = activeFirearm.getLoadedAmmo() + " / " + activeFirearm.getAmmoCount();
 
-            x = Fonts.getXForRightAlignedText((int) (Settings.screenWidth - margin - (10*guiScale)), ammo, Fonts.INFOFONT, .55f * guiScale);
-            y = y - height + (25*guiScale);
+            x = Fonts.getXForRightAlignedText((int) (Settings.screenWidth - margin - (10*Settings.guiScale)), ammo, Fonts.INFOFONT, .55f * Settings.guiScale);
+            y = y - height + (25*Settings.guiScale);
 
-            Fonts.drawScaled(Fonts.INFOFONT, .55f * guiScale, ammo, batch,x, y);
-            x = Settings.screenWidth - margin - width + (15*guiScale);
-            Fonts.drawScaled(Fonts.INFOFONT, .55f * guiScale, activeFirearm.getName(), batch,x, y);
+            Fonts.drawScaled(Fonts.INFOFONT, .55f * Settings.guiScale, ammo, batch,x, y);
+            x = Settings.screenWidth - margin - width + (15*Settings.guiScale);
+            Fonts.drawScaled(Fonts.INFOFONT, .55f * Settings.guiScale, activeFirearm.getName(), batch,x, y);
         }
 
 
@@ -97,7 +95,7 @@ public class UIManager {
         y = bounds.y + 15 + bounds.height/2f;
         weaponIMG.setCenter(x, y);
         float nativeScale = weaponIMG.getScaleX();
-        weaponIMG.setScale(guiScale/2.5f);
+        weaponIMG.setScale(Settings.guiScale/2.5f);
         weaponIMG.draw(batch);
         weaponIMG.setScale(nativeScale);
 
@@ -107,7 +105,7 @@ public class UIManager {
 
     public static void drawRadar(SpriteBatch batch, ShapeRenderer shape, ABNPGame game) {
 
-        float side = 140 * guiScale;
+        float side = 140 * Settings.guiScale;
         Vector2 center = new Vector2(margin + (side/2f), margin + (side/2f));
         Rectangle mapBounds = new Rectangle(margin+4, margin+4, side-8, side-8);
 
@@ -128,9 +126,9 @@ public class UIManager {
             Vector2 displacement = p.getPosition().cpy().sub(player.getPosition()).scl(zoomFactor).add(center);
             if (mapBounds.contains(displacement)) {
                 shape.setColor(Color.YELLOW);
-                shape.circle(displacement.x, displacement.y, 3);
+                shape.circle(displacement.x, displacement.y, 3*Settings.guiScale);
                 shape.setColor(1f, 1f, (220f/255f), 1f);
-                shape.circle(displacement.x, displacement.y, 2);
+                shape.circle(displacement.x, displacement.y, 2*Settings.guiScale);
             }
 
         }
@@ -139,9 +137,9 @@ public class UIManager {
             Vector2 displacement = z.getPosition().cpy().sub(player.getPosition()).scl(zoomFactor).add(center);
             if (mapBounds.contains(displacement)) {
                 shape.setColor(Color.RED);
-                shape.circle(displacement.x, displacement.y, 3);
+                shape.circle(displacement.x, displacement.y, 3*Settings.guiScale);
                 shape.setColor(1f, (220f/255f), (220f/255f), 1f);
-                shape.circle(displacement.x, displacement.y, 2);
+                shape.circle(displacement.x, displacement.y, 2*Settings.guiScale);
             }
 
         }
@@ -150,18 +148,20 @@ public class UIManager {
             Vector2 displacement = s.getPosition().cpy().sub(player.getPosition()).scl(zoomFactor).add(center);
             if (mapBounds.contains(displacement)) {
                 shape.setColor(Color.BLUE);
-                shape.circle(displacement.x, displacement.y, 3);
+                shape.circle(displacement.x, displacement.y, 3*Settings.guiScale);
                 shape.setColor((220f/255f), (220f/255f), 1f, 1f);
-                shape.circle(displacement.x, displacement.y, 2);
+                shape.circle(displacement.x, displacement.y, 2*Settings.guiScale);
             }
         }
 
+        shape.setColor(Color.WHITE);
+        shape.circle(center.x, center.y, 2*Settings.guiScale);
         shape.setColor(Color.GREEN);
         shape.setAutoShapeType(true);
         shape.set(ShapeRenderer.ShapeType.Line);
         shape.rect(mapBounds.x, mapBounds.y, mapBounds.width, mapBounds.height);
         shape.setColor(Color.WHITE);
-        shape.line(center, center.cpy().add(new Vector2(1, 0).rotateRad((float) player.getAdjustedRotation()).scl(10f)));
+        shape.line(center, center.cpy().add(new Vector2(1, 0).rotateRad((float) player.getAdjustedRotation()).scl(10f*Settings.guiScale)));
         shape.end();
 
         batch.begin();
@@ -171,21 +171,21 @@ public class UIManager {
 //            Firearm activeFirearm = (Firearm) activeWeapon;
 //            String ammo = activeFirearm.getLoadedAmmo() + " / " + activeFirearm.getAmmoCount();
 //
-//            x = Fonts.getXForRightAlignedText((int) (camera.viewportWidth - (30*guiScale)), ammo, Fonts.INFOFONT, .55f * guiScale);
-//            y = y - height + (25*guiScale);
+//            x = Fonts.getXForRightAlignedText((int) (camera.viewportWidth - (30*Settings.guiScale)), ammo, Fonts.INFOFONT, .55f * Settings.guiScale);
+//            y = y - height + (25*Settings.guiScale);
 //
-//            Fonts.drawScaled(Fonts.INFOFONT, .55f * guiScale, ammo, batch,x, y);
-//            x = camera.viewportWidth - width - 20 + (15*guiScale);
-//            Fonts.drawScaled(Fonts.INFOFONT, .55f * guiScale, activeFirearm.getName(), batch,x, y);
+//            Fonts.drawScaled(Fonts.INFOFONT, .55f * Settings.guiScale, ammo, batch,x, y);
+//            x = camera.viewportWidth - width - 20 + (15*Settings.guiScale);
+//            Fonts.drawScaled(Fonts.INFOFONT, .55f * Settings.guiScale, activeFirearm.getName(), batch,x, y);
 //        }
 //
 //
 //
 //        x = camera.viewportWidth - 20 - (width/2);
-//        y = camera.viewportHeight - (65*guiScale);
+//        y = camera.viewportHeight - (65*Settings.guiScale);
 //        weaponIMG.setCenter(x, y);
 //        float nativeScale = weaponIMG.getScaleX();
-//        weaponIMG.setScale(guiScale/2.5f);
+//        weaponIMG.setScale(Settings.guiScale/2.5f);
 //        weaponIMG.draw(batch);
 //        weaponIMG.setScale(nativeScale);
 //
@@ -195,8 +195,8 @@ public class UIManager {
 
     public static void drawHealthBar(SpriteBatch batch, ShapeRenderer renderer, Player player) {
 
-        int width = (int) (300 * guiScale);
-        int height = (int) (30 * guiScale);
+        int width = (int) (300 * Settings.guiScale);
+        int height = (int) (30 * Settings.guiScale);
         int weight = 2;
 
         renderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -221,11 +221,11 @@ public class UIManager {
         renderer.rect(margin, Gdx.graphics.getHeight()-(margin)-(height*2)-10, width, height);
 
         renderer.end();
-
+        
         batch.begin();
-        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "HP: " + (int)player.getHealth() + "/" + (int)player.getMaxHealth(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-margin-height + (5*guiScale) + Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
-        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "Stamina: " + (int)player.getStamina() + "/" + (int)player.getMaxStamina(), batch,margin + (5*guiScale), Gdx.graphics.getHeight()-margin-(height*2)-10 + (5*guiScale) + Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
-        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, "Money: $" + player.getMoney(), batch,margin + 2*guiScale, Gdx.graphics.getHeight()-(margin*2)-(height*2) - (5*guiScale) - Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * guiScale));
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, "HP: " + (int)player.getHealth() + "/" + (int)player.getMaxHealth(), batch,margin + (5*Settings.guiScale), Gdx.graphics.getHeight()-margin-height + (5*Settings.guiScale) + Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * Settings.guiScale));
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, "Stamina: " + (int)player.getStamina() + "/" + (int)player.getMaxStamina(), batch,margin + (5*Settings.guiScale), Gdx.graphics.getHeight()-margin-(height*2)-10 + (5*Settings.guiScale) + Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * Settings.guiScale));
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, "Money: $" + player.getMoney(), batch,margin + 2*Settings.guiScale, Gdx.graphics.getHeight()-(margin*2)-(height*2) - (5*Settings.guiScale) - Fonts.getTextHeight("/", Fonts.INFOFONT,.4f * Settings.guiScale));
         batch.end();
 
     }
@@ -252,84 +252,84 @@ public class UIManager {
         spriteBatch.begin();
 
         String debugTXT = "World X: " + String.format("%,.2f", game.getPlayer().getWorldX());
-        int y = (int) (screenHeight - (180*guiScale));
+        int y = (int) (screenHeight - (180*Settings.guiScale));
         int spacer = 30;
-        int x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * guiScale);
+        int x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //        Utilities.drawStringShadow(g2, debugTXT, x, y);
 //        g2.drawString(debugTXT, x, y);
-        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, debugTXT, spriteBatch, x, y);
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, debugTXT, spriteBatch, x, y);
         //
         debugTXT = "World Y: " + String.format("%,.2f", game.getPlayer().getWorldY());
         y-=spacer;
-        x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * guiScale);
+        x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //        Utilities.drawStringShadow(g2, debugTXT, x, y);
 //        g2.drawString(debugTXT, x, y);
-        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, debugTXT, spriteBatch, x, y);
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, debugTXT, spriteBatch, x, y);
 
         //
         debugTXT = "Player Rotation: " + String.format("%,.2f", Math.toDegrees(game.getPlayer().getAngleToCursor()));
         y-=spacer;
-        x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * guiScale);
+        x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //        Utilities.drawStringShadow(g2, debugTXT, x, y);
 //        g2.drawString(debugTXT, x, y);
-        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, debugTXT, spriteBatch, x, y);
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, debugTXT, spriteBatch, x, y);
 
         //
 
         if (game.getMousePointer() != null) {
             debugTXT = "Mouse X: " + String.format("%,.2f", game.getMousePointer().x);
             y-=spacer;
-            x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * guiScale);
+            x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //            Utilities.drawStringShadow(g2, debugTXT, x, y);
 //            g2.drawString(debugTXT, x, y);
-            Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, debugTXT, spriteBatch, x, y);
+            Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, debugTXT, spriteBatch, x, y);
 
             //
             debugTXT = "Mouse Y: " + String.format("%,.2f", game.getMousePointer().y);
             y-=spacer;
-            x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * guiScale);
+            x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //            Utilities.drawStringShadow(g2, debugTXT, x, y);
 //            g2.drawString(debugTXT, x, y);
-            Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, debugTXT, spriteBatch, x, y);
+            Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, debugTXT, spriteBatch, x, y);
             //
             debugTXT = "Target X: " + String.format("%,.2f", game.getWorldMousePointer().x);
             y-=spacer;
-            x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * guiScale);
+            x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //            Utilities.drawStringShadow(g2, debugTXT, x, y);
 //            g2.drawString(debugTXT, x, y);
-            Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, debugTXT, spriteBatch, x, y);
+            Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, debugTXT, spriteBatch, x, y);
             //
             debugTXT = "Target Y: " + String.format("%,.2f", game.getWorldMousePointer().y);
             y-=spacer;
-            x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * guiScale);
+            x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //            Utilities.drawStringShadow(g2, debugTXT, x, y);
 //            g2.drawString(debugTXT, x, y);
-            Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, debugTXT, spriteBatch, x, y);
+            Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, debugTXT, spriteBatch, x, y);
 
         }
 
         //
         debugTXT = "Active Projectiles: " + game.getMapManager().projectiles.size;
         y-=spacer;
-        x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * guiScale);
+        x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //        Utilities.drawStringShadow(g2, debugTXT, x, y);
 //        g2.drawString(debugTXT, x, y);
-        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, debugTXT, spriteBatch, x, y);
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, debugTXT, spriteBatch, x, y);
 
         debugTXT = "Active Entities: " + game.getMapManager().entities.size;
         y-=spacer;
-        x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * guiScale);
+        x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //        Utilities.drawStringShadow(g2, debugTXT, x, y);
 //        g2.drawString(debugTXT, x, y);
-        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, debugTXT, spriteBatch, x, y);
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, debugTXT, spriteBatch, x, y);
 
         //
         debugTXT = "Frame Time: " + delta + "ms";
         y-=spacer;
-        x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * guiScale);
+        x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //        Utilities.drawStringShadow(g2, debugTXT, x, y);
 //        g2.drawString(debugTXT, x, y);
-        Fonts.drawScaled(Fonts.INFOFONT, .4f * guiScale, debugTXT, spriteBatch, x, y);
+        Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, debugTXT, spriteBatch, x, y);
 
         spriteBatch.end();
 
