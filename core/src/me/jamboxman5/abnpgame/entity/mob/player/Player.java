@@ -16,7 +16,6 @@ import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
 import me.jamboxman5.abnpgame.net.packets.PacketShoot;
 import me.jamboxman5.abnpgame.util.InputKeys;
-import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 
 public class Player extends Survivor {
@@ -61,7 +60,7 @@ public class Player extends Survivor {
 
 		super.update(delta);
 
-		if (gp.getPlayer().getID() != uuid) return;
+		if (!gp.getPlayer().getID().equals(uuid)) return;
 
 		aimTarget = gp.getWorldMousePointer();
 
@@ -293,21 +292,11 @@ public class Player extends Survivor {
 		}
 		
 	}
-
-	public float getAngleX() {
-		return (float) (screenX - gp.getMousePointer().x);
-
-	}
-
-	public float getAngleY() {
-		return (float) (screenY - gp.getMousePointer().y);
-
-	}
 	
 	public float getDrawingAngle() {
-		try {
-			float num = (float) (position.y - gp.getWorldMousePointer().y);
-			float denom = (float) (position.x - gp.getWorldMousePointer().x);
+//		try {
+			float num = (position.y - gp.getWorldMousePointer().y);
+			float denom = (position.x - gp.getWorldMousePointer().x);
 			if (denom == 0 && num == 0) return (float) (-Math.PI/2);
 			float angle = (float) Math.atan(num/denom);
 			if ((int)gp.getMousePointer().x <= screenX) {
@@ -315,10 +304,10 @@ public class Player extends Survivor {
 			   } else {
 				   return angle;
 			   }
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-			return 0;
-		}
+//		} catch (NullPointerException e) {
+//			e.printStackTrace();
+//			return 0;
+//		}
 		
 	}
 	public int getScreenX() { return Gdx.graphics.getWidth()/2; }
