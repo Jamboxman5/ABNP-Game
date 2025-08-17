@@ -36,6 +36,7 @@ import me.jamboxman5.abnpgame.util.NetUtil;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
+import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleAK47;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 
@@ -154,6 +155,7 @@ public class ABNPGame extends Game {
     public void loadAssets() {
         Zombie.loadAssets(assetManager);
         RifleM4A1.loadAssets(assetManager);
+        RifleAK47.loadAssets(assetManager);
         Pistol1911.loadAssets(assetManager);
         ShotgunWinchester12.loadAssets(assetManager);
         PickupWeapon.loadAssets(assetManager);

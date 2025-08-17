@@ -24,6 +24,7 @@ import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
+import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleAK47;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 
@@ -160,6 +161,7 @@ public class LoadingScreen implements Screen {
     private void loadSprites() {
         Zombie.loadSprites(game.getAssetManager());
         RifleM4A1.loadSprites(game.getAssetManager());
+        RifleAK47.loadSprites(game.getAssetManager());
         Pistol1911.loadSprites(game.getAssetManager());
         ShotgunWinchester12.loadSprites(game.getAssetManager());
         PickupWeapon.loadSprites(game.getAssetManager());

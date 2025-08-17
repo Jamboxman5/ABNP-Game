@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
+import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleAK47;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 import me.jamboxman5.abnpgame.weapon.mods.RedDotSight;
@@ -85,6 +86,8 @@ public abstract class Weapon {
 			return new Pistol1911();
 		case M4A1:
 			return new RifleM4A1();
+		case AK47:
+			return new RifleAK47();
 		case WINCHESTER12:
 			return new ShotgunWinchester12();
 		}
