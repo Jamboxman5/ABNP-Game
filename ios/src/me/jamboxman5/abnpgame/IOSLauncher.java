@@ -1,5 +1,6 @@
 package me.jamboxman5.abnpgame;
 
+import me.jamboxman5.abnpgame.main.ABNPGame;
 import org.robovm.apple.foundation.NSAutoreleasePool;
 import org.robovm.apple.uikit.UIApplication;
 
@@ -10,7 +11,7 @@ public class IOSLauncher extends IOSApplication.Delegate {
     @Override
     protected IOSApplication createApplication() {
         IOSApplicationConfiguration config = new IOSApplicationConfiguration();
-        return new IOSApplication(new Drop(), config);
+        return new IOSApplication(new ABNPGame(), config);
     }
 
     public static void main(String[] argv) {

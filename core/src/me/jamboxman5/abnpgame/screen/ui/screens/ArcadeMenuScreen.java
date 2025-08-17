@@ -23,8 +23,7 @@ public class ArcadeMenuScreen implements Screen {
 
     Texture menuBKG;
     final ABNPGame game;
-    private final int alignX = Gdx.graphics.getWidth() - 40;
-    private final int spacer = 70;
+
     private long lastButton = System.currentTimeMillis();
 
     private String title = "ABNP:";
@@ -61,15 +60,14 @@ public class ArcadeMenuScreen implements Screen {
 
         camera.update();
         game.uiCanvas.setProjectionMatrix(camera.combined);
-
-
+        game.uiShapeRenderer.setProjectionMatrix(camera.combined);
         update();
         draw();
     }
 
     @Override
     public void resize(int width, int height) {
-
+//        camera.setToOrtho(false,width, height);
     }
 
     @Override
@@ -105,7 +103,7 @@ public class ArcadeMenuScreen implements Screen {
 
     public void drawBKG(SpriteBatch batch) {
         batch.begin();
-        batch.draw(menuBKG, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        batch.draw(menuBKG, 0, 0, Settings.screenWidth, Settings.screenHeight);
         batch.end();
     }
 
@@ -123,28 +121,28 @@ public class ArcadeMenuScreen implements Screen {
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
         renderer.setColor(new Color(75f/255f,0,0,.6f));
 
-        float yDown = Gdx.graphics.getHeight() - Gdx.graphics.getHeight()/4.5f;
-        float height = Gdx.graphics.getHeight()/4.5f;
+        float yDown = Settings.screenHeight - Settings.screenHeight/4.5f;
+        float height = Settings.screenHeight/4.5f;
 
-        renderer.rect(0, yDown, Gdx.graphics.getWidth(), height);
+        renderer.rect(0, yDown, Settings.screenWidth, height);
         renderer.setColor(Color.RED);
-        renderer.rectLine(0, yDown, Gdx.graphics.getWidth(), yDown, 2f);
+        renderer.rectLine(0, yDown, Settings.screenWidth, yDown, 2f);
         renderer.end();
 
 
 
 
         batch.begin();
-        Fonts.drawScaled(Fonts.BUTTONFONT, 1f, game.getPlayer().getName(), batch, 20, Gdx.graphics.getHeight() - 20);
-        Fonts.drawScaled(Fonts.INFOFONT, .8f, "Money: $" + game.getPlayer().getMoney(), batch, 20, Gdx.graphics.getHeight() - 80);
+        Fonts.drawScaled(Fonts.BUTTONFONT, 1f, game.getPlayer().getName(), batch, 20, Settings.screenHeight - 20);
+        Fonts.drawScaled(Fonts.INFOFONT, .8f, "Money: $" + game.getPlayer().getMoney(), batch, 20, Settings.screenHeight - 80);
 
         String exp = "EXP: " + game.getPlayer().getExp();
         int x = (int) Fonts.getXForRightAlignedText((int) (20 + Fonts.getTextWidth(game.getPlayer().getName(), Fonts.BUTTONFONT, 1f)), exp, Fonts.INFOFONT, .8f);
 
-        Fonts.drawScaled(Fonts.INFOFONT, .8f, exp, batch, x, Gdx.graphics.getHeight() - 80);
+        Fonts.drawScaled(Fonts.INFOFONT, .8f, exp, batch, x, Settings.screenHeight - 80);
 //
 //        int x = 60;
-//        int y = Gdx.graphics.getHeight() - 220;
+//        int y = Settings.screenHeight - 220;
 //
 //        Fonts.drawScaled(Fonts.TITLEFONT, .6f, title, batch, x, y + Fonts.getTextHeight(title, Fonts.TITLEFONT, 1f));
 //
@@ -176,17 +174,17 @@ public class ArcadeMenuScreen implements Screen {
 
     private void getButtons() {
 
-        int buttonWidth = (int) (Gdx.graphics.getWidth()/3f);
-        int buttonXSpace = (int) (Gdx.graphics.getWidth()/9f);
-        int buttonTopSpace = (int) (Gdx.graphics.getHeight()/4f) + (int) (Gdx.graphics.getHeight()/3.75f);
-        int buttonMidSpace = (int) (Gdx.graphics.getHeight()/16f);
-        int buttonHeight = (int) (Gdx.graphics.getHeight()/4f);
+        int buttonWidth = (int) (Settings.screenWidth/3f);
+        int buttonXSpace = (int) (Settings.screenWidth/9f);
+        int buttonTopSpace = (int) (Settings.screenHeight/4f) + (int) (Settings.screenHeight/3.75f);
+        int buttonMidSpace = (int) (Settings.screenHeight/16f);
+        int buttonHeight = (int) (Settings.screenHeight/4f);
 
         buttons = new Button[6];
-        playButton = new Button(buttonXSpace, Gdx.graphics.getHeight() - buttonTopSpace, Gdx.graphics.getWidth()/3, buttonHeight, "Play", Fonts.BUTTONFONT);
-        shopButton = new Button(buttonXSpace, Gdx.graphics.getHeight() - buttonTopSpace - buttonHeight - buttonMidSpace, buttonWidth, buttonHeight, "Shop", Fonts.BUTTONFONT);
-        equipButton = new Button(Gdx.graphics.getWidth() - buttonXSpace - buttonWidth, Gdx.graphics.getHeight() - buttonTopSpace, buttonWidth, buttonHeight, "Equip", Fonts.BUTTONFONT);
-        unlocksButton = new Button(Gdx.graphics.getWidth() - buttonXSpace - buttonWidth, Gdx.graphics.getHeight() - buttonTopSpace - buttonHeight - buttonMidSpace, buttonWidth, buttonHeight, "Unlocks", Fonts.BUTTONFONT);
+        playButton = new Button(buttonXSpace, Settings.screenHeight - buttonTopSpace, Settings.screenWidth/3, buttonHeight, "Play", Fonts.BUTTONFONT);
+        shopButton = new Button(buttonXSpace, Settings.screenHeight - buttonTopSpace - buttonHeight - buttonMidSpace, buttonWidth, buttonHeight, "Shop", Fonts.BUTTONFONT);
+        equipButton = new Button(Settings.screenWidth - buttonXSpace - buttonWidth, Settings.screenHeight - buttonTopSpace, buttonWidth, buttonHeight, "Equip", Fonts.BUTTONFONT);
+        unlocksButton = new Button(Settings.screenWidth - buttonXSpace - buttonWidth, Settings.screenHeight - buttonTopSpace - buttonHeight - buttonMidSpace, buttonWidth, buttonHeight, "Unlocks", Fonts.BUTTONFONT);
 
         buttons[0] = playButton;
         buttons[1] = shopButton;
