@@ -13,6 +13,7 @@ import com.esotericsoftware.kryonet.Client;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import me.jamboxman5.abnpgame.data.DataManager;
+import me.jamboxman5.abnpgame.data.SettingsData;
 import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.entity.mob.player.Player;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
@@ -65,6 +66,7 @@ public class ABNPGame extends Game {
 
     public void create() {
         instance = this;
+
         canvas = new SpriteBatch();
         uiCanvas = new SpriteBatch();
         uiShapeRenderer = new ShapeRenderer();

@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import me.jamboxman5.abnpgame.data.SettingsData;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.maps.*;
@@ -273,6 +274,7 @@ public class SettingsMenuScreen implements Screen {
                 Settings.musVolume = selectedMusVolume / 10f;
                 Settings.sfxVolume = selectedSfxVolume / 10f;
                 Sounds.updateVolumes();
+                SettingsData.updateSettings();
 
                 Screen old = game.getScreen();
                 game.setScreen(new SettingsMenuScreen(game));

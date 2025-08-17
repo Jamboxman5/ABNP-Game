@@ -1,0 +1,11 @@
+{
+
+  "sfxVolume": 0.1,
+  "musVolume": 0.1,
+
+  "screenWidth": 1366,
+  "screenHeight": 768,
+  "guiScale": 1.5,
+  "hudMargin": 20
+
+}

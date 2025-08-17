@@ -145,10 +145,21 @@ public class DataManager {
         }
         return shiftedContents.toString();
     }
-    private static String load(InputStream is) throws IOException {
+    protected static String load(InputStream is) throws IOException {
         Scanner s = new Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
+
+    protected static void save(String jsonString, String path) throws IOException {
+        try {
+            FileWriter writer = new FileWriter(path);
+            writer.write(jsonString);
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        };
+    }
+
     private static void shiftSave(String jsonString, String path) {
         StringBuilder fileContents = new StringBuilder(jsonString);
         for (int i = 0; i < fileContents.length(); i ++) {
