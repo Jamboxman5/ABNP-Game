@@ -267,7 +267,7 @@ public class UIManager {
         Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, debugTXT, spriteBatch, x, y);
 
         //
-        debugTXT = "Player Rotation: " + String.format("%,.2f", Math.toDegrees(game.getPlayer().getAngleToCursor()));
+        debugTXT = "Player Rotation: " + String.format("%,.2f", Math.toDegrees(game.getPlayer().getAdjustedRotation()));
         y-=spacer;
         x = (int) Fonts.getXForRightAlignedText(screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //        Utilities.drawStringShadow(g2, debugTXT, x, y);
