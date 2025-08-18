@@ -25,6 +25,8 @@ public abstract class Ammo {
 				return new ShellAmmo();
 			case StandardAmmo:
 				return new StandardAmmo();
+			case SlugAmmo:
+				return new SlugAmmo();
 			default:
 				return new StandardAmmo();
 		}
@@ -45,7 +47,7 @@ public abstract class Ammo {
 			Bullet bullet = new Bullet(rotations[i],
 					(int)(weapon.getFiringVelocity() * speedBoost),
 					start,
-					(int)(weapon.getRange() * rangeBoost), this, drawFirst);
+					(int)(weapon.getRange() * rangeBoost), this, weapon, drawFirst);
 			ABNPGame.getInstance().getMapManager().addProjectile(bullet);
 		}
 
@@ -66,8 +68,10 @@ public abstract class Ammo {
 		ammoCount = count;
 	}
 
+	public double getDamageBoost() { return damageBoost; }
+
 	public enum AmmoType {
-		StandardAmmo, ShellAmmo;
+		StandardAmmo, ShellAmmo, SlugAmmo;
 	}
 
 	public AmmoType getType() { return type; }
