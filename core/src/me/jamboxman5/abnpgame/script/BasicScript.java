@@ -13,9 +13,12 @@ import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
+import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
+
+import java.util.Random;
 
 public class BasicScript extends MissionScript {
 
@@ -27,7 +30,9 @@ public class BasicScript extends MissionScript {
             Sound winSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/menu/Win.wav"));
 
             final ABNPGame game = ABNPGame.getInstance();
-//            game.getMapManager().addAlly(new Ally(game, "Sarge", game.getMapManager().getActiveMap().getPlayerSpawn().cpy().add(new Vector2(0,1)), 50, 50, 5));
+            Ally ally = new Ally(game, "Sarge");
+            ally.setPosition(game.getMapManager().getActiveMap().getPlayerSpawn().cpy());
+//            game.getMapManager().addAlly(ally);
 
             gameOver = false;
 
@@ -44,26 +49,25 @@ public class BasicScript extends MissionScript {
             for (int i = 0; i < 10; i++) {
                 zombiesRemaining = (50 - i) + game.getMapManager().entities.size;
                 Thread.sleep(2000);
-                Zombie zombie = new ZombieTank(game, spawnPoints[spawnCounter]);
+
+                Zombie zombie = new ZombieTank(game, getRandomSpawnPoint(spawnPoints));
                 game.getMapManager().addEntity(zombie);
                 lastSpawn = System.currentTimeMillis();
-                spawnCounter++;
-                if (spawnCounter >= spawnPoints.length) spawnCounter = 0;
             }
 
-            while (game.getMapManager().entities.size > 0) {
-                zombiesRemaining = game.getMapManager().entities.size;
+            while (game.getMapManager().getZombies().size > 0) {
+                zombiesRemaining = game.getMapManager().getZombies().size;
                 Thread.sleep(3000);
             }
-            zombiesRemaining = game.getMapManager().entities.size;
+            zombiesRemaining = game.getMapManager().getZombies().size;
 
-            winSound.play();
+            winSound.play(Settings.sfxVolume);
             UIManager.pushBufferMessage("Prepare for the next wave!");
             new Thread() {
                 @Override
                 public void run() {
                     for (int i = 0; i < 150; i++) {
-                        game.getPlayer().healBy(.1f, false);
+                        game.getPlayer().healBy(.5f, false);
                         try {
                             Thread.sleep(100);
                         } catch (InterruptedException e) {
@@ -78,30 +82,28 @@ public class BasicScript extends MissionScript {
             UIManager.pushBufferMessage("Begin!");
 
             for (int i = 0; i < 10; i++) {
-                zombiesRemaining = 2*(50 - i) + game.getMapManager().entities.size;
+                zombiesRemaining = 2*(50 - i) + game.getMapManager().getZombies().size;
                 Thread.sleep(2000);
-                Zombie zombie2 = new ZombieNormal(game, spawnPoints[spawnCounter].cpy().add(new Vector2(40,40)));
-                Zombie zombie3 = new ZombieTank(game, spawnPoints[spawnCounter].cpy().add(new Vector2(-40,-40)));
+                Zombie zombie2 = new ZombieNormal(game, getRandomSpawnPoint(spawnPoints));
+                Zombie zombie3 = new ZombieTank(game, getRandomSpawnPoint(spawnPoints));
                 game.getMapManager().addEntity(zombie2);
                 game.getMapManager().addEntity(zombie3);
                 lastSpawn = System.currentTimeMillis();
-                spawnCounter++;
-                if (spawnCounter >= spawnPoints.length) spawnCounter = 0;
             }
 
-            while (game.getMapManager().entities.size > 0) {
+            while (game.getMapManager().getZombies().size > 0) {
                 zombiesRemaining = game.getMapManager().entities.size;
                 Thread.sleep(3000);
             }
-            zombiesRemaining = game.getMapManager().entities.size;
+            zombiesRemaining = game.getMapManager().getZombies().size;
 
-            winSound.play();
+            winSound.play(Settings.sfxVolume);
             UIManager.pushBufferMessage("Prepare for the final wave!");
             new Thread() {
                 @Override
                 public void run() {
                     for (int i = 0; i < 30; i++) {
-                        game.getPlayer().healBy(.5, false);
+                        game.getPlayer().healBy(.5f, false);
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
@@ -115,35 +117,46 @@ public class BasicScript extends MissionScript {
             UIManager.pushBufferMessage("Begin!");
 
             for (int i = 0; i < 10; i++) {
-                zombiesRemaining = 3*(50 - i) + game.getMapManager().entities.size;
+                zombiesRemaining = 3*(50 - i) + game.getMapManager().getZombies().size;
                 Thread.sleep(2000);
-                Zombie zombie = new ZombieNormal(game, spawnPoints[spawnCounter]);
-                Zombie zombie2 = new ZombieRunner(game, spawnPoints[spawnCounter].cpy().add(new Vector2(60,60)));
-                Zombie zombie3 = new ZombieTank(game, spawnPoints[spawnCounter].cpy().add(new Vector2(-60,-60)));                        game.getMapManager().addEntity(zombie);
+                Zombie zombie = new ZombieNormal(game, getRandomSpawnPoint(spawnPoints));
+                Zombie zombie2 = new ZombieRunner(game, getRandomSpawnPoint(spawnPoints));
+                Zombie zombie3 = new ZombieTank(game, getRandomSpawnPoint(spawnPoints));
                 game.getMapManager().addEntity(zombie);
                 game.getMapManager().addEntity(zombie2);
                 game.getMapManager().addEntity(zombie3);
                 lastSpawn = System.currentTimeMillis();
-                spawnCounter++;
-                if (spawnCounter >= spawnPoints.length) spawnCounter = 0;
             }
 
-            while (game.getMapManager().entities.size > 0) {
-                zombiesRemaining = game.getMapManager().entities.size;
+            while (game.getMapManager().getZombies().size > 0) {
+                zombiesRemaining = game.getMapManager().getZombies().size;
                 Thread.sleep(3000);
             }
-            zombiesRemaining = game.getMapManager().entities.size;
+            zombiesRemaining = game.getMapManager().getZombies().size;
 
-            winSound.play();
+            winSound.play(Settings.sfxVolume);
             UIManager.pushBufferMessage("Congratulations! You win!");
             game.getMapManager().clearMap();
             DataManager.save(game.getPlayer());
+            game.getPlayer().heal();
             gameOver = true;
 
 
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         }
+
+    }
+
+    private Vector2 getRandomSpawnPoint(Vector2[] points) {
+        int idx = new Random().nextInt(points.length);
+        return points[idx].cpy();
+    }
+
+    private Vector2 getRandomSpawnPoint(Vector2[] points, Vector2 exclude) {
+        int idx = new Random().nextInt(points.length);
+        while (points[idx].equals(exclude)) idx = new Random().nextInt(points.length);
+        return points[idx].cpy();
     }
 
 }
