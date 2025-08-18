@@ -103,11 +103,15 @@ public class UIManager {
 
     }
 
+    static int radarDropAnimCounter = 0;
+
     public static void drawRadar(SpriteBatch batch, ShapeRenderer shape, ABNPGame game) {
 
+        radarDropAnimCounter++;
         float side = 140 * Settings.guiScale;
         Vector2 center = new Vector2(margin + (side/2f), margin + (side/2f));
         Rectangle mapBounds = new Rectangle(margin+4, margin+4, side-8, side-8);
+        Rectangle fullMapBounds = new Rectangle(margin, margin, side, side);
 
         Sprite pointer;
 
@@ -116,6 +120,21 @@ public class UIManager {
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
         shape.setColor(0f, (float)(50.0/255.0), 0f, .6f);
         shape.rect(margin, margin, side, side);
+
+        shape.setAutoShapeType(true);
+        shape.set(ShapeRenderer.ShapeType.Line);
+        shape.setColor(0f, (float)(70.0/255.0), 0f, .9f);
+
+        float space = (side / 10);
+        if (radarDropAnimCounter >= space) radarDropAnimCounter = 0;
+
+        for (int i = 1; i <= 10; i++) {
+            float spacer = space*i;
+            shape.line(fullMapBounds.x, fullMapBounds.y + spacer - radarDropAnimCounter, fullMapBounds.x + side, fullMapBounds.y + spacer - radarDropAnimCounter);
+        }
+
+        shape.set(ShapeRenderer.ShapeType.Filled);
+
 
         float zoomFactor = .1f;
 
@@ -157,7 +176,6 @@ public class UIManager {
         shape.setColor(Color.WHITE);
         shape.circle(center.x, center.y, 2*Settings.guiScale);
         shape.setColor(Color.GREEN);
-        shape.setAutoShapeType(true);
         shape.set(ShapeRenderer.ShapeType.Line);
         shape.rect(mapBounds.x, mapBounds.y, mapBounds.width, mapBounds.height);
         shape.setColor(Color.WHITE);
@@ -165,29 +183,6 @@ public class UIManager {
         shape.end();
 
         batch.begin();
-
-//        if (activeWeapon instanceof Firearm) {
-//
-//            Firearm activeFirearm = (Firearm) activeWeapon;
-//            String ammo = activeFirearm.getLoadedAmmo() + " / " + activeFirearm.getAmmoCount();
-//
-//            x = Fonts.getXForRightAlignedText((int) (camera.viewportWidth - (30*Settings.guiScale)), ammo, Fonts.INFOFONT, .55f * Settings.guiScale);
-//            y = y - height + (25*Settings.guiScale);
-//
-//            Fonts.drawScaled(Fonts.INFOFONT, .55f * Settings.guiScale, ammo, batch,x, y);
-//            x = camera.viewportWidth - width - 20 + (15*Settings.guiScale);
-//            Fonts.drawScaled(Fonts.INFOFONT, .55f * Settings.guiScale, activeFirearm.getName(), batch,x, y);
-//        }
-//
-//
-//
-//        x = camera.viewportWidth - 20 - (width/2);
-//        y = camera.viewportHeight - (65*Settings.guiScale);
-//        weaponIMG.setCenter(x, y);
-//        float nativeScale = weaponIMG.getScaleX();
-//        weaponIMG.setScale(Settings.guiScale/2.5f);
-//        weaponIMG.draw(batch);
-//        weaponIMG.setScale(nativeScale);
 //
         batch.end();
 

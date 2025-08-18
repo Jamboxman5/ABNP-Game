@@ -35,6 +35,8 @@ public class MainMenuScreen implements Screen {
     public Button quitButton;
     public Button activeButton;
 
+    int move = 600;
+
     public MainMenuScreen(final ABNPGame game) {
         this.game = game;
         menuBKG = new Texture(Gdx.files.internal("ui/bkg/Menu_Background_0.png"));
@@ -54,6 +56,11 @@ public class MainMenuScreen implements Screen {
         Pixmap pixmap = new Pixmap(Gdx.files.internal("ui/cursor/Cursor_Pointer_Full.png"));
         Cursor cursor = Gdx.graphics.newCursor(pixmap, 0, 0);
         Gdx.graphics.setCursor(cursor);
+
+        playButton.reposition(move, 0);
+        settingsButton.reposition(move, 0);
+        quitButton.reposition(move, 0);
+
     }
 
     @Override
@@ -80,6 +87,12 @@ public class MainMenuScreen implements Screen {
                 activeButton.press();
                 lastButton = System.currentTimeMillis();
             }
+        }
+        if (move > 0) {
+            playButton.reposition(-40, 0);
+            settingsButton.reposition(-40, 0);
+            quitButton.reposition(-40, 0);
+            move-=40;
         }
     }
 
