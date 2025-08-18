@@ -34,6 +34,11 @@ public class Button {
         bounds = new Rectangle(x, y, width, height);
     }
 
+    public void reposition(int dX, int dY) {
+        bounds.x += dX;
+        bounds.y += dY;
+    }
+
     public Button(int x, int y, String text, BitmapFont font, float txtScale) {
         this.text = text;
         this.font = font;
