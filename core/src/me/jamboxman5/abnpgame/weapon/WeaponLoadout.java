@@ -29,6 +29,15 @@ public class WeaponLoadout {
 		weapons.add(new ShotgunWinchester12());
 		activeWeapon = weapons.get(0);
 	}
+
+	public void setWeapons(Array<Weapon> weapons) {
+		this.weapons = weapons;
+		activeWeapon = weapons.get(0);
+	}
+
+
+	public void setAmmos(Array<Ammo> ammos) { this.ammos = ammos; }
+
 	public WeaponLoadout(Array<Weapon> weapons, Array<Ammo> ammos) {
 		this.weapons = weapons;
 		this.ammos = ammos;

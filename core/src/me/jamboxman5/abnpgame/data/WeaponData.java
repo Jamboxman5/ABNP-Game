@@ -25,22 +25,26 @@ public class WeaponData {
     public static WeaponLoadout generateWeapons(JsonObject weaponsOBJ) {
         JsonArray weaponsArr = weaponsOBJ.get("weapons").getAsJsonArray();
 
-        Array<Weapon> weapons = new Array<>();
-
-        for (int i = 0; i < weaponsArr.size(); i++) {
-            JsonObject weaponOBJ = weaponsArr.get(i).getAsJsonObject();
-            weapons.add(generateWeaponFromJson(weaponOBJ));
-        }
+        WeaponLoadout loadout = new WeaponLoadout();
 
         JsonArray ammoArr = weaponsOBJ.get("ammo").getAsJsonArray();
-
         Array<Ammo> ammos = new Array<>();
-
         for (int i = 0; i < ammoArr.size(); i++) {
             JsonObject ammoOBJ = ammoArr.get(i).getAsJsonObject();
             ammos.add(generateAmmoFromJson(ammoOBJ));
         }
-        return new WeaponLoadout(weapons, ammos);
+
+        loadout.setAmmos(ammos);
+
+        Array<Weapon> weapons = new Array<>();
+        for (int i = 0; i < weaponsArr.size(); i++) {
+            JsonObject weaponOBJ = weaponsArr.get(i).getAsJsonObject();
+            weapons.add(generateWeaponFromJson(weaponOBJ, loadout));
+        }
+
+        loadout.setWeapons(weapons);
+
+        return loadout;
     }
 
     protected static Ammo generateAmmoFromJson(JsonObject ammoOBJ) {
@@ -49,19 +53,21 @@ public class WeaponData {
         return ammo;
     }
 
-    protected static Weapon generateWeaponFromJson(JsonObject weaponOBJ) {
+    protected static Weapon generateWeaponFromJson(JsonObject weaponOBJ, WeaponLoadout loadout) {
         WeaponType type = WeaponType.valueOf(weaponOBJ.get("type").getAsString());
         Weapon weapon = Weapon.getByType(type);
         JsonArray modsArr = weaponOBJ.get("mods").getAsJsonArray();
-        WeaponModLoadout loadout = new WeaponModLoadout();
+        WeaponModLoadout modLoadout = new WeaponModLoadout();
         for (int j = 0; j < modsArr.size(); j++) {
             JsonObject modOBJ = modsArr.get(j).getAsJsonObject();
             WeaponMod.ModType modType = WeaponMod.ModType.valueOf(modOBJ.get("type").getAsString());
-            loadout.addMod(WeaponMod.getByType(modType));
+            modLoadout.addMod(WeaponMod.getByType(modType));
         }
-        weapon.setMods(loadout);
+        weapon.setMods(modLoadout);
         if (weapon instanceof Firearm) {
             Firearm arm = (Firearm) weapon;
+            Ammo.AmmoType ammoType = Ammo.AmmoType.valueOf(weaponOBJ.get("ammoType").getAsString());
+            arm.setAmmo(loadout.getAmmo(ammoType));
             arm.setLoadedAmmo(weaponOBJ.get("loaded").getAsInt());
         }
         return weapon;
