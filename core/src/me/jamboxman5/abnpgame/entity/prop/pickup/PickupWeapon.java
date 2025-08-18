@@ -59,7 +59,7 @@ public class PickupWeapon extends Pickup {
     }
 
     public static void loadSprites(AssetManager assets) {
-        crateSprite = setup("entity/prop/crate.png", assets, -.9f);
+        crateSprite = setup("entity/prop/crate.png", assets, .09f);
 
     }
 }
