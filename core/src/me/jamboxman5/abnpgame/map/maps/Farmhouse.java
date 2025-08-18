@@ -13,7 +13,7 @@ public class Farmhouse extends Map {
     private static Texture texture;
 
     public Farmhouse() {
-        super("Farmhouse", new Vector2(-300, 0));
+        super("Farmhouse", new Vector2(530, 300));
         type = MapType.FARMHOUSE;
 
     }
@@ -26,11 +26,13 @@ public class Farmhouse extends Map {
 
     @Override
     public Vector2[] getZombieSpawns() {
-        Vector2[] spawnPoints = {new Vector2(-2200, -450),
-                new Vector2(-1000, -1500),
-                new Vector2(650, -1500),
-                new Vector2(1750, 320),
-                new Vector2(0, 1600)};
+        Vector2[] spawnPoints = {
+                new Vector2(0, 680),
+                new Vector2(1085, 555),
+                new Vector2(820, 720),
+                new Vector2(515, 720),
+                new Vector2(0, 500)
+        };
         return spawnPoints;
     }
 

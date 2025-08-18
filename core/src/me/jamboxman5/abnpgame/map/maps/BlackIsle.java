@@ -16,7 +16,7 @@ public class BlackIsle extends Map {
 
     public BlackIsle() {
 
-        super("Black Isle", new Vector2(3040, 1800));
+        super("Black Isle", new Vector2(2200, 1280));
         type = MapType.BLACKISLE;
     }
 
@@ -28,11 +28,16 @@ public class BlackIsle extends Map {
 
     @Override
     public Vector2[] getZombieSpawns() {
-        Vector2[] spawnPoints = {new Vector2(2165, 1675),
-                new Vector2(1230, 1400),
-                new Vector2(-240, 1175),
-                new Vector2(-4030, -360),
-                new Vector2(4150, 3800)};
+        Vector2[] spawnPoints = {
+                new Vector2(1768, 1219),
+                new Vector2(1297, 1090),
+                new Vector2(565, 967),
+                new Vector2(933, 0),
+                new Vector2(230, 1866),
+                new Vector2(1540, 2360),
+                new Vector2(2860, 2000),
+                new Vector2(2833, 380),
+                new Vector2(0, 701)};
         return spawnPoints;
     }
     public static void setTexture(Texture texture) {

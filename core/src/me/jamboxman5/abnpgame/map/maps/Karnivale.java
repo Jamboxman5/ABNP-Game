@@ -13,7 +13,7 @@ public class Karnivale extends Map {
     private static Texture texture;
 
     public Karnivale() {
-        super("Karnivale", new Vector2(-315, 850));
+        super("Karnivale", new Vector2(560, 650));
         type = MapType.KARNIVALE;
     }
 
@@ -25,11 +25,16 @@ public class Karnivale extends Map {
 
     @Override
     public Vector2[] getZombieSpawns() {
-        Vector2[] spawnPoints = {new Vector2(-1000, 2000),
-                new Vector2(25, 2000),
-                new Vector2(-250, -1500),
-                new Vector2(-2300, 250),
-                new Vector2(1750, 550)};
+        Vector2[] spawnPoints = {
+                new Vector2(180, 0),
+                new Vector2(850, 0),
+                new Vector2(1090, 470),
+                new Vector2(1090, 820),
+                new Vector2(190, 1090),
+                new Vector2(0, 690),
+                new Vector2(0, 300),
+                new Vector2(700, 1090)
+        };
         return spawnPoints;
     }
 

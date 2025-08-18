@@ -14,7 +14,7 @@ public class Verdammtenstadt extends Map {
     private static Texture texture;
 
     public Verdammtenstadt() {
-        super("Verdammtenstadt", new Vector2(1426, 1374));
+        super("Verdammtenstadt", new Vector2(1454, 1042));
         type = MapType.VERDAMMTENSTADT;
     }
 
@@ -25,11 +25,15 @@ public class Verdammtenstadt extends Map {
 
     @Override
     public Vector2[] getZombieSpawns() {
-        Vector2[] spawnPoints = {new Vector2(1600, 2040),
-                new Vector2(1240, 1710),
-                new Vector2(1790, 1500),
-                new Vector2(-800, 970),
-                new Vector2(190, 280)};
+        Vector2[] spawnPoints = {
+                new Vector2(1187, 1513),
+                new Vector2(1496, 1403),
+                new Vector2(1313, 1243),
+                new Vector2(1580, 1138),
+                new Vector2(771, 511),
+                new Vector2(463, 1738),
+                new Vector2(281, 868)
+        };
         return spawnPoints;
     }
 
