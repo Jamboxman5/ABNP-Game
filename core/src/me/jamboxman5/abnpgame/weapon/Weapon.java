@@ -116,4 +116,7 @@ public abstract class Weapon {
 //
 //        return Utilities.scaleImage(image, (int)(image.getWidth() * scale), (int)(image.getHeight() * scale));
 	}
+
+	public double getDamage() { return damage; }
+
 }
