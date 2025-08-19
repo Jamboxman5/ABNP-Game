@@ -26,6 +26,7 @@ public class RifleM4A1 extends Firearm {
 
 	public static Sound attackSound;
 	public static Sound reloadSound;
+	public static Sound silencerSound;
 
 	public RifleM4A1() {
 		this(new WeaponModLoadout(), new StandardAmmo(), 30);
@@ -43,6 +44,7 @@ public class RifleM4A1 extends Firearm {
 
 		super.attackSound = attackSound;
 		super.reloadSound = reloadSound;
+		super.silencerSound = silencerSound;
 
 		this.attackRateMS = 86;
 		this.damage = 45;
@@ -93,6 +95,7 @@ public class RifleM4A1 extends Firearm {
 
 		assets.load("sound/sfx/weapon/rifle/Rifle_M4A1_Shot.wav", Sound.class);
 		assets.load("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
+		assets.load("sound/sfx/weapon/rifle/Rifle_Shot_Silencer.wav", Sound.class);
 	}
 
 	public static void loadSprites(AssetManager assets) {
@@ -134,6 +137,7 @@ public class RifleM4A1 extends Firearm {
 
 		attackSound = assets.get("sound/sfx/weapon/rifle/Rifle_M4A1_Shot.wav", Sound.class);
 		reloadSound = assets.get("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
+		silencerSound = assets.get("sound/sfx/weapon/rifle/Rifle_Shot_Silencer.wav", Sound.class);
 	}
 
 }

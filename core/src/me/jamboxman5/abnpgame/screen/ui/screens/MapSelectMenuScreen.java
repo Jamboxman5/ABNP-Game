@@ -213,7 +213,7 @@ public class MapSelectMenuScreen implements Screen {
                     game.getClientManager().sendPacketTCP(packet);
                 } else {
                     Screen old = game.getScreen();
-                    game.setScreen(new GameScreen(game, selected, new MissionScript()));
+                    game.setScreen(new GameScreen(game, selected, new BasicScript()));
                     old.dispose();
                 }
             }

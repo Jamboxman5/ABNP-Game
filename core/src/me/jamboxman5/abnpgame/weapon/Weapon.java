@@ -13,7 +13,6 @@ import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleAK47;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
-import me.jamboxman5.abnpgame.weapon.mods.RedDotSight;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponMod;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
@@ -65,11 +64,8 @@ public abstract class Weapon {
 	    if ((System.currentTimeMillis() - lastAttack) < attackRateMS) return false;
 		return true;
 	}
-	public boolean hasRedDotSight() {
-		for (WeaponMod m : equippedMods.getMods()) {
-			if (m instanceof RedDotSight) return true;
-		}
-		return false;
+	public boolean hasMod(WeaponMod.ModType type) {
+		return equippedMods.hasMod(type);
 	}
 	public void idle() { currentAnimation = idleAnimation; }
 	public void move() { currentAnimation = moveAnimation; }

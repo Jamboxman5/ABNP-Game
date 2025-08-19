@@ -19,6 +19,7 @@ import me.jamboxman5.abnpgame.net.packets.PacketMove;
 import me.jamboxman5.abnpgame.net.packets.PacketShoot;
 import me.jamboxman5.abnpgame.util.InputKeys;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
+import me.jamboxman5.abnpgame.weapon.mods.WeaponMod;
 
 public class Player extends Survivor {
 	
@@ -291,7 +292,7 @@ public class Player extends Survivor {
 	@Override
 	public void draw(SpriteBatch batch, ShapeRenderer shape) {
 
-		if (weapons.getActiveWeapon().hasRedDotSight()) {
+		if (weapons.getActiveWeapon().hasMod(WeaponMod.ModType.RedDotSight)) {
 			Gdx.gl.glEnable(GL30.GL_BLEND);
 			Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 			shape.begin(ShapeRenderer.ShapeType.Filled);

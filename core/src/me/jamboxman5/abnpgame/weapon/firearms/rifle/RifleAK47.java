@@ -26,6 +26,7 @@ public class RifleAK47 extends Firearm {
 
 	public static Sound attackSound;
 	public static Sound reloadSound;
+	public static Sound silencerSound;
 
 	public RifleAK47() {
 		this(new WeaponModLoadout(), new StandardAmmo(), 30);
@@ -43,6 +44,7 @@ public class RifleAK47 extends Firearm {
 
 		super.attackSound = attackSound;
 		super.reloadSound = reloadSound;
+		super.silencerSound = silencerSound;
 
 		this.attackRateMS = 100;
 		this.damage = 60;
@@ -93,6 +95,7 @@ public class RifleAK47 extends Firearm {
 
 		assets.load("sound/sfx/weapon/rifle/Rifle_AK47_Shot.wav", Sound.class);
 		assets.load("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
+		assets.load("sound/sfx/weapon/rifle/Rifle_Shot_Silencer.wav", Sound.class);
 	}
 
 	public static void loadSprites(AssetManager assets) {
@@ -134,6 +137,7 @@ public class RifleAK47 extends Firearm {
 
 		attackSound = assets.get("sound/sfx/weapon/rifle/Rifle_AK47_Shot.wav", Sound.class);
 		reloadSound = assets.get("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
+		silencerSound = assets.get("sound/sfx/weapon/rifle/Rifle_Shot_Silencer.wav", Sound.class);
 	}
 
 }

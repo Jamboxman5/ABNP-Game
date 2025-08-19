@@ -22,9 +22,9 @@ public class WeaponModLoadout {
 		if (equippedMods.contains(mod, false)) equippedMods.removeValue(mod, false);
 	}
 	public Array<WeaponMod> getMods() { return equippedMods; }
-	public boolean hasRedDotSight() {
+	public boolean hasMod(WeaponMod.ModType type) {
 		for (WeaponMod mod : equippedMods) {
-			if (mod instanceof RedDotSight) return true;
+			if (mod.getType() == type) return true;
 		}
 		return false;
 	}

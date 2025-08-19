@@ -12,6 +12,7 @@ import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.weapon.Weapon;
+import me.jamboxman5.abnpgame.weapon.mods.WeaponMod;
 
 public class Firearm extends Weapon {
 	
@@ -23,6 +24,7 @@ public class Firearm extends Weapon {
 
 	protected Sound reloadSound;
 	protected Sound outOfAmmoSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/misc/Out_Of_Ammo.wav"));
+	protected Sound silencerSound;
 	protected long lastMisfire = System.currentTimeMillis();
 
 	protected Ammo currentAmmo;
@@ -46,7 +48,11 @@ public class Firearm extends Weapon {
 //		if (!(shooter instanceof Player)) return false;
 		ABNPGame gp = ABNPGame.getInstance();
 		currentAnimation = shootAnimation;
-		attackSound.play(Settings.sfxVolume);
+		if (hasMod(WeaponMod.ModType.Silencer)) {
+			silencerSound.play(Settings.sfxVolume);
+		} else {
+			attackSound.play(Settings.sfxVolume);
+		}
 		this.lastAttack = System.currentTimeMillis();
 		loaded -= 1;
 
@@ -80,26 +86,39 @@ public class Firearm extends Weapon {
 		if (!canAttack()) return false;
 
 		currentAnimation = shootAnimation;
-		attackSound.play(Settings.sfxVolume);
+		if (hasMod(WeaponMod.ModType.Silencer)) {
+			silencerSound.play(Settings.sfxVolume);
+		} else {
+			attackSound.play(Settings.sfxVolume);
+
+		}
 		this.lastAttack = System.currentTimeMillis();
 
 		return true;
 	}
 
 	public boolean canReload() {
-		return (!reloading && (loaded < magSize) && (currentAmmo.getAmmoCount() > 0));
+		return (!reloading && (loaded < getAdjustedMagSize()) && (currentAmmo.getAmmoCount() > 0));
+	}
+
+	public int getAdjustedMagSize() {
+		float adjustedCapacity = magSize;
+		if (hasMod(WeaponMod.ModType.ExtendedMagazine)) adjustedCapacity *= (float) WeaponMod.getByType(WeaponMod.ModType.ExtendedMagazine).getMagCapacityModifier();
+		return Math.round(adjustedCapacity);
 	}
 
 	public void reload() {
 		reloading = true;
 		currentAnimation = reloadAnimation;
 		reloadSound.play(Settings.sfxVolume);
+		final int loadTo = getAdjustedMagSize();
+
 		new Thread() {
 			@Override
 			public void run() {
 				try {
 					Thread.sleep(reloadSpeedMS);
-					int delta = magSize - loaded;
+					int delta = loadTo - loaded;
 					int ammoCount = currentAmmo.getAmmoCount();
 					if (delta > ammoCount) {
 						delta = ammoCount;

@@ -1,7 +1,6 @@
 package me.jamboxman5.abnpgame.entity.mob.player;
 
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -11,7 +10,7 @@ import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.mob.Mob;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
-import me.jamboxman5.abnpgame.weapon.mods.RedDotSight;
+import me.jamboxman5.abnpgame.weapon.mods.firearm.RedDotSight;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
 public abstract class Survivor extends Mob {

@@ -24,6 +24,7 @@ public class Pistol1911 extends Firearm {
 
 	public static Sound attackSound;
 	public static Sound reloadSound;
+	public static Sound silencerSound;
 
 	public Pistol1911() {
 		this(new WeaponModLoadout(), new StandardAmmo(), 8);
@@ -41,6 +42,7 @@ public class Pistol1911 extends Firearm {
 
 		super.attackSound = attackSound;
 		super.reloadSound = reloadSound;
+		super.silencerSound = silencerSound;
 
 		this.attackRateMS = 350;
 		this.damage = 18;
@@ -93,6 +95,7 @@ public class Pistol1911 extends Firearm {
 		// Sounds
 		assets.load("sound/sfx/weapon/pistol/Pistol_Shot.wav", Sound.class);
 		assets.load("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
+		assets.load("sound/sfx/weapon/pistol/Pistol_Shot_Silencer.wav", Sound.class);
 	}
 
 	public static void loadSprites(AssetManager assets) {
@@ -135,5 +138,6 @@ public class Pistol1911 extends Firearm {
 
 		attackSound = assets.get("sound/sfx/weapon/pistol/Pistol_Shot.wav", Sound.class);
 		reloadSound = assets.get("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
+		silencerSound = assets.get("sound/sfx/weapon/pistol/Pistol_Shot_Silencer.wav", Sound.class);
 	}
 }
