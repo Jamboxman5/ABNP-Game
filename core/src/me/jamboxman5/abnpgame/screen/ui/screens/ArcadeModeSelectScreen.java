@@ -38,6 +38,7 @@ public class ArcadeModeSelectScreen implements Screen {
 
     public Button activeButton;
 
+    int move = 600;
 
     public ArcadeModeSelectScreen(final ABNPGame game) {
         this.game = game;
@@ -50,6 +51,8 @@ public class ArcadeModeSelectScreen implements Screen {
     @Override
     public void show() {
         getButtons();
+        singlePlayer.reposition(move, 0);
+        multiPlayer.reposition(move, 0);
     }
 
     @Override
@@ -99,6 +102,11 @@ public class ArcadeModeSelectScreen implements Screen {
                 activeButton.press();
                 lastButton = System.currentTimeMillis();
             }
+        }
+        if (move > 0) {
+            singlePlayer.reposition(-40, 0);
+            multiPlayer.reposition(-40, 0);
+            move-=40;
         }
     }
 

@@ -39,6 +39,7 @@ public class MultiplayerModeSelectScreen implements Screen {
 
     public Button activeButton;
 
+    int move = 600;
 
     public MultiplayerModeSelectScreen(final ABNPGame game) {
         this.game = game;
@@ -51,6 +52,9 @@ public class MultiplayerModeSelectScreen implements Screen {
     @Override
     public void show() {
         getButtons();
+        host.reposition(move, 0);
+        join.reposition(move, 0);
+
     }
 
     @Override
@@ -100,6 +104,11 @@ public class MultiplayerModeSelectScreen implements Screen {
                 activeButton.press();
                 lastButton = System.currentTimeMillis();
             }
+        }
+        if (move > 0) {
+            host.reposition(-40, 0);
+            join.reposition(-40, 0);
+            move-=40;
         }
     }
 

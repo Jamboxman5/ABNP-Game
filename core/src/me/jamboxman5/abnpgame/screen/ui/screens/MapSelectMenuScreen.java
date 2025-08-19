@@ -41,7 +41,7 @@ public class MapSelectMenuScreen implements Screen {
     public Button back;
     public Button activeButton;
 
-    private boolean dispose = false;
+    int move = 600;
 
     public MapSelectMenuScreen(final ABNPGame game) {
         this.game = game;
@@ -51,13 +51,14 @@ public class MapSelectMenuScreen implements Screen {
         camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
     }
 
-    public void markForDisposal() {
-        dispose = true;
-    }
-
     @Override
     public void show() {
         getButtons();
+        verdammtenstadt.reposition(move, 0);
+        blackIsle.reposition(move, 0);
+        farmHouse.reposition(move, 0);
+        karnivale.reposition(move, 0);
+        airbase.reposition(move, 0);
     }
 
     @Override
@@ -108,7 +109,14 @@ public class MapSelectMenuScreen implements Screen {
                 lastButton = System.currentTimeMillis();
             }
         }
-        if (dispose) dispose();
+        if (move > 0) {
+            verdammtenstadt.reposition(-40, 0);
+            farmHouse.reposition(-40, 0);
+            airbase.reposition(-40, 0);
+            blackIsle.reposition(-40, 0);
+            karnivale.reposition(-40, 0);
+            move-=40;
+        }
     }
 
     public void drawBKG(SpriteBatch batch) {
