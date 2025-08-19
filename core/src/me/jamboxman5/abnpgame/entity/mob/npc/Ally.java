@@ -42,15 +42,6 @@ public class Ally extends Survivor {
             }
         }
 
-
-
-        animFrame -= 1;
-
-        if (animFrame < 0) {
-            weapons.getActiveWeapon().idle();
-            animFrame = weapons.getActiveWeapon().idleSprites.size-1;
-        }
-
         if (gp.getMapManager().getNearestZombie(position) != null) {
             desiredTarget = gp.getMapManager().getNearestZombie(position).getPosition();
             if (distanceTo(aimTarget) > ((Firearm) weapons.getActiveWeapon()).getRange()) desiredTarget = gp.getPlayer().getPosition();

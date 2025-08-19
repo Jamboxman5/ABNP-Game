@@ -31,6 +31,8 @@ public class Player extends Survivor {
 	protected int staminaRegenRate = 1;
 	protected long lastStaminaRegen = 0;
 
+	protected float stateTime = 0;
+
 	protected Array<Ally> companions;
 
 	public Player(ABNPGame gamePanel, String name, String uuid) {
@@ -62,19 +64,13 @@ public class Player extends Survivor {
 
 		if (!gp.getPlayer().getID().equals(uuid)) return;
 
+		stateTime += delta;
 		aimTarget = gp.getWorldMousePointer();
 
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
 
 		((Circle)collision).setPosition(new Vector2(position.x, position.y+10).rotateAroundDeg(position, (float) (Math.toDegrees(getDrawingAngle()) + 360)));
-
-		animFrame -= 1;
-
-		if (animFrame < 0) {
-			weapons.getActiveWeapon().idle();
-			animFrame = weapons.getActiveWeapon().idleSprites.size-1;
-		}
 
 		boolean rotating = false;
 		float oldRotation = getRotation();
@@ -111,6 +107,18 @@ public class Player extends Survivor {
 			if (weapons.getActiveWeapon() instanceof Firearm) {
 				Firearm arm = (Firearm) weapons.getActiveWeapon();
 				if (arm.canReload()) arm.reload();
+				stateTime = 0;
+			}
+		}
+
+		if (Gdx.input.isKeyPressed(Input.Keys.F) && !weapons.getActiveWeapon().isMeleeAnimation()) {
+			if (weapons.getActiveWeapon() instanceof Firearm) {
+				Firearm arm = (Firearm) weapons.getActiveWeapon();
+				arm.melee();
+				stateTime = 0;
+			} else {
+				weapons.getActiveWeapon().attack(this, Math.toRadians(jitter));
+				stateTime = 0;
 			}
 		}
 		
@@ -172,7 +180,11 @@ public class Player extends Survivor {
 			stepCounter = 0;
 		}
 
-
+		if (weapons.getActiveWeapon().getCurrentAnimation().isAnimationFinished(stateTime)) {
+			stateTime = 0;
+			if (isMoving) weapons.getActiveWeapon().move();
+			else weapons.getActiveWeapon().idle();
+		}
 
 		if (Gdx.input.isTouched()) {
 			if (gp.isMultiplayer()) {
@@ -181,7 +193,7 @@ public class Player extends Survivor {
 				gp.getClientManager().sendPacketTCP(shoot);
 				weapons.getActiveWeapon().fakeAttack(this);
 			} else if (weapons.getActiveWeapon().attack(this, Math.toRadians(jitter))) {
-
+				stateTime = 0;
 				jitter = (float) (Math.random() * weapons.getActiveWeapon().getRecoil());
 				if (Math.random() > .5) jitter = -jitter;
 
@@ -247,7 +259,7 @@ public class Player extends Survivor {
 
 
 		batch.begin();
-		Sprite toDraw = weapons.getActiveWeapon().getPlayerSprite(animFrame);
+		Sprite toDraw = weapons.getActiveWeapon().getPlayerSprite(stateTime);
 
 		if (gp.getPlayer().equals(this)) {
 			// Translate + rotate around custom pivot
@@ -258,10 +270,23 @@ public class Player extends Survivor {
 			batch.setTransformMatrix(transform);
 
 			// Offset sprite so it rotates around the right pivot point
-			toDraw.setPosition(
-					-toDraw.getWidth() / 2f + weapons.getActiveWeapon().getXOffset(),
-					-toDraw.getHeight() / 2f + weapons.getActiveWeapon().getYOffset()
-			);
+			if (weapons.getActiveWeapon().isShootAnimation()) {
+				toDraw.setPosition(
+						-toDraw.getWidth() / 2f + weapons.getActiveWeapon().getShootXOffset(),
+						-toDraw.getHeight() / 2f + weapons.getActiveWeapon().getShootYOffset()
+				);
+			} else if (weapons.getActiveWeapon().isMeleeAnimation()){
+				toDraw.setPosition(
+						-toDraw.getWidth() / 2f + weapons.getActiveWeapon().getMeleeXOffset(),
+						-toDraw.getHeight() / 2f + weapons.getActiveWeapon().getMeleeYOffset()
+				);
+			} else {
+				toDraw.setPosition(
+						-toDraw.getWidth() / 2f + weapons.getActiveWeapon().getXOffset(),
+						-toDraw.getHeight() / 2f + weapons.getActiveWeapon().getYOffset()
+				);
+			}
+
 
 			toDraw.draw(batch);
 

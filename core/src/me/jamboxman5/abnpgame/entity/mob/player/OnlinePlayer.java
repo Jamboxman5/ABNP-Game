@@ -5,13 +5,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
-import me.jamboxman5.abnpgame.entity.mob.Mob;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
 import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.weapon.Weapon;
-import me.jamboxman5.abnpgame.weapon.WeaponType;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
@@ -29,12 +27,8 @@ public class OnlinePlayer extends Player {
 
     @Override
     public void update(float delta) {
-        animFrame -= 1;
 
-        if (animFrame < 0) {
-            weapons.getActiveWeapon().idle();
-            animFrame = weapons.getActiveWeapon().idleSprites.size-1;
-        }
+
     }
 
     public Weapon getActiveWeapon() { return activeWeapon; }

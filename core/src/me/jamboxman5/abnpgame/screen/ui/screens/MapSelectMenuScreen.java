@@ -15,6 +15,7 @@ import me.jamboxman5.abnpgame.net.packets.PacketMap;
 import me.jamboxman5.abnpgame.screen.GameScreen;
 import me.jamboxman5.abnpgame.screen.ui.elements.Button;
 import me.jamboxman5.abnpgame.script.BasicScript;
+import me.jamboxman5.abnpgame.script.MissionScript;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
@@ -212,7 +213,7 @@ public class MapSelectMenuScreen implements Screen {
                     game.getClientManager().sendPacketTCP(packet);
                 } else {
                     Screen old = game.getScreen();
-                    game.setScreen(new GameScreen(game, selected, new BasicScript()));
+                    game.setScreen(new GameScreen(game, selected, new MissionScript()));
                     old.dispose();
                 }
             }
