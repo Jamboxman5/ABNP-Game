@@ -39,6 +39,7 @@ public class ArcadeMenuScreen implements Screen {
     public Button backButton1;
     public Button activeButton;
 
+    private int move = 800;
 
     public ArcadeMenuScreen(final ABNPGame game) {
         this.game = game;
@@ -51,6 +52,11 @@ public class ArcadeMenuScreen implements Screen {
     @Override
     public void show() {
         getButtons();
+        playButton.reposition(-move, 0);
+        shopButton.reposition(-move, 0);
+        equipButton.reposition(move, 0);
+        unlocksButton.reposition(move, 0);
+
     }
 
     @Override
@@ -98,6 +104,13 @@ public class ArcadeMenuScreen implements Screen {
                 lastButton = System.currentTimeMillis();
             }
         }
+        if (move > 0) {
+            playButton.reposition(80, 0);
+            shopButton.reposition(80, 0);
+            equipButton.reposition(-80, 0);
+            unlocksButton.reposition(-80, 0);
+            move-=80;
+        }
     }
 
     public void drawBKG(SpriteBatch batch) {
@@ -123,22 +136,22 @@ public class ArcadeMenuScreen implements Screen {
         float yDown = Settings.screenHeight - Settings.screenHeight/4.5f;
         float height = Settings.screenHeight/4.5f;
 
-        renderer.rect(0, yDown, Settings.screenWidth, height);
+        renderer.rect(0, yDown + move, Settings.screenWidth, height);
         renderer.setColor(Color.RED);
-        renderer.rectLine(0, yDown, Settings.screenWidth, yDown, 2f);
+        renderer.rectLine(0, yDown + move, Settings.screenWidth, yDown + move, 2f);
         renderer.end();
 
 
 
 
         batch.begin();
-        Fonts.drawScaled(Fonts.BUTTONFONT, 1f, game.getPlayer().getName(), batch, 20, Settings.screenHeight - 20);
-        Fonts.drawScaled(Fonts.INFOFONT, .8f, "Money: $" + game.getPlayer().getMoney(), batch, 20, Settings.screenHeight - 80);
+        Fonts.drawScaled(Fonts.BUTTONFONT, 1f, game.getPlayer().getName(), batch, 20, Settings.screenHeight - 20 + move);
+        Fonts.drawScaled(Fonts.INFOFONT, .8f, "Money: $" + game.getPlayer().getMoney(), batch, 20, Settings.screenHeight - 80 + move);
 
         String exp = "EXP: " + game.getPlayer().getExp();
         int x = (int) Fonts.getXForRightAlignedText((int) (20 + Fonts.getTextWidth(game.getPlayer().getName(), Fonts.BUTTONFONT, 1f)), exp, Fonts.INFOFONT, .8f);
 
-        Fonts.drawScaled(Fonts.INFOFONT, .8f, exp, batch, x, Settings.screenHeight - 80);
+        Fonts.drawScaled(Fonts.INFOFONT, .8f, exp, batch, x, Settings.screenHeight - 80 + move);
 //
 //        int x = 60;
 //        int y = Settings.screenHeight - 220;
