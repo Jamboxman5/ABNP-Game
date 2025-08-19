@@ -4,8 +4,10 @@ package me.jamboxman5.abnpgame.entity.mob.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Matrix4;
@@ -32,6 +34,7 @@ public class Player extends Survivor {
 	protected long lastStaminaRegen = 0;
 
 	protected float stateTime = 0;
+	protected float legStateTime = 0;
 
 	protected Array<Ally> companions;
 
@@ -65,6 +68,8 @@ public class Player extends Survivor {
 		if (!gp.getPlayer().getID().equals(uuid)) return;
 
 		stateTime += delta;
+		legStateTime += delta;
+
 		aimTarget = gp.getWorldMousePointer();
 
 		screenX = Gdx.graphics.getWidth()/2;
@@ -85,7 +90,9 @@ public class Player extends Survivor {
             setDirection("left");
         } else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
             setDirection("right");
-        }
+        } else {
+			setDirection("still");
+		}
 
 		if (Gdx.input.isKeyPressed(InputKeys.SHIFT) && stamina > 0) {
 			sprinting = true;
@@ -213,10 +220,51 @@ public class Player extends Survivor {
 			move.jitter = jitter;
 			gp.getClientManager().sendPacketUDP(move);
 		}
+
+		if (isMoving) {
+			switch (getDirection()) {
+				case "forward": {
+					if (sprinting) {
+						if (changedAnimation(runAnimation)) legStateTime = 0;
+						currentAnimation = runAnimation;
+					}
+					else {
+						if (changedAnimation(walkAnimation)) legStateTime = 0;
+						currentAnimation = walkAnimation;
+					}
+					break;
+				}
+				case "left": {
+					if (changedAnimation(strafeLeftAnimation)) legStateTime = 0;
+					currentAnimation = strafeLeftAnimation;
+					break;
+				}
+				case "right": {
+					if (changedAnimation(strafeRightAnimation)) legStateTime = 0;
+					currentAnimation = strafeRightAnimation;
+					break;
+				}
+				case "back": {
+					if (changedAnimation(strafeBackAnimation)) legStateTime = 0;
+					currentAnimation = strafeBackAnimation;
+					break;
+				}
+				default: {
+					if (changedAnimation(idleAnimation)) legStateTime = 0;
+					currentAnimation = idleAnimation;
+					break;
+				}
+			}
+		} else {
+			if (changedAnimation(idleAnimation)) legStateTime = 0;
+			currentAnimation = idleAnimation;
+		}
 		
 	}
 	
-	
+	boolean changedAnimation(Animation<TextureRegion> newAnimation) {
+		return currentAnimation != newAnimation;
+	}
 	
 	public void basicMove() {
 		
@@ -287,6 +335,13 @@ public class Player extends Survivor {
 				);
 			}
 
+			int legXOffset = 0;
+			if (currentAnimation == strafeBackAnimation) legXOffset = -10;
+
+			Sprite legs = new Sprite(currentAnimation.getKeyFrame(legStateTime));
+			legs.setScale(.25f);
+			legs.setPosition(-legs.getWidth() / 2f + legXOffset, -legs.getHeight() / 2f + 6);
+			legs.draw(batch);
 
 			toDraw.draw(batch);
 

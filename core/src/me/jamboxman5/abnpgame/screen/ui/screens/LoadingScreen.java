@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
+import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.entity.prop.pickup.Pickup;
 import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
@@ -168,6 +169,7 @@ public class LoadingScreen implements Screen {
         Pickup.loadSprites(game.getAssetManager());
         Sounds.loadSounds(game.getAssetManager());
         Map.loadMaps(game.getAssetManager());
+        Survivor.loadSprites(game.getAssetManager());
         Sounds.updateVolumes();
 
     }

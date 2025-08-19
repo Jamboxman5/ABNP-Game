@@ -61,7 +61,7 @@ public class RifleAK47 extends Firearm {
 		this.shootYOffset = 12;
 		this.meleeXOffset = 0;
 		this.meleeYOffset = 14;
-		this.recoil = 3.5;
+		this.recoil = 5.5;
 
 		currentAnimation = super.idleAnimation;
 

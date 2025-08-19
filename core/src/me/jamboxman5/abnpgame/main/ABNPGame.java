@@ -16,6 +16,7 @@ import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.data.SettingsData;
 import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.entity.mob.player.Player;
+import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.entity.prop.pickup.Pickup;
 import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
@@ -163,6 +164,7 @@ public class ABNPGame extends Game {
         Pickup.loadAssets(assetManager);
         Sounds.loadAssets(assetManager);
         Map.loadAssets(assetManager);
+        Survivor.loadAssets(assetManager);
     }
 
     public void closeMultiplayerGame() throws IOException {
