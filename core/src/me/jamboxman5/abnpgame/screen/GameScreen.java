@@ -18,6 +18,7 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieNormal;
+import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieRunner;
 import me.jamboxman5.abnpgame.entity.prop.pickup.Pickup;
 import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
 import me.jamboxman5.abnpgame.main.ABNPGame;
@@ -138,7 +139,7 @@ public class GameScreen implements Screen, InputProcessor {
         }
         if (Gdx.input.isKeyPressed(Input.Keys.BACKSPACE)) {
             if (System.currentTimeMillis() - gameController.lastSpawn > 100) {
-                Zombie zombie = new ZombieNormal(game, game.getMapManager().getActiveMap().getZombieSpawns()[gameController.spawnCounter]);
+                Zombie zombie = new ZombieRunner(game, game.getMapManager().getActiveMap().getZombieSpawns()[gameController.spawnCounter]);
                 game.getMapManager().addEntity(zombie);
                 gameController.lastSpawn = System.currentTimeMillis();
                 gameController.spawnCounter++;

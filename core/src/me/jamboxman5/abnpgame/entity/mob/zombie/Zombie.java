@@ -29,15 +29,18 @@ public class Zombie extends Mob {
     protected int rewardMoney;
     protected int rewardEXP;
 
+    private boolean isAttacking = false;
+    private PursuitType pursuitType;
     public Zombie(ABNPGame game,
                   ZombieType type,
                   Vector2 startPos,
-                  int topSpeed,
+                  float topSpeed,
                   int maxHealth,
                   int attackCooldownMS,
                   int rewardMoney,
                   int rewardEXP,
-                  double damage) {
+                  double damage,
+                  PursuitType pursuitType) {
         super(game,
                 type.toString(),
                 startPos,
@@ -49,6 +52,7 @@ public class Zombie extends Mob {
         this.attackCooldownMS = attackCooldownMS;
         this.rewardMoney = rewardMoney;
         this.rewardEXP = rewardEXP;
+        this.pursuitType = pursuitType;
 
         activeSprites = attackSprites;
 
@@ -101,7 +105,6 @@ public class Zombie extends Mob {
             ));
         }
     }
-
     @Override
     public void update(float delta) {
 
@@ -116,34 +119,58 @@ public class Zombie extends Mob {
             animFrame++;
             Array<Sprite> lastSprites = activeSprites;
 
-            if (velocity.len() > 0) {
-                activeSprites = walkSprites;
-                if (getCollision().overlaps(gp.getPlayer().getCollision())) {
-                    activeSprites = attackSprites;
+            if (isAttacking) {
+                activeSprites = attackSprites;
+
+                if (animFrame >= attackSprites.size) {
+                    animFrame = 0;
+                    isAttacking = false;
                 }
             } else {
-                if (((Circle)collision).overlaps(gp.getPlayer().getCollision())) {
-                    activeSprites = attackSprites;
+                if (velocity.len() > 0) {
+                    activeSprites = walkSprites;
                 } else {
                     activeSprites = idleSprites;
                 }
             }
 
-
             if (!lastSprites.equals(activeSprites)) animFrame = 0;
 
-            if (animFrame == activeSprites.size) {
+            if (animFrame >= activeSprites.size) {
                 animFrame = 0;
             }
 
             animCounter = 0;
-
         }
 
         setRotation((float) (Math.toDegrees(getAngleToPoint(target)) + 360) + jitter);
 
-        arrive(new Vector2(gp.getPlayer().getCollision().x, gp.getPlayer().getCollision().y), 300, 1);
-        if (getCollision().overlaps(gp.getPlayer().getCollision())) gp.getPlayer().damage(damage);
+        if (!isAttacking) {
+            switch (pursuitType) {
+                case SEEK: {
+                    seek(new Vector2(gp.getPlayer().getCollision().x, gp.getPlayer().getCollision().y));
+                    break;
+                }
+                case PURSUE: {
+                    pursue(gp.getPlayer());
+                    break;
+                }
+                case ARRIVE: {
+                    arrive(new Vector2(gp.getPlayer().getCollision().x, gp.getPlayer().getCollision().y), 250, 1);
+                    break;
+                }
+            }
+        }
+
+        if (getCollision().overlaps(gp.getPlayer().getCollision()) && System.currentTimeMillis() - lastHit > attackCooldownMS) {
+            gp.getPlayer().damage(damage);
+            lastHit = System.currentTimeMillis();
+
+            isAttacking = true;
+            velocity.limit(0);
+            acceleration.limit(0);
+            animFrame = 0;
+        }
 
         if (isDead()) {
             gp.getPlayer().giveMoney(rewardMoney);

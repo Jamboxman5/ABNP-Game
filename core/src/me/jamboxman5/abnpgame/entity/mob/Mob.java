@@ -10,7 +10,7 @@ import me.jamboxman5.abnpgame.util.Settings;
 public abstract class Mob extends LivingEntity {
 	
 	protected String name;
-	protected int speed;
+	protected float speed;
 	public boolean isMoving;
 	protected int scale = 1;
 	protected float maxForce;
@@ -30,7 +30,7 @@ public abstract class Mob extends LivingEntity {
 	protected Vector2 target;
 
 
-	public Mob(ABNPGame gamePanel, String type, Vector2 startPos, int health, int maxHealth, int speed) {
+	public Mob(ABNPGame gamePanel, String type, Vector2 startPos, int health, int maxHealth, float speed) {
 		super(gamePanel, health, maxHealth);
 		this.name = type;
 //		this.worldX = x;
@@ -240,5 +240,9 @@ public abstract class Mob extends LivingEntity {
 	
 	public abstract boolean hasCollided(double xComp, double yComp);
 	public String getName() { return name; } 
+
+	public enum PursuitType {
+		ARRIVE, PURSUE, SEEK;
+	}
 
 }

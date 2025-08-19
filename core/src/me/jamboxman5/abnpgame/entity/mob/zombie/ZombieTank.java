@@ -5,6 +5,6 @@ import me.jamboxman5.abnpgame.main.ABNPGame;
 
 public class ZombieTank extends Zombie{
     public ZombieTank(ABNPGame game, Vector2 startPos) {
-        super(game, ZombieType.TANK, startPos, 2, 300, 800, 200, 50, .5);
+        super(game, ZombieType.TANK, startPos, 1.5f, 300, 1200, 200, 50, 20, PursuitType.SEEK);
     }
 }

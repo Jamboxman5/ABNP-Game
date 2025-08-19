@@ -20,6 +20,7 @@ import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.entity.prop.pickup.Pickup;
 import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
 import me.jamboxman5.abnpgame.managers.MapManager;
+import me.jamboxman5.abnpgame.managers.UIManager;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.maps.*;
 import me.jamboxman5.abnpgame.net.ClientManager;
@@ -195,6 +196,7 @@ public class ABNPGame extends Game {
         this.getScreen().dispose();
         setScreen(new GameOverScreen(this));
         player.heal();
+        UIManager.clearMessageBuffer();
 //        generatePlayer();
     }
 
