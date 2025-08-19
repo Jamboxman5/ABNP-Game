@@ -45,8 +45,7 @@ public class Firearm extends Weapon {
 		if (!canAttack()) return false;
 //		if (!(shooter instanceof Player)) return false;
 		ABNPGame gp = ABNPGame.getInstance();
-		activeSprites = shootSprites;
-		shooter.setAnimFrame(shootSprites.size-1);
+		currentAnimation = shootAnimation;
 		attackSound.play(Settings.sfxVolume);
 		this.lastAttack = System.currentTimeMillis();
 		loaded -= 1;
@@ -80,8 +79,7 @@ public class Firearm extends Weapon {
 	public boolean fakeShoot(Survivor shooter) {
 		if (!canAttack()) return false;
 
-		activeSprites = shootSprites;
-		shooter.setAnimFrame(shootSprites.size-1);
+		currentAnimation = shootAnimation;
 		attackSound.play(Settings.sfxVolume);
 		this.lastAttack = System.currentTimeMillis();
 
@@ -94,8 +92,7 @@ public class Firearm extends Weapon {
 
 	public void reload() {
 		reloading = true;
-		activeSprites = reloadSprites;
-		ABNPGame.getInstance().getPlayer().setAnimFrame(reloadSprites.size-1);
+		currentAnimation = reloadAnimation;
 		reloadSound.play(Settings.sfxVolume);
 		new Thread() {
 			@Override
@@ -140,5 +137,9 @@ public class Firearm extends Weapon {
 	public void setLoadedAmmo(int loaded) { this.loaded = loaded; }
 
 	public void setAmmo(Ammo newAmmo) { currentAmmo = newAmmo;
+	}
+
+	public void melee() {
+		currentAnimation = meleeAnimation;
 	}
 }

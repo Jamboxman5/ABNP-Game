@@ -2,12 +2,12 @@ package me.jamboxman5.abnpgame.weapon;
 
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleAK47;
@@ -27,12 +27,15 @@ public abstract class Weapon {
 	
 	protected long attackRateMS;
 	protected long lastAttack;
-		
-	public Array<Sprite> idleSprites;
-	public Array<Sprite> shootSprites;
-	public Array<Sprite> reloadSprites;
-	public Array<Sprite> activeSprites;
-			
+
+	protected Animation<TextureRegion> idleAnimation;
+	protected Animation<TextureRegion> shootAnimation;
+	protected Animation<TextureRegion> reloadAnimation;
+	protected Animation<TextureRegion> meleeAnimation;
+	protected Animation<TextureRegion> moveAnimation;
+
+	protected Animation<TextureRegion> currentAnimation;
+
 	protected Sprite dropSprite;
 	protected Sprite hudSprite;
 	protected Sound attackSound;
@@ -40,14 +43,18 @@ public abstract class Weapon {
 	protected WeaponType type;
 	protected int xOffset = 0;
 	protected int yOffset = 0;
+	protected int shootXOffset = 0;
+	protected int shootYOffset = 0;
+	protected int meleeXOffset = 0;
+	protected int meleeYOffset = 0;
 	protected final static float playerSpriteScale = .25f;
 
 	protected WeaponModLoadout equippedMods;
 	
-	public Sprite getPlayerSprite(int idx) {
-		if (idx < activeSprites.size) return activeSprites.get(idx);
-		else return activeSprites.get(0);
-
+	public Sprite getPlayerSprite(float stateTime) {
+		Sprite toDraw = new Sprite(currentAnimation.getKeyFrame(stateTime));
+		toDraw.setScale(playerSpriteScale);
+		return toDraw;
 	}
 	public Sprite getHudSprite() { return hudSprite; }
 	public String getName() { return name; }
@@ -64,7 +71,8 @@ public abstract class Weapon {
 		}
 		return false;
 	}
-	public void idle() { activeSprites = idleSprites; }
+	public void idle() { currentAnimation = idleAnimation; }
+	public void move() { currentAnimation = moveAnimation; }
 	public void setMods(WeaponModLoadout mods) {
 		equippedMods = mods;
 	}
@@ -74,7 +82,12 @@ public abstract class Weapon {
 	public int getXOffset() { return xOffset; }
 
 	public float getYOffset() { return yOffset; }
+	public int getShootXOffset() { return shootXOffset; }
 
+	public float getShootYOffset() { return shootYOffset; }
+	public int getMeleeXOffset() { return meleeXOffset; }
+
+	public float getMeleeYOffset() { return meleeYOffset; }
 	public double getRecoil() { return recoil;
 	}
 
@@ -118,5 +131,8 @@ public abstract class Weapon {
 	}
 
 	public double getDamage() { return damage; }
+	public Animation<TextureRegion> getCurrentAnimation() { return currentAnimation; }
+	public boolean isShootAnimation() { return currentAnimation == shootAnimation; }
+	public boolean isMeleeAnimation() { return currentAnimation == meleeAnimation; }
 
 }

@@ -2,11 +2,12 @@ package me.jamboxman5.abnpgame.weapon.firearms.rifle;
 
 
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.Ammo;
 import me.jamboxman5.abnpgame.entity.projectile.ammo.StandardAmmo;
@@ -15,9 +16,12 @@ import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
 public class RifleM4A1 extends Firearm {
 
-	public static Array<Sprite> idleSprites;
-	public static Array<Sprite> shootSprites;
-	public static Array<Sprite> reloadSprites;
+	public static Animation<TextureRegion> idleAnimation;
+	public static Animation<TextureRegion> shootAnimation;
+	public static Animation<TextureRegion> reloadAnimation;
+	public static Animation<TextureRegion> meleeAnimation;
+	public static Animation<TextureRegion> moveAnimation;
+
 	public static Sprite hudSprite;
 
 	public static Sound attackSound;
@@ -29,9 +33,12 @@ public class RifleM4A1 extends Firearm {
 	
 	public RifleM4A1(WeaponModLoadout mods, Ammo ammo, int loadedAmmo) {
 
-		super.shootSprites = shootSprites;
-		super.reloadSprites = reloadSprites;
-		super.idleSprites = idleSprites;
+		super.shootAnimation = shootAnimation;
+		super.reloadAnimation = reloadAnimation;
+		super.idleAnimation = idleAnimation;
+		super.moveAnimation = moveAnimation;
+		super.meleeAnimation = meleeAnimation;
+
 		super.hudSprite = hudSprite;
 
 		super.attackSound = attackSound;
@@ -48,23 +55,42 @@ public class RifleM4A1 extends Firearm {
 		this.name = "M4A1";
 		this.firingVelocity = 150;
 		this.type = me.jamboxman5.abnpgame.weapon.WeaponType.M4A1;
-		this.xOffset = 18;
+		this.xOffset = 0;
 		this.yOffset = 12;
+		this.shootXOffset = 8;
+		this.shootYOffset = 12;
+		this.meleeXOffset = 0;
+		this.meleeYOffset = 14;
 		this.recoil = 1;
 
-		activeSprites = super.idleSprites;
+		currentAnimation = super.idleAnimation;
 
 	}
 
 	public static void loadAssets(AssetManager assets) {
 		// Sprites (Textures)
 		assets.load("weapon/rifle/M4A1.png", Texture.class);
-		assets.load("entity/player/rifle/Player_Rifle.png", Texture.class);
-		assets.load("entity/player/rifle/Player_Rifle_Shoot_2.png", Texture.class);
-		assets.load("entity/player/rifle/Player_Rifle_Shoot_1.png", Texture.class);
-		assets.load("entity/player/rifle/Player_Rifle_Shoot_0.png", Texture.class);
 
-		// Sounds
+		assets.load("entity/player/rifle/shoot/Player_Rifle_Shoot_2.png", Texture.class);
+		assets.load("entity/player/rifle/shoot/Player_Rifle_Shoot_1.png", Texture.class);
+		assets.load("entity/player/rifle/shoot/Player_Rifle_Shoot_0.png", Texture.class);
+
+		for (int i = 0; i < 20; i++) {
+			assets.load("entity/player/rifle/idle/Player_Rifle_Idle_" + i + ".png", Texture.class);
+		}
+
+		for (int i = 0; i < 15; i++) {
+			assets.load("entity/player/rifle/melee/Player_Rifle_Melee_" + i + ".png", Texture.class);
+		}
+
+		for (int i = 0; i < 20; i++) {
+			assets.load("entity/player/rifle/move/Player_Rifle_Move_" + i + ".png", Texture.class);
+		}
+
+		for (int i = 0; i < 20; i++) {
+			assets.load("entity/player/rifle/reload/Player_Rifle_Reload_" + i + ".png", Texture.class);
+		}
+
 		assets.load("sound/sfx/weapon/rifle/Rifle_M4A1_Shot.wav", Sound.class);
 		assets.load("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
 	}
@@ -72,23 +98,39 @@ public class RifleM4A1 extends Firearm {
 	public static void loadSprites(AssetManager assets) {
 		hudSprite = setup("weapon/rifle/M4A1.png", assets, .15f);
 
-		idleSprites = new Array<>(new Sprite[]{
-				setup("entity/player/rifle/Player_Rifle.png", assets, .25f)
-		});
+		Array<TextureRegion> shootFrames = new Array<>();
+		for (int i = 0; i < 3; i++) {
+			shootFrames.add(new TextureRegion(assets.get("entity/player/rifle/shoot/Player_Rifle_Shoot_" + i + ".png", Texture.class)));
+		}
+		shootAnimation = new Animation<>(0.05f, shootFrames, Animation.PlayMode.NORMAL);
 
-		shootSprites = new Array<>(new Sprite[]{
-				setup("entity/player/rifle/Player_Rifle_Shoot_2.png", assets, .25f),
-				setup("entity/player/rifle/Player_Rifle_Shoot_2.png", assets, .25f),
-				setup("entity/player/rifle/Player_Rifle_Shoot_1.png", assets, .25f),
-				setup("entity/player/rifle/Player_Rifle_Shoot_1.png", assets, .25f),
-				setup("entity/player/rifle/Player_Rifle_Shoot_0.png", assets, .25f),
-				setup("entity/player/rifle/Player_Rifle_Shoot_0.png", assets, .25f),
-				setup("entity/player/rifle/Player_Rifle_Shoot_0.png", assets, .25f)
-		});
 
-		reloadSprites = new Array<>(new Sprite[]{
-				setup("entity/player/rifle/Player_Rifle.png", assets, .25f)
-		});
+		Array<TextureRegion> idleFrames = new Array<>();
+		for (int i = 0; i < 20; i++) {
+			idleFrames.add(new TextureRegion(assets.get("entity/player/rifle/idle/Player_Rifle_Idle_" + i + ".png", Texture.class)));
+		}
+		idleAnimation = new Animation<>(0.1f, idleFrames, Animation.PlayMode.LOOP);
+
+
+		Array<TextureRegion> meleeFrames = new Array<>();
+		for (int i = 0; i < 15; i++) {
+			meleeFrames.add(new TextureRegion(assets.get("entity/player/rifle/melee/Player_Rifle_Melee_" + i + ".png", Texture.class)));
+		}
+		meleeAnimation = new Animation<>(0.035f, meleeFrames, Animation.PlayMode.NORMAL);
+
+
+		Array<TextureRegion> moveFrames = new Array<>();
+		for (int i = 0; i < 20; i++) {
+			moveFrames.add(new TextureRegion(assets.get("entity/player/rifle/move/Player_Rifle_Move_" + i + ".png", Texture.class)));
+		}
+		moveAnimation = new Animation<>(0.1f, moveFrames, Animation.PlayMode.LOOP);
+
+
+		Array<TextureRegion> reloadFrames = new Array<>();
+		for (int i = 0; i < 20; i++) {
+			reloadFrames.add(new TextureRegion(assets.get("entity/player/rifle/reload/Player_Rifle_Reload_" + i + ".png", Texture.class)));
+		}
+		reloadAnimation = new Animation<>(0.06f, reloadFrames, Animation.PlayMode.NORMAL);
 
 		attackSound = assets.get("sound/sfx/weapon/rifle/Rifle_M4A1_Shot.wav", Sound.class);
 		reloadSound = assets.get("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
