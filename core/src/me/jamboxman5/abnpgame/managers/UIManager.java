@@ -103,11 +103,17 @@ public class UIManager {
 
     }
 
-    static int radarDropAnimCounter = 0;
+    static float radarAnimCounterX = 0;
+    static float radarAnimCounterY = 0;
+
+    private static Vector2 lastPosition = null;
 
     public static void drawRadar(SpriteBatch batch, ShapeRenderer shape, ABNPGame game) {
 
-        radarDropAnimCounter++;
+        if (lastPosition == null) lastPosition = game.getPlayer().getPosition().cpy();
+
+        Vector2 currentPosition = game.getPlayer().getPosition().cpy();
+
         float side = 140 * Settings.guiScale;
         Vector2 center = new Vector2(margin + (side/2f), margin + (side/2f));
         Rectangle mapBounds = new Rectangle(margin+4, margin+4, side-8, side-8);
@@ -126,17 +132,51 @@ public class UIManager {
         shape.setColor(0f, (float)(70.0/255.0), 0f, .9f);
 
         float space = (side / 10);
-        if (radarDropAnimCounter >= space) radarDropAnimCounter = 0;
 
-        for (int i = 1; i <= 10; i++) {
-            float spacer = space*i;
-            shape.line(fullMapBounds.x, fullMapBounds.y + spacer - radarDropAnimCounter, fullMapBounds.x + side, fullMapBounds.y + spacer - radarDropAnimCounter);
+        float zoomFactor = .1f;
+
+        {
+
+            Vector2 displacement = currentPosition.cpy().sub(lastPosition).scl(zoomFactor);
+            radarAnimCounterX += displacement.x;
+            radarAnimCounterY += displacement.y;
+
+            radarAnimCounterX = radarAnimCounterX % space;
+            radarAnimCounterY = radarAnimCounterY % space;
+
+            if (radarAnimCounterX >= space) radarAnimCounterX = 0;
+
+            for (int i = 1; i <= 10; i++) {
+                float spacer = space*i;
+                float y = fullMapBounds.y + spacer - radarAnimCounterY;
+                if (y > fullMapBounds.y + side) y -= side;
+                shape.line(
+                        fullMapBounds.x,
+                        y,
+                        fullMapBounds.x + side,
+                        y);
+            }
+
+            for (int i = 1; i <= 10; i++) {
+                float spacer = space*i;
+                float x = fullMapBounds.x + spacer - radarAnimCounterX;
+                if (x > fullMapBounds.x + side) x -= side;
+                shape.line(
+                        x,
+                        fullMapBounds.y,
+                        x,
+                        fullMapBounds.y +side);
+            }
+
+            lastPosition = currentPosition.cpy();
+
         }
+
+
 
         shape.set(ShapeRenderer.ShapeType.Filled);
 
 
-        float zoomFactor = .1f;
 
         // draw map entities
         MapManager map = game.getMapManager();
