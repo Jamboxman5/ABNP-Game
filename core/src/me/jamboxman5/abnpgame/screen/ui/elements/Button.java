@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -18,9 +19,11 @@ public class Button {
 
     Rectangle bounds;
     String text;
+    Sprite sprite;
     BitmapFont font;
     boolean fill;
     float textScale;
+    float spriteScale;
     Color color;
     TextAlign align;
     Runnable buttonAction;
@@ -28,6 +31,15 @@ public class Button {
     public Button(int x, int y, int width, int height, String text, BitmapFont font) {
         this.text = text;
         this.font = font;
+        this.fill = true;
+        align = TextAlign.CENTER;
+        textScale = 1f;
+        bounds = new Rectangle(x, y, width, height);
+    }
+
+    public Button(int x, int y, int width, int height, Sprite sprite, float spriteScale) {
+        this.sprite = sprite;
+        this.spriteScale = spriteScale;
         this.fill = true;
         align = TextAlign.CENTER;
         textScale = 1f;
@@ -81,29 +93,38 @@ public class Button {
 
         }
 
-
         batch.begin();
-        int x = 0;
-        switch (align) {
-            case LEFT:
-                x = (int) bounds.x;
-                break;
-            case RIGHT:
-                x = (int) Fonts.getXForRightAlignedText((int) (bounds.x + bounds.width), text, font, textScale);
-                break;
-            default:
-                x = (int) Fonts.getXForCenteredText((int) (bounds.x + bounds.width/2), text, font);
-                break;
+
+        if (sprite != null) {
+            float oldScale = sprite.getScaleX();
+            sprite.setCenter(bounds.x + bounds.width/2f, bounds.y + bounds.height/2f);
+            sprite.setScale(spriteScale);
+            sprite.draw(batch);
+            sprite.setScale(oldScale);
         }
-//        int y = (int) (bounds.y + (int)(bounds.height/1.7));
-        int y = (int) (bounds.y + (int)(bounds.height/1.6));
-//        Color color = Color.WHITE;
-        if (active) font = Fonts.SELECTEDBUTTONFONT;
-        else font = Fonts.BUTTONFONT;
-//        if (this.color != null) color = this.color;
-        if (fill)
-            Fonts.drawScaled(font, textScale, text, batch, x, y - (Fonts.getTextHeight("/", font, 1f)/2f));
-        else Fonts.drawScaled(font, textScale, text, batch, x, y+(bounds.height/2));
+
+        if (text != null && text.length() > 0) {
+            int x = 0;
+            switch (align) {
+                case LEFT:
+                    x = (int) bounds.x;
+                    break;
+                case RIGHT:
+                    x = (int) Fonts.getXForRightAlignedText((int) (bounds.x + bounds.width), text, font, textScale);
+                    break;
+                default:
+                    x = (int) Fonts.getXForCenteredText((int) (bounds.x + bounds.width/2), text, font);
+                    break;
+            }
+            int y = (int) (bounds.y + (int)(bounds.height/1.6));
+            if (active) font = Fonts.SELECTEDBUTTONFONT;
+            else font = Fonts.BUTTONFONT;
+
+            if (fill)
+                Fonts.drawScaled(font, textScale, text, batch, x, y - (Fonts.getTextHeight("/", font, 1f)/2f));
+            else Fonts.drawScaled(font, textScale, text, batch, x, y+(bounds.height/2));
+        }
+
         batch.end();
     }
 

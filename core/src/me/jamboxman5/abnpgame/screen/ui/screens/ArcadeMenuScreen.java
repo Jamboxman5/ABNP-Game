@@ -219,6 +219,15 @@ public class ArcadeMenuScreen implements Screen {
             }
         };
 
+        equipButton.setAction(new Runnable() {
+            @Override
+            public void run() {
+                Screen old = game.getScreen();
+                game.setScreen(new EquipMenuScreen(game));
+                old.dispose();
+            }
+        });
+
         backButton1.setAction(backAction);
 
         playButton.setAction(new Runnable() {
