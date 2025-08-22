@@ -1,6 +1,7 @@
 package me.jamboxman5.abnpgame.screen.ui.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
@@ -20,7 +21,7 @@ import me.jamboxman5.abnpgame.weapon.Weapon;
 
 import java.util.Set;
 
-public class EquipMenuScreen implements Screen {
+public class EquipMenuScreen implements Screen, InputProcessor {
 
     Texture menuBKG;
     final ABNPGame game;
@@ -40,6 +41,10 @@ public class EquipMenuScreen implements Screen {
     private Weapon selectedWeapon;
 
     private int move = 800;
+    private float scrolled = 0;
+    private float scrollDiff = 0;
+    private float maxScroll = 0;
+    private float scrollMargin = 0;
 
     public EquipMenuScreen(final ABNPGame game) {
         this.game = game;
@@ -47,12 +52,13 @@ public class EquipMenuScreen implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
+
     }
 
     @Override
     public void show() {
         getButtons();
-
+        Gdx.input.setInputProcessor(this);
 
     }
 
@@ -93,6 +99,19 @@ public class EquipMenuScreen implements Screen {
     }
 
     public void update() {
+        scrollDiff += scrolled;
+
+        if (scrollDiff < 0) {
+            scrolled = scrolled - scrollDiff;
+            scrollDiff = 0;
+        }
+
+        float lowerBound = Math.max(0, maxScroll - (Settings.screenHeight) + scrollMargin*2);
+        if (scrollDiff > lowerBound) {
+            scrolled = scrolled - (scrollDiff - lowerBound);
+            scrollDiff = lowerBound;
+        }
+
         updateActiveButton(game.getMousePointer());
         if (Gdx.input.isTouched()) {
             if (activeButton != null && (System.currentTimeMillis() - lastButton > 500)) {
@@ -105,6 +124,18 @@ public class EquipMenuScreen implements Screen {
 
             move-=80;
         }
+        for (Button button : buttons) {
+            if (button != backButton1) {
+                button.reposition(0, (int) scrolled);
+            }
+        }
+
+//        System.out.println(scrollDiff + " / " + maxScroll);
+
+        if (scrolled > 0) scrolled -= 1;
+        if (scrolled < 0) scrolled += 1;
+
+
     }
 
     public void drawBKG(SpriteBatch batch) {
@@ -156,14 +187,17 @@ public class EquipMenuScreen implements Screen {
         int buttonWidth = (int) (300*Settings.guiScale);
         int buttonHeight = (int) (150*Settings.guiScale);
         int x = (int) ((Settings.screenWidth/4f)*3f - (buttonWidth/2f));
-        int startY = (int) (Settings.screenHeight - Settings.hudMargin - buttonHeight);
-
+        scrollMargin = Settings.screenWidth - (x + buttonWidth);
+        int startY = (int) (Settings.screenHeight - scrollMargin - buttonHeight);
         Array<Weapon> weapons = game.getPlayer().getWeaponLoadout().getWeapons();
 
         buttons = new Button[weapons.size + 1];
 
         int i = 0;
         for (final Weapon weapon : weapons) {
+
+            if (maxScroll > 0) maxScroll += Settings.hudMargin;
+            maxScroll += buttonHeight;
 
             Button button = new Button(x, startY, buttonWidth, buttonHeight, weapon.getHudSprite(), .15f * Settings.guiScale);
             startY -= buttonHeight;
@@ -197,5 +231,54 @@ public class EquipMenuScreen implements Screen {
 
         backButton1.setAction(backAction);
 
+    }
+
+    @Override
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
+    @Override
+    public boolean keyTyped(char character) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchCancelled(int screenX, int screenY, int pointer, int button) {
+        return false;
+    }
+
+    @Override
+    public boolean touchDragged(int screenX, int screenY, int pointer) {
+        return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int screenX, int screenY) {
+        return false;
+    }
+
+    @Override
+    public boolean scrolled(float amountX, float amountY) {
+        scrolled += (amountY * 10 * Settings.guiScale);
+        if (scrolled > 0) scrolled = Math.min(scrolled, 20);
+        if (scrolled < 0) scrolled = Math.max(scrolled, -20);
+
+        return false;
     }
 }
