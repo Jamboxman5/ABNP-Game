@@ -12,6 +12,8 @@ import me.jamboxman5.abnpgame.entity.projectile.ammo.ShellAmmo;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
+import java.util.UUID;
+
 public class ShotgunAssault extends Firearm {
 
 	public static Animation<TextureRegion> idleAnimation;
@@ -27,10 +29,12 @@ public class ShotgunAssault extends Firearm {
 	public static Sound silencerSound;
 
 	public ShotgunAssault() {
-		this(new WeaponModLoadout(), new ShellAmmo(), 6);
+		this(new WeaponModLoadout(), new ShellAmmo(), 8, UUID.randomUUID().toString());
 	}
 
-	public ShotgunAssault(WeaponModLoadout mods, Ammo ammo, int loadedAmmo) {
+	public ShotgunAssault(WeaponModLoadout mods, Ammo ammo, int loadedAmmo, String id) {
+
+		super.weaponID = id;
 
 		super.shootAnimation = shootAnimation;
 		super.reloadAnimation = reloadAnimation;
@@ -61,7 +65,7 @@ public class ShotgunAssault extends Firearm {
 		this.shootYOffset = 12;
 		this.meleeXOffset = 0;
 		this.meleeYOffset = 14;
-		this.recoil = 5;
+		this.recoil = 15;
 
 		currentAnimation = super.idleAnimation;
 

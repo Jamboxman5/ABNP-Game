@@ -12,6 +12,8 @@ import me.jamboxman5.abnpgame.entity.projectile.ammo.StandardAmmo;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
+import java.util.UUID;
+
 public class Pistol1911 extends Firearm {
 
 	public static Animation<TextureRegion> idleAnimation;
@@ -27,10 +29,12 @@ public class Pistol1911 extends Firearm {
 	public static Sound silencerSound;
 
 	public Pistol1911() {
-		this(new WeaponModLoadout(), new StandardAmmo(), 8);
+		this(new WeaponModLoadout(), new StandardAmmo(), 8, UUID.randomUUID().toString());
 	}
 	
-	public Pistol1911(WeaponModLoadout mods, Ammo ammo, int loadedAmmo) {
+	public Pistol1911(WeaponModLoadout mods, Ammo ammo, int loadedAmmo, String id) {
+
+		super.weaponID = id;
 
 		super.shootAnimation = shootAnimation;
 		super.reloadAnimation = reloadAnimation;

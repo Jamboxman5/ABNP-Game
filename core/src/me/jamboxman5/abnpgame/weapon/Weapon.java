@@ -18,6 +18,8 @@ import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponMod;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
+import java.util.UUID;
+
 public abstract class Weapon {
 
 	protected double damage;
@@ -51,7 +53,12 @@ public abstract class Weapon {
 	protected final static float playerSpriteScale = .25f;
 
 	protected WeaponModLoadout equippedMods;
-	
+
+	protected String weaponID;
+
+	public void setID(String uuid) { weaponID = uuid; }
+	public String getID(String uuid) { return weaponID; }
+
 	public Sprite getPlayerSprite(float stateTime) {
 		Sprite toDraw = new Sprite(currentAnimation.getKeyFrame(stateTime));
 		toDraw.setScale(playerSpriteScale);
