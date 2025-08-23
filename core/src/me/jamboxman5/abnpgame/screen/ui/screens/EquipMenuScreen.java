@@ -18,8 +18,7 @@ import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
 import me.jamboxman5.abnpgame.weapon.Weapon;
-
-import java.util.Set;
+import me.jamboxman5.abnpgame.weapon.WeaponLoadout;
 
 public class EquipMenuScreen implements Screen, InputProcessor {
 
@@ -160,12 +159,45 @@ public class EquipMenuScreen implements Screen, InputProcessor {
     public void drawSelectedWeapon(SpriteBatch batch, ShapeRenderer renderer) {
         if (selectedWeapon == null) return;
 
+        WeaponLoadout loadout = game.getPlayer().getWeaponLoadout();
+
+        float margin = Settings.hudMargin * Settings.guiScale;
+        float width = Settings.screenWidth/2 - (Settings.hudMargin*2);
+        float height = Settings.screenHeight - margin * 4;
+
+        float x = margin;
+        float y = margin * 3;
+
         renderer.begin(ShapeRenderer.ShapeType.Filled);
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
         renderer.setColor(new Color((75f/255f),0f,0f, .6f));
-        renderer.rect(Settings.hudMargin, 140, Settings.screenWidth/2 - (Settings.hudMargin*2), Settings.screenHeight - Settings.hudMargin - 140);
+        renderer.rect(x, y, width, height);
         renderer.end();
+
+        x = (float) (x + (width/2.0));
+        y = (float) (y + ((height/6.0) * 5.0));
+
+        batch.begin();
+        selectedWeapon.getHudSprite().setScale(.2f * Settings.guiScale * (Settings.screenWidth/2560f));
+        selectedWeapon.getHudSprite().setCenter(x, y);
+        selectedWeapon.getHudSprite().draw(batch);
+
+        Fonts.drawScaled(Fonts.SELECTIONFONT,
+                1f,
+                selectedWeapon.getName(),
+                batch,
+                Fonts.getXForCenteredText((int) x, selectedWeapon.getName(), Fonts.SELECTIONFONT),
+                y - 100);
+
+        Fonts.drawScaled(Fonts.SELECTIONFONT,
+                1f,
+                "Equipped: " + loadout.getEquippedWeapons().contains(selectedWeapon, false),
+                batch,
+                margin * 2,
+                y - 200);
+
+        batch.end();
 
     }
 
@@ -189,7 +221,10 @@ public class EquipMenuScreen implements Screen, InputProcessor {
         int x = (int) ((Settings.screenWidth/4f)*3f - (buttonWidth/2f));
         scrollMargin = Settings.screenWidth - (x + buttonWidth);
         int startY = (int) (Settings.screenHeight - scrollMargin - buttonHeight);
-        Array<Weapon> weapons = game.getPlayer().getWeaponLoadout().getWeapons();
+        Array<Weapon> weapons = game.getPlayer().getWeaponLoadout().getOwnedWeapons();
+
+        scrolled = 0;
+        scrollDiff = 0;
 
         buttons = new Button[weapons.size + 1];
 
