@@ -44,11 +44,11 @@ public class ShotgunAssault extends Firearm {
 		super.reloadSound = reloadSound;
 		super.silencerSound = silencerSound;
 
-		this.attackRateMS = 1100;
-		this.damage = 85;
+		this.attackRateMS = 250;
+		this.damage = 160;
 		this.equippedMods = mods;
 		this.reloadSpeedMS = 2300;
-		this.magSize = 6;
+		this.magSize = 8;
 		this.range = 350;
 		this.loaded = loadedAmmo;
 		this.currentAmmo = ammo;
