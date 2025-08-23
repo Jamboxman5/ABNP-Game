@@ -10,66 +10,70 @@ import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class WeaponLoadout {
 
-	Array<Weapon> weapons;
+	Array<Weapon> equippedWeapons;
+	Array<Weapon> ownedWeapons;
 	Array<Ammo> ammos;
 	Weapon activeWeapon;
 	
 	public WeaponLoadout() {
-		weapons = new Array<>();
+		equippedWeapons = new Array<>();
 		ammos = new Array<>();
 		ammos.add(new StandardAmmo());
 		ammos.add(new ShellAmmo());
-		weapons.add(new RifleM4A1(new WeaponModLoadout(), getAmmo(Ammo.AmmoType.StandardAmmo), 30));
-		weapons.add(new Pistol1911(new WeaponModLoadout(), getAmmo(Ammo.AmmoType.StandardAmmo), 30));
-		weapons.add(new ShotgunWinchester12());
-		activeWeapon = weapons.get(0);
+		equippedWeapons.add(new RifleM4A1());
+		equippedWeapons.add(new Pistol1911());
+		equippedWeapons.add(new ShotgunWinchester12());
+		activeWeapon = equippedWeapons.get(0);
 	}
 
-	public void setWeapons(Array<Weapon> weapons) {
-		this.weapons = weapons;
-		activeWeapon = weapons.get(0);
+	public void setEquippedWeapons(Array<Weapon> weapons) {
+		this.equippedWeapons = weapons;
+		activeWeapon = equippedWeapons.get(0);
 	}
 
 
 	public void setAmmos(Array<Ammo> ammos) { this.ammos = ammos; }
 
 	public WeaponLoadout(Array<Weapon> weapons, Array<Ammo> ammos) {
-		this.weapons = weapons;
+		this.equippedWeapons = weapons;
 		this.ammos = ammos;
 		if (!weapons.isEmpty())  {
 			activeWeapon = weapons.get(0);
-			for (Firearm firearm : getFirearms()) {
+			for (Firearm firearm : getEquippedFirearms()) {
 				firearm.setAmmo(getAmmo(firearm.getAmmoType()));
 			}
 		}
 	}
 	public void nextWeapon() {
-		int idx = weapons.indexOf(activeWeapon, false) + 1;
-		if (idx >= weapons.size) idx = 0;
-		activeWeapon = weapons.get(idx);
+		int idx = equippedWeapons.indexOf(activeWeapon, false) + 1;
+		if (idx >= equippedWeapons.size) idx = 0;
+		activeWeapon = equippedWeapons.get(idx);
 	}
 	public void previousWeapon() {
-		int idx = weapons.indexOf(activeWeapon, false) - 1;
-		if (idx < 0) idx = weapons.size-1;
-		activeWeapon = weapons.get(idx);
+		int idx = equippedWeapons.indexOf(activeWeapon, false) - 1;
+		if (idx < 0) idx = equippedWeapons.size-1;
+		activeWeapon = equippedWeapons.get(idx);
 	}
-	public void addWeapon(Weapon newWeapon, boolean makeActive) {
-		weapons.add(newWeapon);
+	public void addWeapon(Weapon newWeapon, boolean makeActive, boolean keep) {
+		equippedWeapons.add(newWeapon);
 		if (makeActive) {
 			activeWeapon = newWeapon;
 		}
+		if (keep) {
+			ownedWeapons.add(newWeapon);
+		}
 	}
-	public void removeWeapon(Weapon toRemove) {
-		if (!weapons.contains(toRemove, false)) return;
+	public void removeWeapon(Weapon toRemove, boolean permanent) {
+		if (!equippedWeapons.contains(toRemove, false)) return;
 		if (activeWeapon.equals(toRemove)) {
 			previousWeapon();
 		}
-		weapons.removeValue(toRemove, false);
+		equippedWeapons.removeValue(toRemove, false);
+		if (permanent) {
+			ownedWeapons.removeValue(toRemove, false);
+		}
 	}
 	public Weapon getActiveWeapon() { return activeWeapon; }
 	public Firearm getActiveFirearm() {
@@ -78,11 +82,11 @@ public class WeaponLoadout {
 		} else return null;
 	}
 
-    public Array<Weapon> getWeapons() { return weapons; }
+    public Array<Weapon> getEquippedWeapons() { return equippedWeapons; }
 
-    public Array<Firearm> getFirearms() {
+    public Array<Firearm> getEquippedFirearms() {
 		Array<Firearm> firearms = new Array<>();
-		for (Weapon w : weapons) {
+		for (Weapon w : equippedWeapons) {
 			if (w instanceof Firearm) firearms.add((Firearm) w);
 		}
 		return firearms;
@@ -95,4 +99,10 @@ public class WeaponLoadout {
 		}
 		return null;
 	}
+
+	public void setOwnedWeapons(Array<Weapon> weapons) {
+		ownedWeapons = weapons;
+	}
+
+	public Array<Weapon> getOwnedWeapons() { return ownedWeapons; }
 }

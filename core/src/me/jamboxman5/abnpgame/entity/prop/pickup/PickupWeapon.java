@@ -25,7 +25,7 @@ public class PickupWeapon extends Pickup {
         this.pickupEffect = new Runnable() {
             @Override
             public void run() {
-                ABNPGame.getInstance().getPlayer().getWeaponLoadout().addWeapon(pickedUp, true);
+                ABNPGame.getInstance().getPlayer().getWeaponLoadout().addWeapon(pickedUp, true, false);
             }
         };
     }

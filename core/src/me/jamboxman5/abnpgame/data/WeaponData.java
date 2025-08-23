@@ -12,9 +12,6 @@ import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponMod;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
 
-import java.util.HashSet;
-import java.util.Set;
-
 public class WeaponData {
 
     public static WeaponLoadout generateWeapons(String json) {
@@ -36,13 +33,17 @@ public class WeaponData {
 
         loadout.setAmmos(ammos);
 
-        Array<Weapon> weapons = new Array<>();
+        Array<Weapon> ownedWeapons = new Array<>();
+        Array<Weapon> equippedWeapons = new Array<>();
         for (int i = 0; i < weaponsArr.size(); i++) {
             JsonObject weaponOBJ = weaponsArr.get(i).getAsJsonObject();
-            weapons.add(generateWeaponFromJson(weaponOBJ, loadout));
+            Weapon weapon = generateWeaponFromJson(weaponOBJ, loadout);
+            ownedWeapons.add(weapon);
+            if (weaponOBJ.get("equipped").getAsBoolean()) equippedWeapons.add(weapon);
         }
 
-        loadout.setWeapons(weapons);
+        loadout.setOwnedWeapons(ownedWeapons);
+        loadout.setEquippedWeapons(equippedWeapons);
 
         return loadout;
     }
@@ -77,7 +78,7 @@ public class WeaponData {
         JsonObject weaponLoadoutOBJ = new JsonObject();
         JsonArray weaponsArr = new JsonArray();
 
-        for (Weapon weapon : loadout.getWeapons()) {
+        for (Weapon weapon : loadout.getEquippedWeapons()) {
             weaponsArr.add(convertToJson(weapon));
         }
 
