@@ -28,6 +28,7 @@ import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.PistolTec9;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleAK47;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
+import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunAssault;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 
 public class LoadingScreen implements Screen {
@@ -167,6 +168,7 @@ public class LoadingScreen implements Screen {
         Pistol1911.loadSprites(game.getAssetManager());
         PistolTec9.loadSprites(game.getAssetManager());
         ShotgunWinchester12.loadSprites(game.getAssetManager());
+        ShotgunAssault.loadSprites(game.getAssetManager());
         PickupWeapon.loadSprites(game.getAssetManager());
         Pickup.loadSprites(game.getAssetManager());
         Sounds.loadSounds(game.getAssetManager());

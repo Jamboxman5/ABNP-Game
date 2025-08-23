@@ -41,6 +41,7 @@ import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.PistolTec9;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleAK47;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
+import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunAssault;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 
 import javax.swing.*;
@@ -162,6 +163,7 @@ public class ABNPGame extends Game {
         Pistol1911.loadAssets(assetManager);
         PistolTec9.loadAssets(assetManager);
         ShotgunWinchester12.loadAssets(assetManager);
+        ShotgunAssault.loadAssets(assetManager);
         PickupWeapon.loadAssets(assetManager);
         Pickup.loadAssets(assetManager);
         Sounds.loadAssets(assetManager);
