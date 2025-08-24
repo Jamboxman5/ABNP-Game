@@ -79,7 +79,7 @@ public class WeaponData {
         JsonArray weaponsArr = new JsonArray();
 
         for (Weapon weapon : loadout.getEquippedWeapons()) {
-            weaponsArr.add(convertToJson(weapon));
+            weaponsArr.add(convertToJson(weapon, loadout.getEquippedWeapons().contains(weapon, false)));
         }
 
         JsonArray ammoArray = new JsonArray();
@@ -93,13 +93,14 @@ public class WeaponData {
         return weaponLoadoutOBJ;
     }
 
-    protected static JsonObject convertToJson(Weapon weapon) {
+    protected static JsonObject convertToJson(Weapon weapon, boolean equipped) {
         JsonObject weaponOBJ = new JsonObject();
         weaponOBJ.addProperty("type", weapon.getType().toString());
         if (weapon instanceof Firearm) {
             Firearm firearm = (Firearm) weapon;
             weaponOBJ.addProperty("loaded", firearm.getLoadedAmmo());
             weaponOBJ.addProperty("ammoType", firearm.getAmmoType().toString());
+            weaponOBJ.addProperty("equipped", equipped);
         }
         JsonArray modsArr = new JsonArray();
         for (WeaponMod mod : weapon.getModLoadout().getMods()) {
