@@ -1,8 +1,13 @@
 package me.jamboxman5.abnpgame.managers;
 
-import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.*;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -21,6 +26,7 @@ import me.jamboxman5.abnpgame.net.packets.PacketDisconnect;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
 import me.jamboxman5.abnpgame.net.packets.PacketShoot;
 import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
+import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 
 import java.nio.channels.ClosedSelectorException;
@@ -44,10 +50,47 @@ public class MapManager {
 	int splatterTimer = 0;
 
 	Map activeMap;
-	
+
+	//3d
+
+	private PerspectiveCamera perspectiveCamera;
+	private ModelBatch modelBatch;
+	private Environment environment;
+
+	private Model groundModel;
+	private Model boxModel;
+	private ModelInstance groundInstance;
+	private ModelInstance boxInstance;
+
 	public MapManager(ABNPGame game) {
 		this.game = game;
 		activeMap = new Verdammtenstadt();
+
+		//3d world
+		modelBatch = new ModelBatch();
+		environment = new Environment();
+		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .8f, .8f, .8f, 1f));
+		environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, -.8f, -.2f));
+
+		//3d camera
+		perspectiveCamera = new PerspectiveCamera(67, Settings.screenWidth, Settings.screenHeight);
+		perspectiveCamera.near = 0.1f;
+		perspectiveCamera.far = 300f;
+
+
+		//3d 'assets'
+		ModelBuilder modelBuilder = new ModelBuilder();
+		groundModel = modelBuilder.createBox(100f, 1f, 100f,
+				new Material(ColorAttribute.createDiffuse(Color.GREEN)),
+				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+		groundInstance = new ModelInstance(groundModel);
+		groundInstance.transform.setToTranslation(0, 0, 0); // drop slightly below origin
+
+		boxModel = modelBuilder.createBox(10f, 20f, 10f,
+				new Material(ColorAttribute.createDiffuse(Color.GRAY)),
+				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+		boxInstance = new ModelInstance(boxModel, 0, 10, 0);
+		boxInstance.transform.setToTranslation(0, 2.5f, 0); // in front of player
 	}
 
 	public void draw(SpriteBatch batch, ShapeRenderer renderer, Camera camera) {
@@ -60,13 +103,30 @@ public class MapManager {
 //		int screenX = 0;
 //		int screenY = 0;
 
-		batch.begin();
-		activeMap.getImage().setScale(0.5f);
-		activeMap.getImage().setOrigin(0, 0);
-		activeMap.getImage().setPosition(0, 0); // map stays at world origin
-		activeMap.getImage().draw(batch);
 
-		batch.end();
+		//3d test
+
+		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
+
+		Vector2 playerPos = game.getPlayer().getPosition();
+
+		perspectiveCamera.position.set(playerPos.x, 50f, playerPos.y);   // 50 units north of origin
+		perspectiveCamera.lookAt(playerPos.x, 0, playerPos.y);             // look at ground center
+		perspectiveCamera.update();
+
+		modelBatch.begin(perspectiveCamera);
+		modelBatch.render(groundInstance, environment);
+		modelBatch.render(boxInstance, environment);
+		modelBatch.end();
+
+//		batch.begin();
+//		activeMap.getImage().setScale(0.5f);
+//		activeMap.getImage().setOrigin(0, 0);
+//		activeMap.getImage().setPosition(0, 0); // map stays at world origin
+//		activeMap.getImage().draw(batch);
+//
+//		batch.end();
 		drawSplatters(game.canvas);
 		drawProjectiles(renderer);
 		drawEntities();

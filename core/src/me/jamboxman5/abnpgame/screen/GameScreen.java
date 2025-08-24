@@ -5,16 +5,20 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Cursor;
-import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.Model;
+import com.badlogic.gdx.graphics.g3d.ModelBatch;
+import com.badlogic.gdx.graphics.g3d.ModelInstance;
+import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.sun.org.apache.xpath.internal.operations.Mod;
 import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieNormal;
@@ -57,6 +61,7 @@ public class GameScreen implements Screen, InputProcessor {
 
     MissionScript gameController;
 
+
     public GameScreen(final ABNPGame game, Map activeMap, MissionScript controller) {
         this.game = game;
         gameCamera = new OrthographicCamera();
@@ -67,6 +72,8 @@ public class GameScreen implements Screen, InputProcessor {
         gameCamera.zoom = Settings.maxZoom;
         uiCamera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
         Gdx.input.setInputProcessor(this);
+
+
 
         game.getMapManager().setMap(activeMap);
         viewport = new FitViewport(1280, 720, gameCamera);
@@ -188,6 +195,9 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     private void draw() {
+
+
+
         game.getMapManager().draw(game.canvas, game.shapeRenderer, gameCamera);
         game.getPlayer().draw(game.canvas, game.uiShapeRenderer);
 
