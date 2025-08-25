@@ -44,14 +44,16 @@ public class EquipMenuScreen implements Screen, InputProcessor {
     private float scrollDiff = 0;
     private float maxScroll = 0;
     private float scrollMargin = 0;
-
+    private SpriteBatch spriteBatch;
+    private ShapeRenderer shapes;
     public EquipMenuScreen(final ABNPGame game) {
         this.game = game;
         menuBKG = new Texture(Gdx.files.internal("ui/bkg/Black_Background.png"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
-
+        shapes = new ShapeRenderer();
+        spriteBatch = new SpriteBatch();
     }
 
     @Override
@@ -66,8 +68,8 @@ public class EquipMenuScreen implements Screen, InputProcessor {
         ScreenUtils.clear(0f, 0, 0f, 1);
 
         camera.update();
-        game.uiCanvas.setProjectionMatrix(camera.combined);
-        game.uiShapeRenderer.setProjectionMatrix(camera.combined);
+        spriteBatch.setProjectionMatrix(camera.combined);
+        shapes.setProjectionMatrix(camera.combined);
         update();
         draw();
     }
@@ -151,9 +153,9 @@ public class EquipMenuScreen implements Screen, InputProcessor {
 
     public void draw() {
 
-        drawBKG(game.uiCanvas);
-        drawButtons(game.uiCanvas, game.uiShapeRenderer);
-        drawSelectedWeapon(game.uiCanvas, game.uiShapeRenderer);
+        drawBKG(spriteBatch);
+        drawButtons(spriteBatch, shapes);
+        drawSelectedWeapon(spriteBatch, shapes);
     }
 
     public void drawSelectedWeapon(SpriteBatch batch, ShapeRenderer renderer) {

@@ -37,12 +37,18 @@ public class MainMenuScreen implements Screen {
 
     int move = 600;
 
+    private SpriteBatch spriteBatch;
+    private ShapeRenderer shapes;
+
     public MainMenuScreen(final ABNPGame game) {
         this.game = game;
         menuBKG = new Texture(Gdx.files.internal("ui/bkg/Menu_Background_0.png"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
+
+        shapes = new ShapeRenderer();
+        spriteBatch = new SpriteBatch();
     }
 
     @Override
@@ -52,7 +58,7 @@ public class MainMenuScreen implements Screen {
             Sounds.AMBIENCE.play();
         }
 
-        getButtons(game, game.uiShapeRenderer);
+        getButtons(game, shapes);
         Pixmap pixmap = new Pixmap(Gdx.files.internal("ui/cursor/Cursor_Pointer_Full.png"));
         Cursor cursor = Gdx.graphics.newCursor(pixmap, 0, 0);
         Gdx.graphics.setCursor(cursor);
@@ -68,7 +74,8 @@ public class MainMenuScreen implements Screen {
         ScreenUtils.clear(0f, 0, 0f, 1);
 
         camera.update();
-        game.uiCanvas.setProjectionMatrix(camera.combined);
+        shapes.setProjectionMatrix(camera.combined);
+        spriteBatch.setProjectionMatrix(camera.combined);
 
 //        Fonts.TITLEFONT.draw(game.batch, "ABNP:", 20, ScreenInfo.HEIGHT - 20);
 //        Fonts.drawScaled(Fonts.SUBTITLEFONT, .85f, "Zombie Assault", game.batch,20, ScreenInfo.HEIGHT - Fonts.TITLEFONT.getScaleY() - Fonts.SUBTITLEFONT.getScaleY() - 220);
@@ -122,9 +129,9 @@ public class MainMenuScreen implements Screen {
     }
 
     public void draw() {
-        drawBKG(game.uiCanvas);
-        drawTitle(game.uiCanvas);
-        drawButtons(game.uiShapeRenderer, game.uiCanvas);
+        drawBKG(spriteBatch);
+        drawTitle(spriteBatch);
+        drawButtons(shapes, spriteBatch);
     }
 
     private void drawBKG(SpriteBatch batch) {

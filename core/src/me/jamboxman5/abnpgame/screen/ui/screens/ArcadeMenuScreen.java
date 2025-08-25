@@ -41,12 +41,18 @@ public class ArcadeMenuScreen implements Screen {
 
     private int move = 800;
 
+    private SpriteBatch spriteBatch;
+    private ShapeRenderer shapes;
+
     public ArcadeMenuScreen(final ABNPGame game) {
         this.game = game;
         menuBKG = new Texture(Gdx.files.internal("ui/bkg/Dark_Brown_Background.png"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
+
+        shapes = new ShapeRenderer();
+        spriteBatch = new SpriteBatch();
     }
 
     @Override
@@ -64,8 +70,8 @@ public class ArcadeMenuScreen implements Screen {
         ScreenUtils.clear(0f, 0, 0f, 1);
 
         camera.update();
-        game.uiCanvas.setProjectionMatrix(camera.combined);
-        game.uiShapeRenderer.setProjectionMatrix(camera.combined);
+        spriteBatch.setProjectionMatrix(camera.combined);
+        shapes.setProjectionMatrix(camera.combined);
         update();
         draw();
     }
@@ -165,9 +171,9 @@ public class ArcadeMenuScreen implements Screen {
 
     public void draw() {
 
-        drawBKG(game.uiCanvas);
-        drawPlayerBar(game.uiCanvas, game.uiShapeRenderer);
-        drawButtons(game.uiCanvas, game.uiShapeRenderer);
+        drawBKG(spriteBatch);
+        drawPlayerBar(spriteBatch, shapes);
+        drawButtons(spriteBatch, shapes);
 
     }
 

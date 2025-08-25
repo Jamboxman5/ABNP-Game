@@ -3,12 +3,13 @@ package me.jamboxman5.abnpgame.managers;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.Entity;
@@ -38,10 +39,10 @@ public class MapManager {
 	public Array<Entity> disposingEntities = new Array<>();
 	public Array<Projectile> projectiles = new Array<>();
 	public Array<Projectile> disposingProjectiles = new Array<>();
-	public Array<Sprite> splatters = new Array<>();
+	public Array<Decal> splatters = new Array<>();
 	public Array<Map> maps = new Array<>();
 
-	public HashMap<Sprite, Vector3> splatterLocs = new HashMap<>();
+	public HashMap<Decal, Vector3> splatterLocs = new HashMap<>();
 
 	int splatterTimer = 0;
 
@@ -75,7 +76,7 @@ public class MapManager {
 		boxInstance.transform.setToTranslation(0, 2.5f, 0); // in front of player
 	}
 
-	public void draw(Environment environment, SpriteBatch spriteBatch, ModelBatch modelBatch, ShapeRenderer renderer, PerspectiveCamera camera) {
+	public void draw(Environment environment, DecalBatch batch, ModelBatch modelBatch, ShapeRenderer shapes, PerspectiveCamera camera) {
 
 		//3d test
 
@@ -101,9 +102,9 @@ public class MapManager {
 //		activeMap.getImage().draw(batch);
 //
 //		batch.end();
-		drawSplatters(spriteBatch);
-		drawProjectiles(renderer);
-		drawEntities();
+		drawSplatters(batch);
+		drawProjectiles(shapes);
+		drawEntities(batch, shapes, camera);
 	}
 	
 	public void updateEntities(float delta) {
@@ -135,17 +136,17 @@ public class MapManager {
 		return closest;
 	}
 	
-	public void drawEntities() {
+	public void drawEntities(DecalBatch batch, ShapeRenderer shapes, PerspectiveCamera camera) {
 		for (Entity e : entities) {
-			e.draw(game.canvas, game.shapeRenderer);
+			e.draw(batch, shapes, camera);
 			if (game.debugMode) {
-				e.drawCollision(game.shapeRenderer);
+				e.drawCollision(shapes);
 			}
 		}
 		for (Entity e : survivors) {
-			e.draw(game.canvas, game.shapeRenderer);
+			e.draw(batch, shapes, camera);
 			if (game.debugMode) {
-				e.drawCollision(game.shapeRenderer);
+				e.drawCollision(shapes);
 			}
 		}
 
@@ -165,21 +166,20 @@ public class MapManager {
 	public void addProjectile(Projectile p) {
 		projectiles.add(p);
 	}
-	public void drawSplatters(SpriteBatch batch) {
+	public void drawSplatters(DecalBatch batch) {
 		if (splatters.size == 0) return;
 		splatterTimer++;
 
 		// Use camera projection instead of manual offsets
-		batch.begin();
 
 		for (int i = 0; i < splatters.size; i++) {
 			Vector3 position = splatterLocs.get(splatters.get(i));
-			float opacity = position.z;
+			float opacity = 1f / (splatterTimer / 600f);
 
-			Sprite splatter = splatters.get(i);
-			splatter.setAlpha(opacity);
-			splatter.setCenter(position.x, position.y); // world coords directly
-			splatter.draw(batch);
+			Decal splatter = splatters.get(i);
+			splatter.setColor(1f, 1f, 1f, opacity);
+			splatter.setPosition(position.x, 1, -position.y); // world coords directly
+			batch.add(splatter);
 
 //			if (position.z > 0) position.z -= .002f;
 		}
@@ -190,7 +190,6 @@ public class MapManager {
 			splatterTimer = 0;
 		}
 
-		batch.end();
 	}
 
 
@@ -229,9 +228,8 @@ public class MapManager {
 	}
 
 	public void addSplatter(Vector3 position) {
-		Sprite splatter = new Sprite(Zombie.deadSprite);
-		splatter.setCenter(position.x, position.z);
-		splatter.setRotation((float) (Math.random() * 360));
+		Decal splatter = Decal.newDecal(new TextureRegion(Zombie.deadSprite.getTexture()));
+		splatter.setRotationY((float) (Math.random() * 360));
 		splatters.insert(0, splatter);
 		splatterLocs.put(splatter, position.cpy());
 	}

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
@@ -21,14 +22,15 @@ public class GameOverScreen implements Screen {
     long startTime;
     long lastNewStar;
     Array<Vector3> stars = new Array<>();
-    ShapeRenderer shapeRenderer;
 
+    private SpriteBatch spriteBatch;
+    private ShapeRenderer shapes;
     public GameOverScreen(final ABNPGame game) {
         this.game = game;
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
-        shapeRenderer = new ShapeRenderer();
-
+        shapes = new ShapeRenderer();
+        spriteBatch = new SpriteBatch();
     }
 
     void renderStars() {
@@ -45,9 +47,9 @@ public class GameOverScreen implements Screen {
         Iterator<Vector3> iter = stars.iterator();
         while (iter.hasNext()) {
             Vector3 star = iter.next();
-            shapeRenderer.setColor(new Color(1f, 1f,1f,star.z));
+            shapes.setColor(new Color(1f, 1f,1f,star.z));
 
-            shapeRenderer.rect(star.x, star.y, 4, 4);
+            shapes.rect(star.x, star.y, 4, 4);
             star.z -= .01;
             if (star.z < 0) {
                 iter.remove();
@@ -70,17 +72,17 @@ public class GameOverScreen implements Screen {
 
 
 
-        game.canvas.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        spriteBatch.setProjectionMatrix(camera.combined);
+        shapes.begin(ShapeRenderer.ShapeType.Filled);
         renderStars();
-        shapeRenderer.end();
-        game.uiCanvas.begin();
+        shapes.end();
+        spriteBatch.begin();
 
-        Fonts.drawScaled(Fonts.SELECTIONFONT, 1f, "Game Over!", game.uiCanvas, 50, Gdx.graphics.getHeight() - 40);
-        Fonts.drawScaled(Fonts.SELECTIONFONT, 1f, "You have died!", game.uiCanvas, 50, Gdx.graphics.getHeight() - 150);
+        Fonts.drawScaled(Fonts.SELECTIONFONT, 1f, "Game Over!", spriteBatch, 50, Gdx.graphics.getHeight() - 40);
+        Fonts.drawScaled(Fonts.SELECTIONFONT, 1f, "You have died!", spriteBatch, 50, Gdx.graphics.getHeight() - 150);
 
-        if (System.currentTimeMillis() - startTime > 3000) Fonts.INFOFONT.draw(game.uiCanvas, "Click anywhere to play again!", 100, 100);
-        game.uiCanvas.end();
+        if (System.currentTimeMillis() - startTime > 3000) Fonts.INFOFONT.draw(spriteBatch, "Click anywhere to play again!", 100, 100);
+        spriteBatch.end();
 
         if (Gdx.input.isTouched() && System.currentTimeMillis() - startTime > 3000) {
             game.setScreen(new MainMenuScreen(game));

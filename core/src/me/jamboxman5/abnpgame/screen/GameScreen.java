@@ -6,6 +6,7 @@ import com.badlogic.gdx.InputProcessor;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.Environment;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
@@ -56,11 +57,12 @@ public class GameScreen implements Screen, InputProcessor {
     private PerspectiveCamera perspectiveCamera;
     private ModelBatch modelBatch;
     private Environment environment;
-
-
-
     private DecalBatch decalBatch;
 
+    //2d
+    private SpriteBatch spriteBatch;
+    private ShapeRenderer worldShapes;
+    private ShapeRenderer uiShapes;
 
     public GameScreen(final ABNPGame game, Map activeMap, MissionScript controller) {
         this.game = game;
@@ -95,6 +97,11 @@ public class GameScreen implements Screen, InputProcessor {
         perspectiveCamera.position.y = Settings.maxZoom;
         decalBatch = new DecalBatch(new CameraGroupStrategy(perspectiveCamera));
 
+        //2d
+        spriteBatch = new SpriteBatch();
+        worldShapes = new ShapeRenderer();
+        uiShapes = new ShapeRenderer();
+
 //        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Crosshair);
     }
 
@@ -102,6 +109,7 @@ public class GameScreen implements Screen, InputProcessor {
     public void show() {
 
         game.getPlayer().setPosition(game.getMapManager().getActiveMap().getPlayerSpawn());
+        worldShapes.rotate(1, 0, 0, -90);
 
         Sounds.AMBIENCE.stop();
         Pixmap pixmap;
@@ -138,11 +146,9 @@ public class GameScreen implements Screen, InputProcessor {
 
         // tell the SpriteBatch to render in the
         // coordinate system specified by the camera.
-        game.canvas.setProjectionMatrix(perspectiveCamera.combined);
-        game.shapeRenderer.setProjectionMatrix(perspectiveCamera.combined);
-        game.shapeRenderer.rotate(1, 0, 0, -90);
-        game.uiShapeRenderer.setProjectionMatrix(uiCamera.combined);
-        game.uiCanvas.setProjectionMatrix(uiCamera.combined);
+        worldShapes.setProjectionMatrix(perspectiveCamera.combined);
+        uiShapes.setProjectionMatrix(uiCamera.combined);
+
         // begin a new batch and draw the bucket and
         // all drops
 
@@ -213,11 +219,11 @@ public class GameScreen implements Screen, InputProcessor {
 
 
 
-        game.getMapManager().draw(environment, game.canvas, modelBatch, game.shapeRenderer, perspectiveCamera);
-        game.getPlayer().draw(perspectiveCamera, decalBatch, game.uiShapeRenderer);
+        game.getMapManager().draw(environment, decalBatch, modelBatch, worldShapes, perspectiveCamera);
+        game.getPlayer().draw(decalBatch, worldShapes, perspectiveCamera);
 
         if (game.debugMode) {
-            game.getPlayer().drawCollision(game.shapeRenderer);
+            game.getPlayer().drawCollision(worldShapes);
         }
 
         drawUI();
@@ -231,13 +237,13 @@ public class GameScreen implements Screen, InputProcessor {
     private void drawUI() {
 
 
-        UIManager.drawWeaponHud(game.uiCanvas, game.uiShapeRenderer, game, gameCamera);
-        UIManager.drawHealthBar(game.uiCanvas, game.uiShapeRenderer, game.getPlayer());
-        UIManager.drawRadar(game.uiCanvas, game.uiShapeRenderer, game);
-        UIManager.drawMessageBuffer(game.uiCanvas);
-        if (game.debugMode) UIManager.drawDebugInfo(game, game.uiShapeRenderer, game.uiCanvas, Gdx.graphics.getDeltaTime());
+        UIManager.drawWeaponHud(spriteBatch, uiShapes, game, gameCamera);
+        UIManager.drawHealthBar(spriteBatch, uiShapes, game.getPlayer());
+        UIManager.drawRadar(spriteBatch, uiShapes, game);
+        UIManager.drawMessageBuffer(spriteBatch);
+        if (game.debugMode) UIManager.drawDebugInfo(game, worldShapes, spriteBatch, Gdx.graphics.getDeltaTime());
         if (gameController.gameOver) {
-            if (UIManager.drawFadeOut(game.uiShapeRenderer)) {
+            if (UIManager.drawFadeOut(uiShapes)) {
                 game.setScreen(new MainMenuScreen(game));
             }
         }

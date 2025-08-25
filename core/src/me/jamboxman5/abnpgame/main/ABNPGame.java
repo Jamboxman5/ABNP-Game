@@ -54,10 +54,6 @@ import java.util.UUID;
 public class ABNPGame extends Game {
 
     private static ABNPGame instance;
-    public SpriteBatch canvas;
-    public SpriteBatch uiCanvas;
-    public ShapeRenderer uiShapeRenderer;
-    public ShapeRenderer shapeRenderer;
     private Player player;
     private MapManager mapManager;
     private AssetManager assetManager;
@@ -75,10 +71,6 @@ public class ABNPGame extends Game {
     public void create() {
         instance = this;
 
-        canvas = new SpriteBatch();
-        uiCanvas = new SpriteBatch();
-        uiShapeRenderer = new ShapeRenderer();
-        shapeRenderer = new ShapeRenderer();
         mapManager = new MapManager(this);
         clientManager = new ClientManager(this);
         assetManager = new AssetManager();
@@ -119,10 +111,7 @@ public class ABNPGame extends Game {
     }
 
     public void dispose() {
-        canvas.dispose();
-        uiCanvas.dispose();
-        shapeRenderer.dispose();
-        uiShapeRenderer.dispose();
+
         try {
             closeMultiplayerGame();
         } catch (IOException e) {

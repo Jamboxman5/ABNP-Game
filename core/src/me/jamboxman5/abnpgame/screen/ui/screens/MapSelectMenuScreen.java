@@ -44,12 +44,19 @@ public class MapSelectMenuScreen implements Screen {
 
     int move = 600;
 
+
+    private SpriteBatch spriteBatch;
+    private ShapeRenderer shapes;
+
     public MapSelectMenuScreen(final ABNPGame game) {
         this.game = game;
         menuBKG = new Texture(Gdx.files.internal("ui/bkg/Menu_Background_1.png"));
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
+
+        shapes = new ShapeRenderer();
+        spriteBatch = new SpriteBatch();
     }
 
     @Override
@@ -67,7 +74,8 @@ public class MapSelectMenuScreen implements Screen {
         ScreenUtils.clear(0f, 0, 0f, 1);
 
         camera.update();
-        game.uiCanvas.setProjectionMatrix(camera.combined);
+        shapes.setProjectionMatrix(camera.combined);
+        spriteBatch.setProjectionMatrix(camera.combined);
 
 
         update();
@@ -147,9 +155,9 @@ public class MapSelectMenuScreen implements Screen {
 
     public void draw() {
 
-        drawBKG(game.uiCanvas);
-        drawTitle(game.uiCanvas);
-        drawButtons(game.uiCanvas, game.uiShapeRenderer);
+        drawBKG(spriteBatch);
+        drawTitle(spriteBatch);
+        drawButtons(spriteBatch, shapes);
 
     }
 

@@ -49,7 +49,8 @@ public class LoadingScreen implements Screen {
     private long loadedTime = 0;
     private long loadStart = 0;
     private boolean spritesLoaded = false;
-
+    private SpriteBatch spriteBatch;
+    private ShapeRenderer shapes;
     public LoadingScreen(final ABNPGame game) {
         this.game = game;
         progress = 0;
@@ -57,6 +58,9 @@ public class LoadingScreen implements Screen {
 
         camera = new OrthographicCamera();
         camera.setToOrtho(false, Settings.screenWidth, Settings.screenHeight);
+
+        shapes = new ShapeRenderer();
+        spriteBatch = new SpriteBatch();
     }
 
     @Override
@@ -69,7 +73,8 @@ public class LoadingScreen implements Screen {
         ScreenUtils.clear(0f, 0, 0f, 1);
 
         camera.update();
-        game.uiCanvas.setProjectionMatrix(camera.combined);
+        shapes.setProjectionMatrix(camera.combined);
+        spriteBatch.setProjectionMatrix(camera.combined);
 
 
         update();
@@ -153,9 +158,9 @@ public class LoadingScreen implements Screen {
 
     public void draw() {
 
-        drawBKG(game.uiCanvas);
-        drawTitle(game.uiCanvas);
-        drawProgress(game.shapeRenderer);
+        drawBKG(spriteBatch);
+        drawTitle(spriteBatch);
+        drawProgress(shapes);
 
 
 

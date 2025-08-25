@@ -51,6 +51,10 @@ public class SettingsMenuScreen implements Screen {
     private int selectedMusVolume;
     private int selectedSfxVolume;
 
+
+    private SpriteBatch spriteBatch;
+    private ShapeRenderer shapes;
+
     public SettingsMenuScreen(final ABNPGame game) {
         this.game = game;
         menuBKG = new Texture(Gdx.files.internal("ui/bkg/Menu_Background_1.png"));
@@ -64,6 +68,9 @@ public class SettingsMenuScreen implements Screen {
         selectedMusVolume = Math.round(Settings.musVolume * 10);
         selectedSfxVolume = Math.round(Settings.sfxVolume * 10);
 
+
+        shapes = new ShapeRenderer();
+        spriteBatch = new SpriteBatch();
     }
 
     @Override
@@ -76,7 +83,8 @@ public class SettingsMenuScreen implements Screen {
         ScreenUtils.clear(0f, 0, 0f, 1);
 
         camera.update();
-        game.uiCanvas.setProjectionMatrix(camera.combined);
+        shapes.setProjectionMatrix(camera.combined);
+        spriteBatch.setProjectionMatrix(camera.combined);
 
 
         update();
@@ -148,11 +156,11 @@ public class SettingsMenuScreen implements Screen {
 
     public void draw() {
 
-        drawBKG(game.uiCanvas);
-        drawTitle(game.uiCanvas);
-        drawLabels(game.uiCanvas);
-        drawButtons(game.uiCanvas, game.uiShapeRenderer);
-        drawValues(game.uiCanvas);
+        drawBKG(spriteBatch);
+        drawTitle(spriteBatch);
+        drawLabels(spriteBatch);
+        drawButtons(spriteBatch, shapes);
+        drawValues(spriteBatch);
 
     }
 
