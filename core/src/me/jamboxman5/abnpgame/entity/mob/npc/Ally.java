@@ -1,7 +1,11 @@
 package me.jamboxman5.abnpgame.entity.mob.npc;
 
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
@@ -94,11 +98,10 @@ public class Ally extends Survivor {
     }
 
     @Override
-    public void draw(SpriteBatch batch, ShapeRenderer shape) {
+    public void draw(DecalBatch batch, ShapeRenderer shape, PerspectiveCamera camera) {
         // Make sure the batch follows the camera
 
-        batch.begin();
-        Sprite toDraw = weapons.getActiveWeapon().getPlayerSprite(animFrame);
+        TextureRegion weaponFrame = weapons.getActiveWeapon().getPlayerSprite(animFrame);
 
         float angleDeg;
         if (aimTarget != null) {
@@ -107,25 +110,49 @@ public class Ally extends Survivor {
             angleDeg = (float) Math.toDegrees(getAngleToPoint(target)) + jitter;
         }
 
-        // Translate to world position, rotate around center
-        batch.setTransformMatrix(
-                new Matrix4()
-                        .translate(position.x, position.y, 0)
-                        .rotate(0f, 0f, 1f, angleDeg)
-        );
+        bodyDecal.setTextureRegion(weaponFrame);
+        bodyDecal.setWidth(weaponFrame.getRegionWidth());
+        bodyDecal.setHeight(weaponFrame.getRegionHeight());
 
-        // Offset so sprite is centered, plus weapon offsets
-        toDraw.setPosition(
-                (-toDraw.getWidth() / 2f) + weapons.getActiveWeapon().getXOffset(),
-                (-toDraw.getHeight() / 2f) + weapons.getActiveWeapon().getYOffset()
-        );
+        // 🔹 Update legs animation frame
+        TextureRegion legFrame = currentAnimation.getKeyFrame(animFrame);
+        legsDecal.setTextureRegion(legFrame);
+        legsDecal.setWidth(legFrame.getRegionWidth());
+        legsDecal.setHeight(legFrame.getRegionHeight());
 
-        toDraw.draw(batch);
+        legsDecal.setPosition(new Vector3(position.x, position.y, -position.z));
+        bodyDecal.setPosition(new Vector3(position.x, position.y, -position.z));
+        legsDecal.translateY(2);
+        bodyDecal.translateY(4);
 
-        // Reset transform
-        batch.setTransformMatrix(new Matrix4());
+// Face the camera
+        legsDecal.lookAt(camera.position, camera.up);
+        bodyDecal.lookAt(camera.position, camera.up);
+//		System.out.println(camera.up);
 
-        batch.end();
+// Rotate around Y for facing direction
+        legsDecal.rotateZ(angleDeg);
+        bodyDecal.rotateZ(angleDeg);
+
+        legsDecal.setScale(.25f);
+        bodyDecal.setScale(.25f);
+
+        if (weapons.getActiveWeapon().isShootAnimation()) {
+            bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getShootXOffset());
+            bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getShootYOffset());
+        } else if (weapons.getActiveWeapon().isMeleeAnimation()) {
+            bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getMeleeXOffset());
+            bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getMeleeYOffset());
+        } else {
+            bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getXOffset());
+            bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getYOffset());
+        }
+        if (currentAnimation == strafeBackAnimation) {
+            legsDecal.translateX(-10);
+        }
+
+        batch.add(legsDecal);
+        batch.add(bodyDecal);
     }
 
 

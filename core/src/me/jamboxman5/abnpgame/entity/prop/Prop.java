@@ -1,7 +1,11 @@
 package me.jamboxman5.abnpgame.entity.prop;
 
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Shape2D;
@@ -12,7 +16,7 @@ import me.jamboxman5.abnpgame.main.ABNPGame;
 
 public class Prop extends Entity {
 
-    protected Sprite activeSprite;
+    protected Decal propDecal;
 
     protected Prop(Sprite activeSprite,
                    Vector3 position,
@@ -21,9 +25,11 @@ public class Prop extends Entity {
 
         super(ABNPGame.getInstance());
         this.position = position;
-        this.activeSprite = activeSprite;
+        this.propDecal = Decal.newDecal(new TextureRegion(activeSprite.getTexture()), true);
         this.rotation = rotation;
         this.collision = collision;
+
+        propDecal.setScale(activeSprite.getScaleX());
     }
 
     @Override
@@ -32,28 +38,14 @@ public class Prop extends Entity {
     }
 
     @Override
-    public void draw(SpriteBatch batch, ShapeRenderer shape) {
+    public void draw(DecalBatch batch, ShapeRenderer shape, PerspectiveCamera camera) {
         // Make sure the batch is using your camera projection
 
-        batch.begin();
+        propDecal.setPosition(position.x, position.y, -position.z);
+        propDecal.setRotationZ(getRotation());
 
-        Sprite toDraw = activeSprite;
+        batch.add(propDecal);
 
-        // Translate to world position, rotate around center
-        batch.setTransformMatrix(
-                new Matrix4()
-                        .translate(position.x, position.y, 0)
-                        .rotate(0f, 0f, 1f, getRotation())
-        );
-
-        // Draw sprite centered on its position
-        toDraw.setPosition(-toDraw.getWidth() / 2f, -toDraw.getHeight() / 2f);
-        toDraw.draw(batch);
-
-        // Reset transform so later things don’t inherit it
-        batch.setTransformMatrix(new Matrix4());
-
-        batch.end();
     }
 
 }

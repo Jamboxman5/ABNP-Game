@@ -4,6 +4,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -30,6 +31,9 @@ public abstract class Survivor extends Mob {
     public static Animation<TextureRegion> strafeBackAnimation;
 
     protected Animation<TextureRegion> currentAnimation;
+
+    protected Decal legsDecal;
+    protected Decal bodyDecal;
 
     public Survivor(ABNPGame gamePanel, String type, Vector3 startPos, int health, int maxHealth, int speed) {
         super(gamePanel, type, startPos, health, maxHealth, speed);

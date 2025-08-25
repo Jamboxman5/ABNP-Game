@@ -1,9 +1,13 @@
 package me.jamboxman5.abnpgame.entity.mob.zombie;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector2;
@@ -28,6 +32,8 @@ public class Zombie extends Mob {
     protected int attackCooldownMS;
     protected int rewardMoney;
     protected int rewardEXP;
+
+    protected Decal zombieDecal;
 
     private boolean isAttacking = false;
     private PursuitType pursuitType;
@@ -56,7 +62,7 @@ public class Zombie extends Mob {
 
         activeSprites = attackSprites;
 
-
+        zombieDecal = Decal.newDecal(new TextureRegion(activeSprites.get(0).getTexture()), true);
 
     }
 
@@ -182,24 +188,26 @@ public class Zombie extends Mob {
     }
 
     @Override
-    public void draw(SpriteBatch batch, ShapeRenderer shape) {
+    public void draw(DecalBatch batch, ShapeRenderer shape, PerspectiveCamera camera) {
         int x = (int) (((position.x - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
         int y = (int) (((position.y - gp.getPlayer().getWorldZ())*.5) + gp.getPlayer().getScreenY());
 
-        batch.begin();
-        Sprite toDraw = activeSprites.get(animFrame);
-        toDraw.setOriginCenter();
-        toDraw.setRotation(getRotation());
+        TextureRegion frame = new TextureRegion(activeSprites.get(animFrame).getTexture());
+        zombieDecal.setTextureRegion(frame);
 
-        // position is in world coords, so just use it directly
-        toDraw.setPosition(position.x - toDraw.getWidth() / 2f,
-                position.y - toDraw.getHeight() / 2f);
+        zombieDecal.setWidth(frame.getRegionWidth());
+        zombieDecal.setHeight(frame.getRegionHeight());
 
-        toDraw.draw(batch);
+        zombieDecal.setPosition(position.x, position.y, -position.z);
 
+        zombieDecal.translateY(4);
+        zombieDecal.lookAt(camera.position, camera.up);
 
-        batch.end();
+        zombieDecal.setScale(.25f);
 
+        zombieDecal.rotateZ(getRotation());
+
+        batch.add(zombieDecal);
 
     }
 

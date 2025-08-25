@@ -3,9 +3,12 @@ package me.jamboxman5.abnpgame.entity;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.*;
 import me.jamboxman5.abnpgame.main.ABNPGame;
@@ -45,7 +48,7 @@ public abstract class Entity {
 	public void setSpeed(double speed) { this.speed = speed; }
 
 	public abstract void update(float delta);
-	public abstract void draw(SpriteBatch batch, ShapeRenderer shape);
+	public abstract void draw(DecalBatch batch, ShapeRenderer shape, PerspectiveCamera camera);
 	
 	public void moveIfCollisionNotDetected() {
 //        if (!isCollisionOn() && !gamePanel.getKeyHandler().isEnterPressed() && !gamePanel.getKeyHandler().isSpacePressed()) {

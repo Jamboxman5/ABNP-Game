@@ -1,7 +1,10 @@
 package me.jamboxman5.abnpgame.entity.mob.player;
 
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
@@ -55,23 +58,51 @@ public class OnlinePlayer extends Player {
     }
 
     @Override
-    public void draw(SpriteBatch batch, ShapeRenderer shape) {
-        int x = (int) (((position.x - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
-        int y = (int) (((position.y - gp.getPlayer().getWorldZ())*.5) + gp.getPlayer().getScreenY());
+    public void draw(DecalBatch batch, ShapeRenderer shape, PerspectiveCamera camera) {
+        TextureRegion weaponFrame = weapons.getActiveWeapon().getPlayerSprite(animFrame);
 
-        batch.begin();
-        Sprite toDraw = activeWeapon.getPlayerSprite(animFrame);
+        bodyDecal.setTextureRegion(weaponFrame);
+        bodyDecal.setWidth(weaponFrame.getRegionWidth());
+        bodyDecal.setHeight(weaponFrame.getRegionHeight());
 
-        batch.setTransformMatrix(new Matrix4().translate((float) x, (float) y, 0).rotate(0f, 0f, 1f, (float) (Math.toDegrees(getRotation()) + 360) + jitter));
-        toDraw.setPosition((-toDraw.getWidth() / 2) + activeWeapon.getXOffset(), (-toDraw.getHeight() / 2) + activeWeapon.getYOffset());
-        toDraw.draw(batch);
-        batch.setTransformMatrix(new Matrix4());
+        TextureRegion legFrame = currentAnimation.getKeyFrame(animFrame);
+        legsDecal.setTextureRegion(legFrame);
+        legsDecal.setWidth(legFrame.getRegionWidth());
+        legsDecal.setHeight(legFrame.getRegionHeight());
 
-        float nameScale = .3f;
-        int nameX = (int) (x - ((x - Fonts.getXForCenteredText(x, name, Fonts.INFOFONT)) * nameScale));
-        Fonts.drawScaled(Fonts.INFOFONT, nameScale, name, batch, nameX, y + 40);
+        legsDecal.setPosition(new Vector3(position.x, position.y, -position.z));
+        bodyDecal.setPosition(new Vector3(position.x, position.y, -position.z));
+        legsDecal.translateY(2);
+        bodyDecal.translateY(4);
 
-        batch.end();
+// Face the camera
+        legsDecal.lookAt(camera.position, camera.up);
+        bodyDecal.lookAt(camera.position, camera.up);
+//		System.out.println(camera.up);
+
+// Rotate around Y for facing direction
+        legsDecal.rotateZ(rotation);
+        bodyDecal.rotateZ(rotation);
+
+        legsDecal.setScale(.25f);
+        bodyDecal.setScale(.25f);
+
+        if (weapons.getActiveWeapon().isShootAnimation()) {
+            bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getShootXOffset());
+            bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getShootYOffset());
+        } else if (weapons.getActiveWeapon().isMeleeAnimation()) {
+            bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getMeleeXOffset());
+            bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getMeleeYOffset());
+        } else {
+            bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getXOffset());
+            bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getYOffset());
+        }
+        if (currentAnimation == strafeBackAnimation) {
+            legsDecal.translateX(-10);
+        }
+
+        batch.add(legsDecal);
+        batch.add(bodyDecal);
 
 
     }
