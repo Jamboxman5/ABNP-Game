@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import me.jamboxman5.abnpgame.entity.Entity;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 
@@ -14,7 +15,7 @@ public class Prop extends Entity {
     protected Sprite activeSprite;
 
     protected Prop(Sprite activeSprite,
-                   Vector2 position,
+                   Vector3 position,
                    float rotation,
                    Shape2D collision) {
 

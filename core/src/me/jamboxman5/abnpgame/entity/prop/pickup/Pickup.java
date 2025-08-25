@@ -15,7 +15,7 @@ public class Pickup extends Prop {
     protected boolean pickedUp = false;
     protected Runnable pickupEffect;
     public Pickup(Sprite pickupSprite,
-                  Vector2 position,
+                  Vector3 position,
                   float rotation,
                   Shape2D collision,
                   Runnable pickupEffect) {

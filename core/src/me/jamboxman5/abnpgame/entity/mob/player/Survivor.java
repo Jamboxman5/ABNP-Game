@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.mob.Mob;
 import me.jamboxman5.abnpgame.main.ABNPGame;
@@ -17,7 +18,7 @@ public abstract class Survivor extends Mob {
 
     protected WeaponLoadout weapons;
 
-    protected Vector2 aimTarget;
+    protected Vector3 aimTarget;
     protected float rotationSpeed;
     protected int exp;
 
@@ -30,14 +31,14 @@ public abstract class Survivor extends Mob {
 
     protected Animation<TextureRegion> currentAnimation;
 
-    public Survivor(ABNPGame gamePanel, String type, Vector2 startPos, int health, int maxHealth, int speed) {
+    public Survivor(ABNPGame gamePanel, String type, Vector3 startPos, int health, int maxHealth, int speed) {
         super(gamePanel, type, startPos, health, maxHealth, speed);
 
         WeaponModLoadout mods = new WeaponModLoadout();
         mods.addMod(new RedDotSight());
         weapons = new WeaponLoadout();
         weapons.getActiveWeapon().setMods(mods);
-        aimTarget = new Vector2();
+        aimTarget = new Vector3();
         currentAnimation = idleAnimation;
 
     }
@@ -65,7 +66,7 @@ public abstract class Survivor extends Mob {
     public double getAimAngle() {
         return getAngleToPoint(aimTarget);
     }
-    public Vector2 getAimVector() { return aimTarget; }
+    public Vector3 getAimVector() { return aimTarget; }
     public void setExp(int exp) { this.exp = exp; }
     public int getExp() { return exp; }
 

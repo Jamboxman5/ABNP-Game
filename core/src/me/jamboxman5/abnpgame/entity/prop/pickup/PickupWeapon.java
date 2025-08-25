@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Shape2D;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.Weapon;
 
@@ -14,7 +15,7 @@ public class PickupWeapon extends Pickup {
     static Sprite crateSprite;
     Weapon pickedUp;
 
-    public PickupWeapon(final Weapon pickupWeapon, Vector2 position, float rotation) {
+    public PickupWeapon(final Weapon pickupWeapon, Vector3 position, float rotation) {
         super(crateSprite,
                 position,
                 rotation,

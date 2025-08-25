@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.mob.Mob;
 import me.jamboxman5.abnpgame.main.ABNPGame;
@@ -33,7 +33,7 @@ public class Zombie extends Mob {
     private PursuitType pursuitType;
     public Zombie(ABNPGame game,
                   ZombieType type,
-                  Vector2 startPos,
+                  Vector3 startPos,
                   float topSpeed,
                   int maxHealth,
                   int attackCooldownMS,
@@ -112,7 +112,7 @@ public class Zombie extends Mob {
 
         animCounter++;
 
-        ((Circle)collision).setPosition(new Vector2(position.x, position.y).rotateAroundDeg(position, (float) (Math.toDegrees(getAngleToPoint(gp.getPlayer().getPosition())) + 360)));
+        ((Circle)collision).setPosition(new Vector2(position.x, position.y).rotateAroundDeg(new Vector2(position.x, position.z), (float) (Math.toDegrees(getAngleToPoint(gp.getPlayer().getPosition())) + 360)));
 
 
         if (animCounter == 3) {
@@ -148,7 +148,7 @@ public class Zombie extends Mob {
         if (!isAttacking) {
             switch (pursuitType) {
                 case SEEK: {
-                    seek(new Vector2(gp.getPlayer().getCollision().x, gp.getPlayer().getCollision().y));
+                    seek(new Vector3(gp.getPlayer().getCollision().x, gp.getPlayer().getPosition().y, gp.getPlayer().getCollision().y));
                     break;
                 }
                 case PURSUE: {
@@ -156,7 +156,7 @@ public class Zombie extends Mob {
                     break;
                 }
                 case ARRIVE: {
-                    arrive(new Vector2(gp.getPlayer().getCollision().x, gp.getPlayer().getCollision().y), 250, 1);
+                    arrive(new Vector3(gp.getPlayer().getCollision().x, gp.getPlayer().getPosition().y, gp.getPlayer().getCollision().y), 250, 1);
                     break;
                 }
             }
@@ -184,7 +184,7 @@ public class Zombie extends Mob {
     @Override
     public void draw(SpriteBatch batch, ShapeRenderer shape) {
         int x = (int) (((position.x - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
-        int y = (int) (((position.y - gp.getPlayer().getWorldY())*.5) + gp.getPlayer().getScreenY());
+        int y = (int) (((position.y - gp.getPlayer().getWorldZ())*.5) + gp.getPlayer().getScreenY());
 
         batch.begin();
         Sprite toDraw = activeSprites.get(animFrame);

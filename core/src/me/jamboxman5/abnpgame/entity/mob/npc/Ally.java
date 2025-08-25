@@ -5,23 +5,24 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 
 public class Ally extends Survivor {
 
-    protected Vector2 desiredTarget;
+    protected Vector3 desiredTarget;
 
     public Ally(ABNPGame gamePanel, String name) {
-        super(gamePanel, name, new Vector2(), 100, 100, 4);
+        super(gamePanel, name, new Vector3(), 100, 100, 4);
         rotationSpeed = 180f;
     }
 
     protected boolean canShoot() {
 
-        Vector2 currentDir = new Vector2(aimTarget).sub(position).nor();
-        Vector2 targetDir = new Vector2(desiredTarget).sub(position).nor();
+        Vector2 currentDir = new Vector2(aimTarget.x, aimTarget.z).sub(position.x, position.z).nor();
+        Vector2 targetDir = new Vector2(desiredTarget.x, desiredTarget.z).sub(position.z, position.z).nor();
 
         float angleBetween = currentDir.angleDeg(targetDir);
 
@@ -32,7 +33,7 @@ public class Ally extends Survivor {
     public void update(float delta) {
         super.update(delta);
 
-        getCollision().setPosition(new Vector2(position.x, position.y+10).rotateAroundDeg(position, (float) (Math.toDegrees(getAngleToPoint(target)) + 360)));
+        getCollision().setPosition(new Vector2(position.x, position.z+10).rotateAroundDeg(new Vector2(position.x, position.z), (float) (Math.toDegrees(getAngleToPoint(target)) + 360)));
 
         target = gp.getPlayer().getPosition();
 
@@ -64,14 +65,14 @@ public class Ally extends Survivor {
 
         updateAim(delta);
 
-        arrive(new Vector2(gp.getPlayer().getCollision().x, gp.getPlayer().getCollision().y), 300, 100);
+        arrive(new Vector3(gp.getPlayer().getCollision().x, gp.getPlayer().getPosition().y, gp.getPlayer().getCollision().y), 300, 100);
 
     }
 
     public void updateAim(float delta) {
         // Direction vectors from position to targets
-        Vector2 currentDir = new Vector2(aimTarget).sub(position).nor();
-        Vector2 targetDir = new Vector2(desiredTarget).sub(position).nor();
+        Vector2 currentDir = new Vector2(aimTarget.x, aimTarget.z).sub(position.x, position.z).nor();
+        Vector2 targetDir = new Vector2(desiredTarget.x, desiredTarget.z).sub(position.z, position.z).nor();
 
         float angleBetween = currentDir.angleDeg(targetDir);
         float crossZ = currentDir.crs(targetDir); // Sign for direction
@@ -87,7 +88,8 @@ public class Ally extends Survivor {
 
             // Set the new realAimTarget based on rotated direction (keep same distance)
             float currentDistance = aimTarget.dst(position);
-            aimTarget.set(position).add(rotated.scl(currentDistance));
+            rotated.scl(currentDistance);
+            aimTarget.set(position).add(rotated.x, 0, rotated.y);
         }
     }
 

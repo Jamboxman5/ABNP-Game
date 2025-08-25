@@ -5,6 +5,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.MapType;
 
@@ -16,7 +17,7 @@ public class BlackIsle extends Map {
 
     public BlackIsle() {
 
-        super("Black Isle", new Vector2(2200, 1280));
+        super("Black Isle", new Vector3(2200, 0, 1280));
         type = MapType.BLACKISLE;
     }
 
@@ -27,19 +28,21 @@ public class BlackIsle extends Map {
     }
 
     @Override
-    public Vector2[] getZombieSpawns() {
-        Vector2[] spawnPoints = {
-                new Vector2(1768, 1219),
-                new Vector2(1297, 1090),
-                new Vector2(565, 967),
-                new Vector2(933, 0),
-                new Vector2(230, 1866),
-                new Vector2(1540, 2360),
-                new Vector2(2860, 2000),
-                new Vector2(2833, 380),
-                new Vector2(0, 701)};
+    public Vector3[] getZombieSpawns() {
+        Vector3[] spawnPoints = {
+                new Vector3(1768, 0, 1219),
+                new Vector3(1297, 0, 1090),
+                new Vector3(565, 0, 967),
+                new Vector3(933, 0, 0),
+                new Vector3(230, 0, 1866),
+                new Vector3(1540, 0, 2360),
+                new Vector3(2860, 0, 2000),
+                new Vector3(2833, 0, 380),
+                new Vector3(0, 0, 701)
+        };
         return spawnPoints;
     }
+
     public static void setTexture(Texture texture) {
         BlackIsle.texture = texture;
     }

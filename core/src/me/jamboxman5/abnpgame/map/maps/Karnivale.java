@@ -5,6 +5,7 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.map.MapType;
 
@@ -13,7 +14,7 @@ public class Karnivale extends Map {
     private static Texture texture;
 
     public Karnivale() {
-        super("Karnivale", new Vector2(560, 650));
+        super("Karnivale", new Vector3(560, 0, 650));
         type = MapType.KARNIVALE;
     }
 
@@ -24,19 +25,20 @@ public class Karnivale extends Map {
     }
 
     @Override
-    public Vector2[] getZombieSpawns() {
-        Vector2[] spawnPoints = {
-                new Vector2(180, 0),
-                new Vector2(850, 0),
-                new Vector2(1090, 470),
-                new Vector2(1090, 820),
-                new Vector2(190, 1090),
-                new Vector2(0, 690),
-                new Vector2(0, 300),
-                new Vector2(700, 1090)
+    public Vector3[] getZombieSpawns() {
+        Vector3[] spawnPoints = {
+                new Vector3(180, 0, 0),
+                new Vector3(850, 0, 0),
+                new Vector3(1090, 0, 470),
+                new Vector3(1090, 0, 820),
+                new Vector3(190, 0, 1090),
+                new Vector3(0, 0, 690),
+                new Vector3(0, 0, 300),
+                new Vector3(700, 0, 1090)
         };
         return spawnPoints;
     }
+
 
     public static void setTexture(Texture texture) {
         Karnivale.texture = texture;

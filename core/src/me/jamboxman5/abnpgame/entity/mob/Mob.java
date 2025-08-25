@@ -2,24 +2,24 @@ package me.jamboxman5.abnpgame.entity.mob;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import me.jamboxman5.abnpgame.entity.LivingEntity;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.util.Settings;
 
 public abstract class Mob extends LivingEntity {
-	
+
 	protected String name;
 	protected float speed;
 	public boolean isMoving;
 	protected int scale = 1;
 	protected float maxForce;
-	
+
 	protected int screenX;
 	protected int screenY;
 
-	protected Vector2 velocity;
-	protected Vector2 acceleration;
+	protected Vector3 velocity;
+	protected Vector3 acceleration;
 
 	protected Sound footstep1;
 	protected Sound footstep2;
@@ -27,51 +27,51 @@ public abstract class Mob extends LivingEntity {
 	protected long lastStep = System.currentTimeMillis();
 	protected float jitter = 0;
 	protected float jitterValue = .2f;
-	protected Vector2 target;
+	protected Vector3 target;
 
-
-	public Mob(ABNPGame gamePanel, String type, Vector2 startPos, int health, int maxHealth, float speed) {
+	public Mob(ABNPGame gamePanel, String type, Vector3 startPos, int health, int maxHealth, float speed) {
 		super(gamePanel, health, maxHealth);
 		this.name = type;
-//		this.worldX = x;
-//		this.worldY = y;
 		this.speed = speed;
 
-		velocity = new Vector2(0,0);
-		acceleration = new Vector2(0,0);
-		position = startPos;
+		velocity = new Vector3();
+		acceleration = new Vector3();
+		position = startPos.cpy();
 		maxForce = .5f;
-		collision = new Circle(position, 30);
-
+		collision = new Circle(position.x, position.z, 30); // XZ plane
 	}
 
 	@Override
 	public void update(float delta) {
-
 		if (jitter < 0) jitter += .1;
 		if (jitter > 0) jitter -= .1;
 
+		// Apply acceleration
 		velocity.add(acceleration);
+		acceleration.scl(0); // reset acceleration each frame
 
+		// Limit speed based on direction
 		switch(direction) {
 			case "forward":
-				velocity.limit(speed);
+				if (velocity.len() > speed) velocity.nor().scl(speed);
 				break;
 			default:
-				velocity.limit(speed/1.75f);
+				if (velocity.len() > speed / 1.75f) velocity.nor().scl(speed / 1.75f);
 				break;
 		}
 
+		// Move position
 		position.add(velocity);
 
+		// Update collision circle in XZ plane
+		((Circle) collision).setPosition(position.x, position.z);
 	}
-	
-	public void move(Vector2 target) {
-		
+
+	public void move(Vector3 target) {
 		if (gp.getMousePointer() == null) return;
 
 		jitter += jitterValue;
-		int stepTime = (int) (2500 * (1.0/velocity.len()));
+		int stepTime = (int) (2500 * (1.0 / velocity.len()));
 
 		if (System.currentTimeMillis() - lastStep > stepTime) {
 			stepCounter++;
@@ -85,164 +85,65 @@ public abstract class Mob extends LivingEntity {
 				stepCounter = 0;
 				jitterValue = -jitterValue;
 			}
-
-//			else if (stepCounter == stepTime) {
-//				footstep2.play();
-//			} else if (stepCounter == stepTime*2) {
-//				stepCounter = 0;
-//			}
-
 		}
 
-
-		
-		if (!hasCollided(target.x, target.y)) {
-
+		if (!hasCollided(target.x, target.z)) {
 			seek(target);
+		}
+	}
 
+	public void seek(Vector3 target) {
+		Vector3 desired = target.cpy().sub(position);
+		desired.y = 0; // stay in XZ plane
+		desired.nor().scl(speed);
+
+		Vector3 steer = desired.sub(velocity);
+		if (steer.len() > maxForce) steer.nor().scl(maxForce);
+
+		acceleration.add(steer);
+		if (acceleration.len() > speed) acceleration.nor().scl(speed);
+	}
+
+	public void arrive(Vector3 target, float slowingRadius, float stopRadius) {
+		Vector3 desired = target.cpy().sub(position);
+		desired.y = 0;
+		float distance = desired.len() - stopRadius;
+
+		if (distance < slowingRadius) {
+			desired.nor().scl(speed * (distance / slowingRadius));
+		} else {
+			desired.nor().scl(speed);
 		}
 
+		Vector3 steer = desired.sub(velocity);
+		if (steer.len() > maxForce) steer.nor().scl(maxForce);
 
-	}
-	
-	public void mfw(Vector2 target) {
-
-		seek(target);
-
-
-
+		acceleration.add(steer);
+		if (acceleration.len() > speed) acceleration.nor().scl(speed);
 	}
 
 	@Override
-	public Circle getCollision() { return (Circle) collision; }
+	public Circle getCollision() {
+		return (Circle) collision;
+	}
 
 	public void pursue(Mob pursuing) {
-		Vector2 target = new Vector2(((Circle)pursuing.getCollision()).x, ((Circle)pursuing.getCollision()).y);
-		Vector2 prediction = pursuing.velocity.cpy();
-		prediction.scl(10);
+		Vector3 target = pursuing.position.cpy();
+		Vector3 prediction = pursuing.velocity.cpy().scl(10);
 		target.add(prediction);
-
 		seek(target);
-
-//        if (!pathFind((int) target.x, (int) target.y)) pathFind((int) screen.player.bounds.x, (int) screen.player.bounds.y);
 	}
 
-	public void seek(Vector2 target) {
-		Vector2 force = target.sub(position);
-		force.setLength(speed);
-		Vector2 steer = force.sub(velocity);
-		steer.limit(maxForce);
-
-		acceleration.add(steer);
-		acceleration.limit(speed);
-
-//		System.out.println(acceleration);
-
-//        if (!deadSpace.contains(new Vector2(bounds.x + steer.x, bounds.y))) bounds.x += steer.x;
-//        else bounds.x += steer.y;
-//        if (!deadSpace.contains(new Vector2(bounds.x, bounds.y + steer.y))) bounds.y += steer.y;
-//        else bounds.y += steer.x;
-	}
-
-	public void arrive(Vector2 target, float slowingRadius, float stopRadius) {
-//		Vector2 force = target.cpy().sub(new Vector2(position.x, position.y));
-//
-//		int radius = 300;
-//		float distance = force.len();
-//		if (distance < radius) {
-//			float m = map(distance, 0, radius, 0, speed);
-//			force.setLength(m);
-//		}
-//		else {
-//			force.setLength(speed);
-//		}
-//
-//		force.sub(velocity);
-//		force.limit(maxForce);
-//
-//
-//
-//		acceleration.add(force);
-//		acceleration.limit(speed);
-
-		Vector2 desiredVelocity = target.cpy().sub(position);
-		float distance = desiredVelocity.len() - stopRadius;
-
-		if (distance < slowingRadius)  {
-			desiredVelocity.nor().scl(speed).scl(distance/slowingRadius);
-		} else {
-			desiredVelocity.nor().scl(speed);
-		}
-
-		Vector2 steer = desiredVelocity.sub(velocity);
-		velocity = velocity.cpy().add(steer).limit(speed);
-		velocity.limit(speed/1.5f);
-		position.add(velocity);
-
-	}
-
-	public static float map(float val, float oldmax, float max, float newMin, float newMax)
-	{
-		val = (val - oldmax)/(max - oldmax);
+	// Utility for mapping values (unchanged)
+	public static float map(float val, float oldmax, float max, float newMin, float newMax) {
+		val = (val - oldmax) / (max - oldmax);
 		return newMin + val * (newMax - newMin);
 	}
 
-	public void mbk(double xComp, double yComp) {
-
-		if (screenX < gp.getMousePointer().x) {
-			setWorldX(getWorldX() - xComp);
-			setWorldY(getWorldY() - yComp);
-		} else if (screenX > gp.getMousePointer().x) {
-			setWorldX(getWorldX() + xComp);
-			setWorldY(getWorldY() + yComp);
-		} else if (screenY < gp.getMousePointer().y) {
-			setWorldX(getWorldX() + xComp);
-			setWorldY(getWorldY() + yComp);
-		} else {
-			setWorldX(getWorldX() + xComp);
-			setWorldY(getWorldY() + yComp);
-		}
-	}
-	public void mrt(double xComp, double yComp) {
-		if (gp.getMousePointer() == null) return;
-
-		if (screenX < gp.getMousePointer().x) {
-			setWorldX(getWorldX() - xComp);
-			setWorldY(getWorldY() - yComp);
-		} else if (screenX > gp.getMousePointer().x) {
-			setWorldX(getWorldX() + xComp);
-			setWorldY(getWorldY() + yComp);
-		} else if (screenY < gp.getMousePointer().y) {
-			setWorldX(getWorldX() + xComp);
-			setWorldY(getWorldY() + yComp);
-		} else {
-			setWorldX(getWorldX() + xComp);
-			setWorldY(getWorldY() + yComp);
-		}
-	}
-	public void mlt(double xComp, double yComp) {
-		if (gp.getMousePointer() == null) return;
-
-		if (screenX < gp.getMousePointer().x) {
-			setWorldX(getWorldX() - xComp);
-			setWorldY(getWorldY() - yComp);
-		} else if (screenX > gp.getMousePointer().x) {
-			setWorldX(getWorldX() + xComp);
-			setWorldY(getWorldY() + yComp);
-		} else if (screenY < gp.getMousePointer().y) {
-			setWorldX(getWorldX() + xComp);
-			setWorldY(getWorldY() + yComp);
-		} else {
-			setWorldX(getWorldX() + xComp);
-			setWorldY(getWorldY() + yComp);
-		}
-	}
-	
 	public abstract boolean hasCollided(double xComp, double yComp);
-	public String getName() { return name; } 
+	public String getName() { return name; }
 
 	public enum PursuitType {
 		ARRIVE, PURSUE, SEEK;
 	}
-
 }

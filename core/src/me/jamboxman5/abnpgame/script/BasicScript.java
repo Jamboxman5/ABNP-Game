@@ -3,6 +3,7 @@ package me.jamboxman5.abnpgame.script;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
@@ -36,7 +37,7 @@ public class BasicScript extends MissionScript {
 
             gameOver = false;
 
-            Vector2[] spawnPoints = game.getMapManager().getActiveMap().getZombieSpawns();
+            Vector3[] spawnPoints = game.getMapManager().getActiveMap().getZombieSpawns();
             UIManager.pushBufferMessage("Prepare for the first wave!");
             Thread.sleep(10000);
             UIManager.pushBufferMessage("Begin!");
@@ -44,7 +45,7 @@ public class BasicScript extends MissionScript {
             Firearm toDrop = new RifleM4A1();
             toDrop.setAmmo(game.getPlayer().getWeaponLoadout().getAmmo(Ammo.AmmoType.StandardAmmo));
 
-            game.getMapManager().addEntity(new PickupWeapon(toDrop, new Vector2(0,0), 90));
+            game.getMapManager().addEntity(new PickupWeapon(toDrop, new Vector3(0, 0, 0), 90));
 
             for (int i = 0; i < 10; i++) {
                 zombiesRemaining = (50 - i) + game.getMapManager().entities.size;
@@ -148,7 +149,7 @@ public class BasicScript extends MissionScript {
 
     }
 
-    private Vector2 getRandomSpawnPoint(Vector2[] points) {
+    private Vector3 getRandomSpawnPoint(Vector3[] points) {
         int idx = new Random().nextInt(points.length);
         return points[idx].cpy();
     }

@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
 import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
@@ -20,7 +20,7 @@ public class OnlinePlayer extends Player {
 
     public OnlinePlayer(ABNPGame gamePanel, String username, String uuid) {
         super(gamePanel, username, uuid);
-        setPosition(new Vector2(0,0));
+        setPosition(new Vector3(0,0,0));
         activeWeapon = new Pistol1911();
         this.uuid = uuid;
     }
@@ -35,7 +35,7 @@ public class OnlinePlayer extends Player {
 
     public void updatePos(PacketMove packet) {
         setWorldX(packet.x);
-        setWorldY(packet.y);
+        setWorldZ(packet.y);
         setRotation(packet.rotation);
         jitter = packet.jitter;
     }
@@ -57,7 +57,7 @@ public class OnlinePlayer extends Player {
     @Override
     public void draw(SpriteBatch batch, ShapeRenderer shape) {
         int x = (int) (((position.x - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
-        int y = (int) (((position.y - gp.getPlayer().getWorldY())*.5) + gp.getPlayer().getScreenY());
+        int y = (int) (((position.y - gp.getPlayer().getWorldZ())*.5) + gp.getPlayer().getScreenY());
 
         batch.begin();
         Sprite toDraw = activeWeapon.getPlayerSprite(animFrame);
