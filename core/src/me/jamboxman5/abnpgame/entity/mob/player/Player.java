@@ -4,14 +4,16 @@ package me.jamboxman5.abnpgame.entity.mob.player;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.graphics.g3d.decals.Decal;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
 import me.jamboxman5.abnpgame.main.ABNPGame;
@@ -39,12 +41,21 @@ public class Player extends Survivor {
 
 	protected Array<Ally> companions;
 
+	private Decal legsDecal;
+	private Decal bodyDecal;
+
 	public Player(ABNPGame gamePanel, String name, String uuid) {
 		super(gamePanel, 
 			  name, 
 			  gamePanel.getMapManager().getActiveMap().getPlayerSpawn(),
 			  100, 100,
 			  defaultSpeed);
+
+		legsDecal = Decal.newDecal(currentAnimation.getKeyFrame(0), true);
+		bodyDecal = Decal.newDecal(new TextureRegion(weapons.getActiveWeapon().getPlayerSprite(0).getTexture()), true);
+		legsDecal.setRotationX(90);
+		bodyDecal.setRotationX(90);
+
 
 		gamerTag = name;
 		this.uuid = uuid;
@@ -70,13 +81,15 @@ public class Player extends Survivor {
 
 		stateTime += delta;
 		legStateTime += delta;
+		Vector2 mouse2D = gp.getWorldMousePointer(); // 2D world position
+		Vector3 worldMouse = new Vector3(mouse2D.x, 0, mouse2D.y); // no negation needed
 
-		aimTarget = gp.getWorldMousePointer();
+		aimTarget = worldMouse;
 
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
 
-		((Circle)collision).setPosition(new Vector2(position.x, position.y+10).rotateAroundDeg(position, (float) (Math.toDegrees(getDrawingAngle()) + 360)));
+		((Circle)collision).setPosition(new Vector2(position.x, position.y+10).rotateAroundDeg(new Vector2(position.x, position.z), (float) (Math.toDegrees(getDrawingAngle()) + 360)));
 
 		boolean rotating = false;
 		float oldRotation = getRotation();
@@ -129,62 +142,48 @@ public class Player extends Survivor {
 				stateTime = 0;
 			}
 		}
-		
+
 		if (Gdx.input.isKeyPressed(InputKeys.FORWARD)
-                || Gdx.input.isKeyPressed(InputKeys.BACK)
-                || Gdx.input.isKeyPressed(InputKeys.LEFT)
-                || Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
-			
-			if (screenX == gp.getMousePointer().x &&
-				screenY == gp.getMousePointer().y) {
+				|| Gdx.input.isKeyPressed(InputKeys.BACK)
+				|| Gdx.input.isKeyPressed(InputKeys.LEFT)
+				|| Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
+
+
+			if ((int)screenX == gp.getMousePointer().x &&
+					(int)screenY == gp.getMousePointer().y) {
 				basicMove();
 				isMoving = true;
-			}
-			
-			else if (Gdx.input.isKeyPressed(InputKeys.FORWARD)) {
-
+			} else if (Gdx.input.isKeyPressed(InputKeys.FORWARD)) {
 				if (Gdx.input.isKeyPressed(InputKeys.LEFT)) {
-					move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, 45));
-
+					move(rotateAroundY(worldMouse, position, 45f));
 				} else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
-					move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, -45));
-
+					move(rotateAroundY(worldMouse, position, -45f));
 				} else {
-					move(gp.getWorldMousePointer().cpy());
+					move(worldMouse.cpy());
 				}
-
 				isMoving = true;
 
 			} else if (Gdx.input.isKeyPressed(InputKeys.BACK)) {
-
 				if (Gdx.input.isKeyPressed(InputKeys.LEFT)) {
-					move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, 180-45));
-
+					move(rotateAroundY(worldMouse, position, 135f)); // 180-45
 				} else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
-					move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, 180+45));
-
+					move(rotateAroundY(worldMouse, position, 225f)); // 180+45
 				} else {
-					move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, 180));
+					move(rotateAroundY(worldMouse, position, 180f));
 				}
-
 				isMoving = true;
 
 			} else if (Gdx.input.isKeyPressed(InputKeys.LEFT)) {
-
-				move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, 90));
+				move(rotateAroundY(worldMouse, position, 90f));
 				isMoving = true;
 			} else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
-
-				move(gp.getWorldMousePointer().cpy().rotateAroundDeg(position, 270));
+				move(rotateAroundY(worldMouse, position, 270f));
 				isMoving = true;
 			}
-
-
-
 		} else {
 			isMoving = false;
-			velocity = new Vector2();
-			acceleration = new Vector2();
+			velocity = new Vector3();
+			acceleration = new Vector3();
 			stepCounter = 0;
 		}
 
@@ -216,7 +215,7 @@ public class Player extends Survivor {
 			PacketMove move = new PacketMove();
 			move.uuid = uuid;
 			move.x = getWorldX();
-			move.y = getWorldY();
+			move.y = getWorldZ();
 			move.rotation = getDrawingAngle();
 			move.jitter = jitter;
 			gp.getClientManager().sendPacketUDP(move);
@@ -262,6 +261,20 @@ public class Player extends Survivor {
 		}
 		
 	}
+
+	Vector3 rotateAroundY(Vector3 point, Vector3 pivot, float degrees) {
+		float rad = (float) Math.toRadians(degrees);
+		float cos = (float) Math.cos(rad);
+		float sin = (float) Math.sin(rad);
+
+		float x = point.x - pivot.x;
+		float z = point.z - pivot.z;
+
+		float newX = x * cos - z * sin + pivot.x;
+		float newZ = x * sin + z * cos + pivot.z;
+
+		return new Vector3(newX, point.y, newZ); // keep Y unchanged
+	}
 	
 	boolean changedAnimation(Animation<TextureRegion> newAnimation) {
 		return currentAnimation != newAnimation;
@@ -272,10 +285,10 @@ public class Player extends Survivor {
 		
 		switch (getDirection()) {
 	    	case "forward":
-	    		setWorldY(getWorldY() - getStrafeSpeed());
+	    		setWorldZ(getWorldZ() - getStrafeSpeed());
 	    		break;
 	    	case "back": 
-	    		setWorldY(getWorldY() + getStrafeSpeed());
+	    		setWorldZ(getWorldZ() + getStrafeSpeed());
 	    		break;
 	    	case "left": 
 	    		setWorldX(getWorldX() - getStrafeSpeed());
@@ -292,6 +305,10 @@ public class Player extends Survivor {
 	@Override
 	public void draw(SpriteBatch batch, ShapeRenderer shape) {
 
+	}
+
+	public void draw(PerspectiveCamera camera, DecalBatch batch, ShapeRenderer shape) {
+
 		if (weapons.getActiveWeapon().hasMod(WeaponMod.ModType.RedDotSight)) {
 			Gdx.gl.glEnable(GL30.GL_BLEND);
 			Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
@@ -300,57 +317,61 @@ public class Player extends Survivor {
 			// Convert start/end to world coords if needed
 			Vector2 start = new Vector2(
 					(getWorldX() - gp.getPlayer().getWorldX()) * 0.5f + gp.getPlayer().getScreenX(),
-					(getWorldY() - gp.getPlayer().getWorldY()) * 0.5f + gp.getPlayer().getScreenY()
+					(getWorldZ() - gp.getPlayer().getWorldZ()) * 0.5f + gp.getPlayer().getScreenY()
 			);
 			drawRedDotSight(shape, start, gp.getMousePointer());
 			shape.end();
 		}
 
+		// 🔹 Update weapon animation frame
+		TextureRegion weaponFrame = weapons.getActiveWeapon().getPlayerSprite(stateTime);
+		bodyDecal.setTextureRegion(weaponFrame);
+		bodyDecal.setWidth(weaponFrame.getRegionWidth());
+		bodyDecal.setHeight(weaponFrame.getRegionHeight());
 
-		batch.begin();
-		Sprite toDraw = weapons.getActiveWeapon().getPlayerSprite(stateTime);
+		// 🔹 Update legs animation frame
+		TextureRegion legFrame = currentAnimation.getKeyFrame(legStateTime);
+		legsDecal.setTextureRegion(legFrame);
+		legsDecal.setWidth(legFrame.getRegionWidth());
+		legsDecal.setHeight(legFrame.getRegionHeight());
 
-		if (gp.getPlayer().equals(this)) {
-			// Translate + rotate around custom pivot
-			Matrix4 transform = new Matrix4()
-					.translate(position.x, position.y, 0) // move to player world position
-					.rotate(0f, 0f, 1f, (float) (Math.toDegrees(getDrawingAngle()) + 360) + jitter);
+		legsDecal.setPosition(new Vector3(position.x, position.y, -position.z));
+		bodyDecal.setPosition(new Vector3(position.x, position.y, -position.z));
+		legsDecal.translateY(2);
+		bodyDecal.translateY(4);
+		float angleDeg = (float) Math.toDegrees(getDrawingAngle()) + jitter;
 
-			batch.setTransformMatrix(transform);
+// Face the camera
+		legsDecal.lookAt(camera.position, camera.up);
+		bodyDecal.lookAt(camera.position, camera.up);
+//		System.out.println(camera.up);
 
-			// Offset sprite so it rotates around the right pivot point
-			if (weapons.getActiveWeapon().isShootAnimation()) {
-				toDraw.setPosition(
-						-toDraw.getWidth() / 2f + weapons.getActiveWeapon().getShootXOffset(),
-						-toDraw.getHeight() / 2f + weapons.getActiveWeapon().getShootYOffset()
-				);
-			} else if (weapons.getActiveWeapon().isMeleeAnimation()){
-				toDraw.setPosition(
-						-toDraw.getWidth() / 2f + weapons.getActiveWeapon().getMeleeXOffset(),
-						-toDraw.getHeight() / 2f + weapons.getActiveWeapon().getMeleeYOffset()
-				);
-			} else {
-				toDraw.setPosition(
-						-toDraw.getWidth() / 2f + weapons.getActiveWeapon().getXOffset(),
-						-toDraw.getHeight() / 2f + weapons.getActiveWeapon().getYOffset()
-				);
-			}
+// Rotate around Y for facing direction
+		legsDecal.rotateZ(angleDeg);
+		bodyDecal.rotateZ(angleDeg);
 
-			int legXOffset = 0;
-			if (currentAnimation == strafeBackAnimation) legXOffset = -10;
+		legsDecal.setScale(.25f);
+		bodyDecal.setScale(.25f);
 
-			Sprite legs = new Sprite(currentAnimation.getKeyFrame(legStateTime));
-			legs.setScale(.25f);
-			legs.setPosition(-legs.getWidth() / 2f + legXOffset, -legs.getHeight() / 2f + 6);
-			legs.draw(batch);
 
-			toDraw.draw(batch);
-
-			// Reset matrix so other things don’t inherit this rotation
-			batch.setTransformMatrix(new Matrix4());
+		if (weapons.getActiveWeapon().isShootAnimation()) {
+			bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getShootXOffset());
+			bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getShootYOffset());
+		} else if (weapons.getActiveWeapon().isMeleeAnimation()) {
+			bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getMeleeXOffset());
+			bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getMeleeYOffset());
+		} else {
+			bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getXOffset());
+			bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getYOffset());
+		}
+		if (currentAnimation == strafeBackAnimation) {
+			legsDecal.translateX(-10);
 		}
 
-		batch.end();
+		batch.add(legsDecal);
+		batch.add(bodyDecal);
+
+
 	}
 
 

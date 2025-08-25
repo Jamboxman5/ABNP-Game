@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Polygon;
-import com.badlogic.gdx.math.Shape2D;
-import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.*;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 
 public abstract class Entity {
@@ -19,7 +16,7 @@ public abstract class Entity {
 	
 	private Sprite sprite;
 
-	protected Vector2 position;
+	protected Vector3 position;
 	protected String name;
 	protected double speed;
 	protected float rotation;
@@ -41,9 +38,10 @@ public abstract class Entity {
 
 	public void setDirection(String dir) { direction = dir; }
 	public void setWorldX(double x) { position.x = (float) x; }
+	public void setWorldZ(double z) { position.z = (float) z; }
 	public void setWorldY(double y) { position.y = (float) y; }
-	public void setPosition(float x, float y) { position = new Vector2(x, y); }
-	public void setPosition(Vector2 newPosition) { position = newPosition; }
+	public void setPosition(float x, float y, float z) { position = new Vector3(x, y, z); }
+	public void setPosition(Vector3 newPosition) { position = newPosition; }
 	public void setSpeed(double speed) { this.speed = speed; }
 
 	public abstract void update(float delta);
@@ -53,10 +51,10 @@ public abstract class Entity {
 //        if (!isCollisionOn() && !gamePanel.getKeyHandler().isEnterPressed() && !gamePanel.getKeyHandler().isSpacePressed()) {
             switch (getDirection()) {
                 case "forward":
-                	setWorldY(getWorldY() - getSpeed());
+                	setWorldZ(getWorldZ() - getSpeed());
                 	break;
                 case "back": 
-                	setWorldY(getWorldY() + getSpeed());
+                	setWorldZ(getWorldZ() + getSpeed());
                 	break;
                 case "left": 
                 	setWorldX(getWorldX() - getSpeed());
@@ -67,9 +65,9 @@ public abstract class Entity {
             }
         }
 
-	public float getAngleToPoint(Vector2 target) {
+	public float getAngleToPoint(Vector3 target) {
 		try {
-			float num = (float) (position.y - target.y);
+			float num = (float) (position.z - target.z);
 			float denom = (float) (position.x - target.x);
 			if (denom == 0 && num == 0) return (float) (-Math.PI/2);
 			float angle = (float) Math.atan(num/denom);
@@ -89,8 +87,9 @@ public abstract class Entity {
 	public Sprite getSprite() { return sprite; }
 	public double getSpeed() { return speed; }
 	public float getWorldX() { return position.x; }
+	public float getWorldZ() { return position.z; }
 	public float getWorldY() { return position.y; }
-	public Vector2 getPosition() { return position; }
+	public Vector3 getPosition() { return position; }
 	public String getDirection() { return direction; }
 
 	public String getName() { return name; }
@@ -98,7 +97,7 @@ public abstract class Entity {
 		return (int) (position.x - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX());
 	}
 	public int getScreenX() {
-		return (int) (position.y - gp.getPlayer().getWorldY() + gp.getPlayer().getScreenY());
+		return (int) (position.y - gp.getPlayer().getWorldZ() + gp.getPlayer().getScreenY());
 	}
 
 	public void setRotation(float i) { rotation = i; }
@@ -115,9 +114,11 @@ public abstract class Entity {
 
 	}
 
-	public float distanceTo(Vector2 target) {
-		return (float) Math.sqrt((target.y - position.y) * (target.y - position.y) + (target.x - position.x) * (target.x - position.x));
-
+	public float distanceTo(Vector3 target) {
+		float dx = target.x - position.x;
+		float dy = target.y - position.y;
+		float dz = target.z - position.z;
+		return (float) Math.sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
 	public void drawCollision(ShapeRenderer shape) {
@@ -126,7 +127,7 @@ public abstract class Entity {
 		shape.begin(ShapeRenderer.ShapeType.Filled);
 		shape.setAutoShapeType(true);
 		shape.setColor(Color.RED);
-		shape.circle(getWorldX(), getWorldY(), 2);
+		shape.circle(getWorldX(), getWorldZ(), 2);
 
 		if (collision instanceof Circle) {
 			Circle circle = (Circle) getCollision();

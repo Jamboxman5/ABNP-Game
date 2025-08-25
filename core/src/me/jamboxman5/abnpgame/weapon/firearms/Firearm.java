@@ -5,6 +5,7 @@ package me.jamboxman5.abnpgame.weapon.firearms;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
 import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
 import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
@@ -58,7 +59,7 @@ public class Firearm extends Weapon {
 
 		boolean drawFirst = true;
 
-		Vector2 shootPos = shooter.getPosition().cpy();
+		Vector3 shootPos = shooter.getPosition().cpy();
 		if ((shooter instanceof Ally) || (shooter instanceof OnlinePlayer)) {
 			drawFirst = false;
 		}
@@ -67,12 +68,12 @@ public class Firearm extends Weapon {
 			OnlinePlayer p = (OnlinePlayer) shooter;
 			currentAmmo.shoot(p.getRotation() + offset,
 					this,
-					shootPos, drawFirst);
+					new Vector2(shootPos.x, shootPos.z), drawFirst);
 			return true;
 		}
 		currentAmmo.shoot(shooter.getAimAngle() + offset,
-						  this, 
-						 shootPos, drawFirst);
+						  this,
+				new Vector2(shootPos.x, shootPos.z), drawFirst);
 //		Bullet bullet = new Bullet(gp.getPlayer().getAdjustedRotation(),
 //				150, 
 //				gp.getPlayer().getAdjustedWorldX(), 
