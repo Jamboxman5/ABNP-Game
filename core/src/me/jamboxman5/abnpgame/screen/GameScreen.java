@@ -7,39 +7,29 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g3d.Environment;
-import com.badlogic.gdx.graphics.g3d.Model;
 import com.badlogic.gdx.graphics.g3d.ModelBatch;
-import com.badlogic.gdx.graphics.g3d.ModelInstance;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
+import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
+import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import me.jamboxman5.abnpgame.data.DataManager;
 import me.jamboxman5.abnpgame.entity.mob.zombie.Zombie;
-import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieNormal;
 import me.jamboxman5.abnpgame.entity.mob.zombie.ZombieRunner;
-import me.jamboxman5.abnpgame.entity.prop.pickup.Pickup;
-import me.jamboxman5.abnpgame.entity.prop.pickup.PickupWeapon;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.managers.UIManager;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
 import me.jamboxman5.abnpgame.screen.ui.screens.MainMenuScreen;
 import me.jamboxman5.abnpgame.script.MissionScript;
-import me.jamboxman5.abnpgame.util.InputKeys;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
-import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
-import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
-import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 
-import javax.swing.text.View;
 import java.io.IOException;
 
 public class GameScreen implements Screen, InputProcessor {
@@ -61,6 +51,16 @@ public class GameScreen implements Screen, InputProcessor {
 
     MissionScript gameController;
 
+    //3d
+
+    private PerspectiveCamera perspectiveCamera;
+    private ModelBatch modelBatch;
+    private Environment environment;
+
+
+
+    private DecalBatch decalBatch;
+
 
     public GameScreen(final ABNPGame game, Map activeMap, MissionScript controller) {
         this.game = game;
@@ -81,6 +81,19 @@ public class GameScreen implements Screen, InputProcessor {
 
         gameController = controller;
 
+        //3d world
+        modelBatch = new ModelBatch();
+        environment = new Environment();
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .8f, .8f, .8f, 1f));
+        environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, -.8f, -.2f));
+
+
+        //3d camera
+        perspectiveCamera = new PerspectiveCamera(67, Settings.screenWidth, Settings.screenHeight);
+        perspectiveCamera.near = 0.1f;
+        perspectiveCamera.far = 600f;
+        perspectiveCamera.position.y = Settings.maxZoom;
+        decalBatch = new DecalBatch(new CameraGroupStrategy(perspectiveCamera));
 
 //        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Crosshair);
     }
@@ -102,7 +115,7 @@ public class GameScreen implements Screen, InputProcessor {
             Gdx.graphics.setCursor(cursor);
 
         }
-        gameController.start();
+//        gameController.start();
 
     }
 
@@ -116,16 +129,18 @@ public class GameScreen implements Screen, InputProcessor {
         // of the color to be used to clear the screen.
 //        if (camera.zoom > .75f) camera.zoom = .75f;
         ScreenUtils.clear(0f, 0, 0f, 1);
+        System.out.println(perspectiveCamera.position);
 
         // tell the camera to update its matrices.
-        gameCamera.position.set(game.getPlayer().getWorldX(), game.getPlayer().getWorldY(), 0);
+        gameCamera.position.set(game.getPlayer().getWorldX(), game.getPlayer().getWorldZ(), 0);
         gameCamera.update();
         uiCamera.update();
 
         // tell the SpriteBatch to render in the
         // coordinate system specified by the camera.
-        game.canvas.setProjectionMatrix(gameCamera.combined);
-        game.shapeRenderer.setProjectionMatrix(gameCamera.combined);
+        game.canvas.setProjectionMatrix(perspectiveCamera.combined);
+        game.shapeRenderer.setProjectionMatrix(perspectiveCamera.combined);
+        game.shapeRenderer.rotate(1, 0, 0, -90);
         game.uiShapeRenderer.setProjectionMatrix(uiCamera.combined);
         game.uiCanvas.setProjectionMatrix(uiCamera.combined);
         // begin a new batch and draw the bucket and
@@ -198,14 +213,17 @@ public class GameScreen implements Screen, InputProcessor {
 
 
 
-        game.getMapManager().draw(game.canvas, game.shapeRenderer, gameCamera);
-        game.getPlayer().draw(game.canvas, game.uiShapeRenderer);
+        game.getMapManager().draw(environment, game.canvas, modelBatch, game.shapeRenderer, perspectiveCamera);
+        game.getPlayer().draw(perspectiveCamera, decalBatch, game.uiShapeRenderer);
 
         if (game.debugMode) {
             game.getPlayer().drawCollision(game.shapeRenderer);
         }
 
         drawUI();
+
+        decalBatch.flush();
+
 
     }
 
@@ -271,15 +289,15 @@ public class GameScreen implements Screen, InputProcessor {
     }
 
     public void setZoom(float newZoom) {
-        gameCamera.zoom = newZoom;
+        perspectiveCamera.position.y = newZoom;
     }
-    public float getZoom() { return gameCamera.zoom; }
+    public float getZoom() { return perspectiveCamera.position.y; }
 
     public void zoomIn() {
-        setZoom(getZoom()-.001f);
+        setZoom(getZoom()-1f);
     }
     public void zoomOut() {
-        setZoom(getZoom()+.002f);
+        setZoom(getZoom()+2f);
     }
 
     @Override

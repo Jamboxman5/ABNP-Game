@@ -1,11 +1,10 @@
 package me.jamboxman5.abnpgame.map;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.math.Vector3;
 import me.jamboxman5.abnpgame.map.maps.*;
 
 public abstract class Map {
@@ -13,20 +12,20 @@ public abstract class Map {
 	protected Sprite img;
 	protected String name;
 	protected MapType type;
-	protected final Vector2 spawnPosition;
+	protected final Vector3 spawnPosition;
 	
-	public Map(String name, Vector2 start) {
+	public Map(String name, Vector3 start) {
 		this.name = name;
 		spawnPosition = start;
 	}
 	
 	public Sprite getImage() { return img; }
 	public String toString() { return name; }
-	public Vector2 getPlayerSpawn() { return spawnPosition; }
+	public Vector3 getPlayerSpawn() { return spawnPosition; }
 
 	public String getName() { return name; }
 
-	public abstract Vector2[] getZombieSpawns();
+	public abstract Vector3[] getZombieSpawns();
 	public abstract void load();
 
 	public MapType getMapType() { return type; }

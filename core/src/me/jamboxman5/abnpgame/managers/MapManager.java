@@ -6,7 +6,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
-import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
@@ -26,10 +25,7 @@ import me.jamboxman5.abnpgame.net.packets.PacketDisconnect;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
 import me.jamboxman5.abnpgame.net.packets.PacketShoot;
 import me.jamboxman5.abnpgame.net.packets.PacketWeaponChange;
-import me.jamboxman5.abnpgame.util.Settings;
-import me.jamboxman5.abnpgame.weapon.Weapon;
 
-import java.nio.channels.ClosedSelectorException;
 import java.util.HashMap;
 
 public class MapManager {
@@ -51,11 +47,8 @@ public class MapManager {
 
 	Map activeMap;
 
-	//3d
 
-	private PerspectiveCamera perspectiveCamera;
-	private ModelBatch modelBatch;
-	private Environment environment;
+	//3d
 
 	private Model groundModel;
 	private Model boxModel;
@@ -65,17 +58,6 @@ public class MapManager {
 	public MapManager(ABNPGame game) {
 		this.game = game;
 		activeMap = new Verdammtenstadt();
-
-		//3d world
-		modelBatch = new ModelBatch();
-		environment = new Environment();
-		environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .8f, .8f, .8f, 1f));
-		environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, -.8f, -.2f));
-
-		//3d camera
-		perspectiveCamera = new PerspectiveCamera(67, Settings.screenWidth, Settings.screenHeight);
-		perspectiveCamera.near = 0.1f;
-		perspectiveCamera.far = 300f;
 
 
 		//3d 'assets'
@@ -93,29 +75,21 @@ public class MapManager {
 		boxInstance.transform.setToTranslation(0, 2.5f, 0); // in front of player
 	}
 
-	public void draw(SpriteBatch batch, ShapeRenderer renderer, Camera camera) {
-		
-//		if (game.getScreen().getClass() != GameScreen.class) return;
-//
-        int screenX = (int) (0 - game.getPlayer().getWorldX());
-        int screenY = (int) (0 - game.getPlayer().getWorldY());
-
-//		int screenX = 0;
-//		int screenY = 0;
-
+	public void draw(Environment environment, SpriteBatch spriteBatch, ModelBatch modelBatch, ShapeRenderer renderer, PerspectiveCamera camera) {
 
 		//3d test
 
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-		Vector2 playerPos = game.getPlayer().getPosition();
+		Vector3 playerPos = game.getPlayer().getPosition();
 
-		perspectiveCamera.position.set(playerPos.x, 50f, playerPos.y);   // 50 units north of origin
-		perspectiveCamera.lookAt(playerPos.x, 0, playerPos.y);             // look at ground center
-		perspectiveCamera.update();
+		camera.position.set(playerPos.x, camera.position.y, -playerPos.z);   // 50 units north of origin
+		camera.lookAt(playerPos.x, 0, -playerPos.z);             // look at ground center
 
-		modelBatch.begin(perspectiveCamera);
+		camera.update();
+
+		modelBatch.begin(camera);
 		modelBatch.render(groundInstance, environment);
 		modelBatch.render(boxInstance, environment);
 		modelBatch.end();
@@ -127,7 +101,7 @@ public class MapManager {
 //		activeMap.getImage().draw(batch);
 //
 //		batch.end();
-		drawSplatters(game.canvas);
+		drawSplatters(spriteBatch);
 		drawProjectiles(renderer);
 		drawEntities();
 	}
@@ -145,8 +119,8 @@ public class MapManager {
 		disposingSurvivors = new Array<>();
 	}
 
-	public Zombie getNearestZombie(Vector2 from) {
-		Vector2 searchLoc = from.cpy();
+	public Zombie getNearestZombie(Vector3 from) {
+		Vector3 searchLoc = from.cpy();
 		Zombie closest = null;
 		for (int i = 0; i < entities.size; i++) {
 			Entity e = entities.get(i);
@@ -207,7 +181,7 @@ public class MapManager {
 			splatter.setCenter(position.x, position.y); // world coords directly
 			splatter.draw(batch);
 
-			if (position.z > 0) position.z -= .002f;
+//			if (position.z > 0) position.z -= .002f;
 		}
 
 		if (splatterTimer > 600) {
@@ -240,7 +214,7 @@ public class MapManager {
 			if (m2.toString().equals(map)) {
 				activeMap = m2;
 				game.getPlayer().setWorldX(activeMap.getPlayerSpawn().x);
-				game.getPlayer().setWorldY(activeMap.getPlayerSpawn().y);
+				game.getPlayer().setWorldZ(activeMap.getPlayerSpawn().y);
 				return;
 			}
 		}
@@ -254,12 +228,12 @@ public class MapManager {
 		survivors = new Array<>();
 	}
 
-	public void addSplatter(Vector2 position) {
+	public void addSplatter(Vector3 position) {
 		Sprite splatter = new Sprite(Zombie.deadSprite);
-		splatter.setCenter(position.x, position.y);
+		splatter.setCenter(position.x, position.z);
 		splatter.setRotation((float) (Math.random() * 360));
 		splatters.insert(0, splatter);
-		splatterLocs.put(splatter, new Vector3(position.x, position.y, 1f));
+		splatterLocs.put(splatter, position.cpy());
 	}
 
 	public void addAlly(Ally sarge) { survivors.add(sarge);}
