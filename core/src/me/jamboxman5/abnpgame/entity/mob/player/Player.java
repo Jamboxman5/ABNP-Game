@@ -20,6 +20,7 @@ import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
 import me.jamboxman5.abnpgame.net.packets.PacketShoot;
 import me.jamboxman5.abnpgame.util.InputKeys;
+import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponMod;
 
@@ -40,9 +41,6 @@ public class Player extends Survivor {
 	protected float legStateTime = 0;
 
 	protected Array<Ally> companions;
-
-	private Decal legsDecal;
-	private Decal bodyDecal;
 
 	public Player(ABNPGame gamePanel, String name, String uuid) {
 		super(gamePanel, 
@@ -81,10 +79,15 @@ public class Player extends Survivor {
 
 		stateTime += delta;
 		legStateTime += delta;
-		Vector2 mouse2D = gp.getWorldMousePointer(); // 2D world position
-		Vector3 worldMouse = new Vector3(mouse2D.x, 0, mouse2D.y); // no negation needed
 
-		aimTarget = worldMouse;
+		Vector2 center = new Vector2(Settings.screenWidth/2f, Settings.screenHeight/2f);
+		Vector2 mouse = gp.getMousePointer();
+
+		Vector2 displacement = mouse.cpy().sub(center);
+
+		Vector3 displacement3D = position.cpy().add(displacement.x, 0, displacement.y);
+
+		aimTarget = displacement3D;
 
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
@@ -155,29 +158,29 @@ public class Player extends Survivor {
 				isMoving = true;
 			} else if (Gdx.input.isKeyPressed(InputKeys.FORWARD)) {
 				if (Gdx.input.isKeyPressed(InputKeys.LEFT)) {
-					move(rotateAroundY(worldMouse, position, 45f));
+					move(rotateAroundY(aimTarget, position, 45f));
 				} else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
-					move(rotateAroundY(worldMouse, position, -45f));
+					move(rotateAroundY(aimTarget, position, -45f));
 				} else {
-					move(worldMouse.cpy());
+					move(aimTarget.cpy());
 				}
 				isMoving = true;
 
 			} else if (Gdx.input.isKeyPressed(InputKeys.BACK)) {
 				if (Gdx.input.isKeyPressed(InputKeys.LEFT)) {
-					move(rotateAroundY(worldMouse, position, 135f)); // 180-45
+					move(rotateAroundY(aimTarget, position, 135f)); // 180-45
 				} else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
-					move(rotateAroundY(worldMouse, position, 225f)); // 180+45
+					move(rotateAroundY(aimTarget, position, 225f)); // 180+45
 				} else {
-					move(rotateAroundY(worldMouse, position, 180f));
+					move(rotateAroundY(aimTarget, position, 180f));
 				}
 				isMoving = true;
 
 			} else if (Gdx.input.isKeyPressed(InputKeys.LEFT)) {
-				move(rotateAroundY(worldMouse, position, 90f));
+				move(rotateAroundY(aimTarget, position, 90f));
 				isMoving = true;
 			} else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
-				move(rotateAroundY(worldMouse, position, 270f));
+				move(rotateAroundY(aimTarget, position, 270f));
 				isMoving = true;
 			}
 		} else {
@@ -302,12 +305,9 @@ public class Player extends Survivor {
 		
 	}
 
+
 	@Override
-	public void draw(SpriteBatch batch, ShapeRenderer shape) {
-
-	}
-
-	public void draw(PerspectiveCamera camera, DecalBatch batch, ShapeRenderer shape) {
+	public void draw(DecalBatch batch, ShapeRenderer shape, PerspectiveCamera camera) {
 
 		if (weapons.getActiveWeapon().hasMod(WeaponMod.ModType.RedDotSight)) {
 			Gdx.gl.glEnable(GL30.GL_BLEND);
