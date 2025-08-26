@@ -52,28 +52,62 @@ public class MapManager {
 	//3d
 
 	private Model groundModel;
-	private Model boxModel;
+	private Model boxModel1;
+	private Model boxModel2;
+	private Model boxModel3;
+	private Model boxModel4;
+	private Model boxModel5;
 	private ModelInstance groundInstance;
-	private ModelInstance boxInstance;
+	private ModelInstance boxInstance1;
+	private ModelInstance boxInstance2;
+	private ModelInstance boxInstance3;
+	private ModelInstance boxInstance4;
+	private ModelInstance boxInstance5;
 
 	public MapManager(ABNPGame game) {
 		this.game = game;
 		activeMap = new Verdammtenstadt();
 
+		float height1 = (float) (Math.random() * 500f);
+		float height2 = (float) (Math.random() * 500f);
+		float height3 = (float) (Math.random() * 500f);
+		float height4 = (float) (Math.random() * 500f);
+		float height5 = (float) (Math.random() * 500f);
+
 
 		//3d 'assets'
 		ModelBuilder modelBuilder = new ModelBuilder();
-		groundModel = modelBuilder.createBox(100f, 1f, 100f,
+		groundModel = modelBuilder.createBox(10000f, 1f, 10000f,
 				new Material(ColorAttribute.createDiffuse(Color.GREEN)),
 				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
 		groundInstance = new ModelInstance(groundModel);
-		groundInstance.transform.setToTranslation(0, 0, 0); // drop slightly below origin
+		groundInstance.transform.setToTranslation(5000f, 0, -5000f);
 
-		boxModel = modelBuilder.createBox(10f, 20f, 10f,
+		boxModel1 = modelBuilder.createBox(200f, height1, 100f,
 				new Material(ColorAttribute.createDiffuse(Color.GRAY)),
 				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
-		boxInstance = new ModelInstance(boxModel, 0, 10, 0);
-		boxInstance.transform.setToTranslation(0, 2.5f, 0); // in front of player
+
+		boxModel2 = modelBuilder.createBox(200f, height2, 200f,
+				new Material(ColorAttribute.createDiffuse(Color.GRAY)),
+				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+
+		boxModel3 = modelBuilder.createBox(400f, height3, 400f,
+				new Material(ColorAttribute.createDiffuse(Color.GRAY)),
+				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+
+		boxModel4 = modelBuilder.createBox(200f, height4, 100f,
+				new Material(ColorAttribute.createDiffuse(Color.GRAY)),
+				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+
+		boxModel5 = modelBuilder.createBox(200f, height5, 100f,
+				new Material(ColorAttribute.createDiffuse(Color.GRAY)),
+				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+
+		boxInstance1 = new ModelInstance(boxModel1, (float) Math.random() * 1000f, height1/2f, -(float) Math.random() * 1000f);
+		boxInstance2 = new ModelInstance(boxModel2, (float) Math.random() * 1000f, height2/2f, -(float) Math.random() * 1000f);
+		boxInstance3 = new ModelInstance(boxModel3, (float) Math.random() * 1000f, height3/2f, -(float) Math.random() * 1000f);
+		boxInstance4 = new ModelInstance(boxModel4, (float) Math.random() * 1000f, height4/2f, -(float) Math.random() * 1000f);
+		boxInstance5 = new ModelInstance(boxModel5, (float) Math.random() * 1000f, height5/2f, -(float) Math.random() * 1000f);
 	}
 
 	public void draw(Environment environment, DecalBatch batch, ModelBatch modelBatch, ShapeRenderer shapes, PerspectiveCamera camera) {
@@ -92,16 +126,13 @@ public class MapManager {
 
 		modelBatch.begin(camera);
 		modelBatch.render(groundInstance, environment);
-		modelBatch.render(boxInstance, environment);
+		modelBatch.render(boxInstance1, environment);
+		modelBatch.render(boxInstance2, environment);
+		modelBatch.render(boxInstance3, environment);
+		modelBatch.render(boxInstance4, environment);
+		modelBatch.render(boxInstance5, environment);
 		modelBatch.end();
 
-//		batch.begin();
-//		activeMap.getImage().setScale(0.5f);
-//		activeMap.getImage().setOrigin(0, 0);
-//		activeMap.getImage().setPosition(0, 0); // map stays at world origin
-//		activeMap.getImage().draw(batch);
-//
-//		batch.end();
 		drawSplatters(batch);
 		drawProjectiles(shapes);
 		drawEntities(batch, shapes, camera);
@@ -179,6 +210,8 @@ public class MapManager {
 			Decal splatter = splatters.get(i);
 			splatter.setColor(1f, 1f, 1f, opacity);
 			splatter.setPosition(position.x, 1, -position.y); // world coords directly
+
+
 			batch.add(splatter);
 
 //			if (position.z > 0) position.z -= .002f;
@@ -228,9 +261,10 @@ public class MapManager {
 	}
 
 	public void addSplatter(Vector3 position) {
-		Decal splatter = Decal.newDecal(new TextureRegion(Zombie.deadSprite.getTexture()));
-		splatter.setRotationY((float) (Math.random() * 360));
+		Decal splatter = Decal.newDecal(new TextureRegion(Zombie.deadSprite.getTexture()), true);
+		splatter.setRotationZ((float) (Math.random() * 360));
 		splatters.insert(0, splatter);
+		splatter.lookAt(splatter.getPosition().cpy().add(0f, 1f, 0f), new Vector3((float) (Math.random() * 90), 0f, (float) (Math.random() * 90)));
 		splatterLocs.put(splatter, position.cpy());
 	}
 
