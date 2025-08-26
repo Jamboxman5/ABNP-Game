@@ -38,7 +38,7 @@ public abstract class Mob extends LivingEntity {
 		acceleration = new Vector3();
 		position = startPos.cpy();
 		maxForce = .5f;
-		collision = new Circle(position.x, position.z, 30); // XZ plane
+		collision = new Circle(position.x, position.z, 20); // XZ plane
 	}
 
 	@Override

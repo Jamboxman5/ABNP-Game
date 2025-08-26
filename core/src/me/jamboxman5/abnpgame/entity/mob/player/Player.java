@@ -11,9 +11,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.math.Circle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
 import me.jamboxman5.abnpgame.main.ABNPGame;
@@ -65,7 +63,7 @@ public class Player extends Survivor {
 
 		footstep1 = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/entity/player/footsteps/Player_Footstep_1.wav"));
 		footstep2 = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/entity/player/footsteps/Player_Footstep_2.wav"));
-		setDefaults();
+		collision = new Circle(position.x, position.y, 25);
 	}
 
 
@@ -92,7 +90,7 @@ public class Player extends Survivor {
 		screenX = Gdx.graphics.getWidth()/2;
 		screenY = Gdx.graphics.getHeight()/2;
 
-		((Circle)collision).setPosition(new Vector2(position.x, position.y+10).rotateAroundDeg(new Vector2(position.x, position.z), (float) (Math.toDegrees(getDrawingAngle()) + 360)));
+		((Circle)collision).setPosition(new Vector2(position.x, position.z));
 
 		boolean rotating = false;
 		float oldRotation = getRotation();
@@ -323,66 +321,105 @@ public class Player extends Survivor {
 			shape.end();
 		}
 
-		// 🔹 Update weapon animation frame
+		float angleDeg = (float) Math.toDegrees(getDrawingAngle()) + jitter;
+
 		TextureRegion weaponFrame = weapons.getActiveWeapon().getPlayerSprite(stateTime);
 		bodyDecal.setTextureRegion(weaponFrame);
 		bodyDecal.setWidth(weaponFrame.getRegionWidth());
 		bodyDecal.setHeight(weaponFrame.getRegionHeight());
 
-		// 🔹 Update legs animation frame
 		TextureRegion legFrame = currentAnimation.getKeyFrame(legStateTime);
 		legsDecal.setTextureRegion(legFrame);
 		legsDecal.setWidth(legFrame.getRegionWidth());
 		legsDecal.setHeight(legFrame.getRegionHeight());
 
-		legsDecal.setPosition(new Vector3(position.x, position.y, -position.z));
-		bodyDecal.setPosition(new Vector3(position.x, position.y, -position.z));
-		legsDecal.translateY(2);
-		bodyDecal.translateY(4);
-		float angleDeg = (float) Math.toDegrees(getDrawingAngle()) + jitter;
+		float scale = 0.25f;
 
-// Face the camera
-		legsDecal.lookAt(camera.position, camera.up);
-		bodyDecal.lookAt(camera.position, camera.up);
-//		System.out.println(camera.up);
+		{
 
-// Rotate around Y for facing direction
-		legsDecal.rotateZ(angleDeg);
-		bodyDecal.rotateZ(angleDeg);
+			//BODY TRANSFORMATION
 
-		legsDecal.setScale(.25f);
-		bodyDecal.setScale(.25f);
+			bodyDecal.setScale(scale);
 
+			float w = bodyDecal.getWidth() * scale;
+			float h = bodyDecal.getHeight() * scale;
 
-		if (weapons.getActiveWeapon().isShootAnimation()) {
-			bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getShootXOffset());
-			bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getShootYOffset());
-		} else if (weapons.getActiveWeapon().isMeleeAnimation()) {
-			bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getMeleeXOffset());
-			bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getMeleeYOffset());
-		} else {
-			bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getXOffset());
-			bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getYOffset());
+			Vector3 drawPos = new Vector3(position.x, position.y, -position.z);
+			drawPos.y += 10f;
+
+			Vector3 up = new Vector3(camera.up).nor();
+			Vector3 right = new Vector3(camera.direction).crs(up).nor();
+
+			float offRight = 6f;
+			float offUp = 3f;
+
+			float cos = MathUtils.cosDeg(angleDeg);
+			float sin = MathUtils.sinDeg(angleDeg);
+
+			Vector3 rotatedOffset = new Vector3()
+					.mulAdd(right, (offRight * cos - offUp * sin))
+					.mulAdd(up, (offRight * sin + offUp * cos));
+
+			Vector3 pivot = new Vector3(drawPos.add(rotatedOffset));
+
+			bodyDecal.setPosition(pivot);
+			bodyDecal.lookAt(camera.position, camera.up);
+			bodyDecal.rotateZ(angleDeg);
+
 		}
-		if (currentAnimation == strafeBackAnimation) {
-			legsDecal.translateX(-10);
+
+		{
+
+			//LEG TRANSFORMATION
+
+			legsDecal.setScale(scale);
+
+			float w = legsDecal.getWidth() * scale;
+			float h = legsDecal.getHeight() * scale;
+
+			Vector3 drawPos = new Vector3(position.x, position.y, -position.z);
+			drawPos.y += 5f;
+
+			Vector3 up = new Vector3(camera.up).nor();
+			Vector3 right = new Vector3(camera.direction).crs(up).nor();
+
+			float offRight = 0f;
+			float offUp = 0f;
+
+			float cos = MathUtils.cosDeg(angleDeg);
+			float sin = MathUtils.sinDeg(angleDeg);
+
+			Vector3 rotatedOffset = new Vector3()
+					.mulAdd(right, (offRight * cos - offUp * sin))
+					.mulAdd(up, (offRight * sin + offUp * cos));
+
+			Vector3 pivot = new Vector3(drawPos.add(rotatedOffset));
+
+			legsDecal.setPosition(pivot);
+			legsDecal.lookAt(camera.position, camera.up);
+			legsDecal.rotateZ(angleDeg);
+
 		}
+
+//		if (weapons.getActiveWeapon().isShootAnimation()) {
+//			bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getShootXOffset());
+//			bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getShootYOffset());
+//		} else if (weapons.getActiveWeapon().isMeleeAnimation()) {
+//			bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getMeleeXOffset());
+//			bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getMeleeYOffset());
+//		} else {
+//			bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getXOffset());
+//			bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getYOffset());
+//		}
+//		if (currentAnimation == strafeBackAnimation) {
+//			legsDecal.translateX(-10);
+//		}
 
 		batch.add(legsDecal);
 		batch.add(bodyDecal);
 
 
 	}
-
-
-
-	private void setDefaults() {
-//		setSpeed(6.5);
-		setRotation(0);
-		collision = new Circle(position.x, position.y, 35);
-	}
-
-
 
 	public float getAngleToCursor() {
 		try {
