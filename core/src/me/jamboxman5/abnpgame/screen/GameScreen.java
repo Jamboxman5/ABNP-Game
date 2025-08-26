@@ -221,6 +221,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         game.getMapManager().draw(environment, decalBatch, modelBatch, worldShapes, perspectiveCamera);
         game.getPlayer().draw(decalBatch, worldShapes, perspectiveCamera);
+        decalBatch.flush();
 
         if (game.debugMode) {
             game.getPlayer().drawCollision(worldShapes);
@@ -228,7 +229,6 @@ public class GameScreen implements Screen, InputProcessor {
 
         drawUI();
 
-        decalBatch.flush();
 
 
     }
