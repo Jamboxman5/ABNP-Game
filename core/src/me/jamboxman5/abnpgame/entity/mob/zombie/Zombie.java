@@ -118,7 +118,8 @@ public class Zombie extends Mob {
 
         animCounter++;
 
-        ((Circle)collision).setPosition(new Vector2(position.x, position.y).rotateAroundDeg(new Vector2(position.x, position.z), (float) (Math.toDegrees(getAngleToPoint(gp.getPlayer().getPosition())) + 360)));
+        ((Circle)collision).setPosition(new Vector2(position.x, position.z).rotateAroundDeg(new Vector2(position.x, position.z), (float) (Math.toDegrees(getAngleToPoint(gp.getPlayer().getPosition())) + 360)));
+//        ((Circle)collision).setPosition(new Vector2(position.x, position.z));
 
 
         if (animCounter == 3) {
@@ -198,7 +199,7 @@ public class Zombie extends Mob {
 
         zombieDecal.setPosition(position.x, position.y, -position.z);
 
-        zombieDecal.translateY(4);
+        zombieDecal.translateY(20);
         zombieDecal.lookAt(camera.position, camera.up);
 
         zombieDecal.setScale(.25f);

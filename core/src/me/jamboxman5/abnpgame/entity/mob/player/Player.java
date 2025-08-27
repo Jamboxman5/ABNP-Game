@@ -63,7 +63,7 @@ public class Player extends Survivor {
 
 		footstep1 = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/entity/player/footsteps/Player_Footstep_1.wav"));
 		footstep2 = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/entity/player/footsteps/Player_Footstep_2.wav"));
-		collision = new Circle(position.x, position.y, 25);
+		collision = new Circle(position.x, position.y, 30);
 	}
 
 
@@ -313,11 +313,8 @@ public class Player extends Survivor {
 			shape.begin(ShapeRenderer.ShapeType.Filled);
 
 			// Convert start/end to world coords if needed
-			Vector2 start = new Vector2(
-					(getWorldX() - gp.getPlayer().getWorldX()) * 0.5f + gp.getPlayer().getScreenX(),
-					(getWorldZ() - gp.getPlayer().getWorldZ()) * 0.5f + gp.getPlayer().getScreenY()
-			);
-			drawRedDotSight(shape, start, gp.getMousePointer());
+			Vector2 start = new Vector2(position.x, position.z);
+			drawRedDotSight(shape, position, aimTarget, camera);
 			shape.end();
 		}
 
@@ -449,8 +446,7 @@ public class Player extends Survivor {
 //		}
 		
 	}
-	public int getScreenX() { return Gdx.graphics.getWidth()/2; }
-	public int getScreenY() { return Gdx.graphics.getHeight()/2; }
+
 	public void setName(String newName) { gamerTag = newName; }
 	public String getName() { return gamerTag; }
 	
