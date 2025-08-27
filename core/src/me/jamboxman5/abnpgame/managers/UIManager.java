@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.mob.player.Player;
 import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
@@ -106,13 +107,13 @@ public class UIManager {
     static float radarAnimCounterX = 0;
     static float radarAnimCounterY = 0;
 
-    private static Vector2 lastPosition = null;
+    private static Vector3 lastPosition = null;
 
     public static void drawRadar(SpriteBatch batch, ShapeRenderer shape, ABNPGame game) {
 
-        if (lastPosition == null) lastPosition = new Vector2(game.getPlayer().getPosition().x, game.getPlayer().getPosition().z);
+        if (lastPosition == null) lastPosition = game.getPlayer().getPosition().cpy();
 
-        Vector2 currentPosition = new Vector2(game.getPlayer().getPosition().x, game.getPlayer().getPosition().z);
+        Vector3 currentPosition = game.getPlayer().getPosition().cpy();
 
         float side = 140 * Settings.guiScale;
         Vector2 center = new Vector2(margin + (side/2f), margin + (side/2f));
@@ -137,7 +138,7 @@ public class UIManager {
 
         {
 
-            Vector2 displacement = currentPosition.cpy().sub(lastPosition).scl(zoomFactor);
+            Vector3 displacement = currentPosition.cpy().sub(lastPosition).scl(zoomFactor);
             radarAnimCounterX += displacement.x;
             radarAnimCounterY += displacement.y;
 
@@ -182,34 +183,34 @@ public class UIManager {
         MapManager map = game.getMapManager();
         Player player = game.getPlayer();
         for (Pickup p : map.getPickups()) {
-            Vector2 displacement = new Vector2(game.getPlayer().getPosition().x, game.getPlayer().getPosition().z).cpy().sub(new Vector2(game.getPlayer().getPosition().x, game.getPlayer().getPosition().z)).scl(zoomFactor).add(center);
-            if (mapBounds.contains(displacement)) {
+            Vector3 displacement = p.getPosition().cpy().sub(player.getPosition()).scl(zoomFactor).add(new Vector3(center.x, 0, center.y));
+            if (mapBounds.contains(new Vector2(displacement.x, displacement.z))) {
                 shape.setColor(Color.YELLOW);
-                shape.circle(displacement.x, displacement.y, 3*Settings.guiScale);
+                shape.circle(displacement.x, displacement.z, 3*Settings.guiScale);
                 shape.setColor(1f, 1f, (220f/255f), 1f);
-                shape.circle(displacement.x, displacement.y, 2*Settings.guiScale);
+                shape.circle(displacement.x, displacement.z, 2*Settings.guiScale);
             }
 
         }
 
         for (Zombie z : map.getZombies()) {
-            Vector2 displacement = new Vector2(game.getPlayer().getPosition().x, game.getPlayer().getPosition().z).cpy().sub(new Vector2(game.getPlayer().getPosition().x, game.getPlayer().getPosition().z)).scl(zoomFactor).add(center);
-            if (mapBounds.contains(displacement)) {
+            Vector3 displacement = z.getPosition().cpy().sub(player.getPosition()).scl(zoomFactor).add(new Vector3(center.x, 0, center.y));
+            if (mapBounds.contains(new Vector2(displacement.x, displacement.z))) {
                 shape.setColor(Color.RED);
-                shape.circle(displacement.x, displacement.y, 3*Settings.guiScale);
+                shape.circle(displacement.x, displacement.z, 3*Settings.guiScale);
                 shape.setColor(1f, (220f/255f), (220f/255f), 1f);
-                shape.circle(displacement.x, displacement.y, 2*Settings.guiScale);
+                shape.circle(displacement.x, displacement.z, 2*Settings.guiScale);
             }
 
         }
 
         for (Survivor s : map.getSurvivors()) {
-            Vector2 displacement = new Vector2(game.getPlayer().getPosition().x, game.getPlayer().getPosition().z).cpy().sub(new Vector2(game.getPlayer().getPosition().x, game.getPlayer().getPosition().z)).scl(zoomFactor).add(center);
-            if (mapBounds.contains(displacement)) {
+            Vector3 displacement = s.getPosition().cpy().sub(player.getPosition()).scl(zoomFactor).add(new Vector3(center.x, 0, center.y));
+            if (mapBounds.contains(new Vector2(displacement.x, displacement.z))) {
                 shape.setColor(Color.BLUE);
-                shape.circle(displacement.x, displacement.y, 3*Settings.guiScale);
+                shape.circle(displacement.x, displacement.z, 3*Settings.guiScale);
                 shape.setColor((220f/255f), (220f/255f), 1f, 1f);
-                shape.circle(displacement.x, displacement.y, 2*Settings.guiScale);
+                shape.circle(displacement.x, displacement.z, 2*Settings.guiScale);
             }
         }
 
@@ -291,7 +292,7 @@ public class UIManager {
 //        g2.drawString(debugTXT, x, y);
         Fonts.drawScaled(Fonts.INFOFONT, .4f * Settings.guiScale, debugTXT, spriteBatch, x, y);
         //
-        debugTXT = "World Z: " + String.format("%,.2f", game.getPlayer().getWorldZ());
+        debugTXT = "World Y: " + String.format("%,.2f", game.getPlayer().getWorldZ());
         y-=spacer;
         x = (int) Fonts.getXForRightAlignedText(Settings.screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //        Utilities.drawStringShadow(g2, debugTXT, x, y);
