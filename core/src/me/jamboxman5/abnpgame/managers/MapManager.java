@@ -39,10 +39,8 @@ public class MapManager {
 	public Array<Entity> disposingEntities = new Array<>();
 	public Array<Projectile> projectiles = new Array<>();
 	public Array<Projectile> disposingProjectiles = new Array<>();
-	public Array<Decal> splatters = new Array<>();
+	public Array<Splatter> splatters = new Array<>();
 	public Array<Map> maps = new Array<>();
-
-	public HashMap<Decal, Vector3> splatterLocs = new HashMap<>();
 
 	int splatterTimer = 0;
 
@@ -204,21 +202,18 @@ public class MapManager {
 		// Use camera projection instead of manual offsets
 
 		for (int i = 0; i < splatters.size; i++) {
-			Vector3 position = splatterLocs.get(splatters.get(i));
-			float opacity = 1f / (splatterTimer / 600f);
 
-			Decal splatter = splatters.get(i);
-			splatter.setColor(1f, 1f, 1f, opacity);
-			splatter.setPosition(position.x, 1, -position.y); // world coords directly
+			Splatter splatter = splatters.get(i);
+			splatter.decal.setColor(1f, 1f, 1f, splatter.alpha);
+			splatter.decal.setPosition(splatter.position.x, 1, -splatter.position.z); // world coords directly
 
 
-			batch.add(splatter);
+			batch.add(splatter.decal);
 
-//			if (position.z > 0) position.z -= .002f;
+			if (splatter.alpha > 0) splatter.alpha -= .002f;
 		}
 
 		if (splatterTimer > 600) {
-			splatterLocs.remove(splatters.get(splatters.size - 1));
 			splatters.removeIndex(splatters.size - 1);
 			splatterTimer = 0;
 		}
@@ -263,9 +258,9 @@ public class MapManager {
 	public void addSplatter(Vector3 position) {
 		Decal splatter = Decal.newDecal(new TextureRegion(Zombie.deadSprite.getTexture()), true);
 		splatter.setRotationZ((float) (Math.random() * 360));
-		splatters.insert(0, splatter);
+		splatter.setScale(.25f);
+		splatters.insert(0, new Splatter(splatter, position));
 		splatter.lookAt(splatter.getPosition().cpy().add(0f, 1f, 0f), new Vector3((float) (Math.random() * 90), 0f, (float) (Math.random() * 90)));
-		splatterLocs.put(splatter, position.cpy());
 	}
 
 	public void addAlly(Ally sarge) { survivors.add(sarge);}
@@ -342,5 +337,17 @@ public class MapManager {
 			if (e instanceof Pickup) s.add((Pickup) e);
 		}
 		return s;
+	}
+
+	private static class Splatter {
+
+		float alpha;
+		Decal decal;
+		Vector3 position;
+		public Splatter(Decal decal, Vector3 position) {
+			this.decal = decal;
+			this.position = position;
+			this.alpha = 1f;
+		}
 	}
 }
