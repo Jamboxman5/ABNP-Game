@@ -189,8 +189,6 @@ public class Zombie extends Mob {
 
     @Override
     public void draw(DecalBatch batch, ShapeRenderer shape, PerspectiveCamera camera) {
-        int x = (int) (((position.x - gp.getPlayer().getWorldX())*.5) + gp.getPlayer().getScreenX());
-        int y = (int) (((position.y - gp.getPlayer().getWorldZ())*.5) + gp.getPlayer().getScreenY());
 
         TextureRegion frame = new TextureRegion(activeSprites.get(animFrame).getTexture());
         zombieDecal.setTextureRegion(frame);
