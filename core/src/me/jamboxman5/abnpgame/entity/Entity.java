@@ -96,13 +96,6 @@ public abstract class Entity {
 	public String getDirection() { return direction; }
 
 	public String getName() { return name; }
-	public int getScreenY() {
-		return (int) (position.x - gp.getPlayer().getWorldX() + gp.getPlayer().getScreenX());
-	}
-	public int getScreenX() {
-		return (int) (position.y - gp.getPlayer().getWorldZ() + gp.getPlayer().getScreenY());
-	}
-
 	public void setRotation(float i) { rotation = i; }
 	public Shape2D getCollision() { return collision; }
 
