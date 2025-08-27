@@ -6,7 +6,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.graphics.g2d.Animation;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
@@ -17,6 +16,7 @@ import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.net.packets.PacketMove;
 import me.jamboxman5.abnpgame.net.packets.PacketShoot;
+import me.jamboxman5.abnpgame.util.CameraUtil;
 import me.jamboxman5.abnpgame.util.InputKeys;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
@@ -314,7 +314,13 @@ public class Player extends Survivor {
 
 			// Convert start/end to world coords if needed
 			Vector2 start = new Vector2(position.x, position.z);
-			drawRedDotSight(shape, position, aimTarget, camera);
+
+			Vector2 mouse = ABNPGame.getInstance().getMousePointer();
+			Vector2 pos2D = new Vector2(position.x, position.z);
+			Vector2 mouseWorld = pos2D.cpy().add(CameraUtil.getWorldPosScreenCenterDisplacement(camera, mouse.x, mouse.y));
+
+
+			drawRedDotSight(shape, pos2D, mouseWorld);
 			shape.end();
 		}
 

@@ -137,7 +137,6 @@ public class GameScreen implements Screen, InputProcessor {
         // of the color to be used to clear the screen.
 //        if (camera.zoom > .75f) camera.zoom = .75f;
         ScreenUtils.clear(0f, 0, 0f, 1);
-        System.out.println(perspectiveCamera.position);
 
         // tell the camera to update its matrices.
         gameCamera.position.set(game.getPlayer().getWorldX(), game.getPlayer().getWorldZ(), 0);

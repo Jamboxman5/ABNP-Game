@@ -51,13 +51,15 @@ public abstract class Survivor extends Mob {
 
     protected void drawRedDotSight(ShapeRenderer shape, Vector2 start, Vector2 end) {
 
+
         end.rotateAroundDeg(start, jitter);
 
+//        System.out.println(start.dst(end));
         shape.setColor(.8f, 0f, 0f, .5f);
         shape.rectLine(start, end, 2);
-        shape.circle(end.x, end.y, 3, 4);
+        shape.circle(end.x, end.y, 3, 8);
         shape.setColor((float) (255.0/255.0), (float) (200.0/255.0), (float) (200.0/255.0), 1f);
-        shape.circle(end.x, end.y, 1, 4);
+        shape.circle(end.x, end.y, 1, 8);
 
     }
     public WeaponLoadout getWeaponLoadout() { return weapons; }
