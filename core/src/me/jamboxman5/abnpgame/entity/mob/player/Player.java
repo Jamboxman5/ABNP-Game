@@ -353,15 +353,14 @@ public class Player extends Survivor {
 			Vector3 up = new Vector3(camera.up).nor();
 			Vector3 right = new Vector3(camera.direction).crs(up).nor();
 
-			float offRight = 6f;
-			float offUp = 3f;
+			Vector2 offset = weapons.getActiveWeapon().getOffset();
 
 			float cos = MathUtils.cosDeg(angleDeg);
 			float sin = MathUtils.sinDeg(angleDeg);
 
 			Vector3 rotatedOffset = new Vector3()
-					.mulAdd(right, (offRight * cos - offUp * sin))
-					.mulAdd(up, (offRight * sin + offUp * cos));
+					.mulAdd(right, (offset.x * cos - offset.y * sin))
+					.mulAdd(up, (offset.x * sin + offset.y * cos));
 
 			Vector3 pivot = new Vector3(drawPos.add(rotatedOffset));
 
@@ -404,19 +403,7 @@ public class Player extends Survivor {
 
 		}
 
-//		if (weapons.getActiveWeapon().isShootAnimation()) {
-//			bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getShootXOffset());
-//			bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getShootYOffset());
-//		} else if (weapons.getActiveWeapon().isMeleeAnimation()) {
-//			bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getMeleeXOffset());
-//			bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getMeleeYOffset());
-//		} else {
-//			bodyDecal.translateX((bodyDecal.getWidth() * .1f)/2f + weapons.getActiveWeapon().getXOffset());
-//			bodyDecal.translateZ((bodyDecal.getHeight() * .1f)/2f + weapons.getActiveWeapon().getYOffset());
-//		}
-//		if (currentAnimation == strafeBackAnimation) {
-//			legsDecal.translateX(-10);
-//		}
+
 
 		batch.add(legsDecal);
 		batch.add(bodyDecal);

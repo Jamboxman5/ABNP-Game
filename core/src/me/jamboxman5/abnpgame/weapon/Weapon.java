@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.PistolTec9;
@@ -143,5 +144,20 @@ public abstract class Weapon {
 	public Animation<TextureRegion> getCurrentAnimation() { return currentAnimation; }
 	public boolean isShootAnimation() { return currentAnimation == shootAnimation; }
 	public boolean isMeleeAnimation() { return currentAnimation == meleeAnimation; }
+
+	public Vector2 getOffset() {
+		Vector2 offset = new Vector2();
+		if (isShootAnimation()) {
+			offset.x = getShootXOffset();
+			offset.y = getShootYOffset();
+		} else if (isMeleeAnimation()) {
+			offset.x = getMeleeXOffset();
+			offset.y = getMeleeYOffset();
+		} else {
+			offset.x = getXOffset();
+			offset.y = getYOffset();
+		}
+		return offset;
+	}
 
 }
