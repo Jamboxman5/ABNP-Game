@@ -83,6 +83,7 @@ public class MapManager {
 // Apply the texture to the material
 		for (Material mat : groundInstance.materials) {
 			mat.set(TextureAttribute.createDiffuse(grass));
+			mat.set(ColorAttribute.createDiffuse(Color.WHITE));
 		}
 
 // Modify top face UVs automatically
@@ -94,8 +95,8 @@ public class MapManager {
 		int posOffset = mesh.getVertexAttribute(VertexAttributes.Usage.Position).offset / 4;
 		int uvOffset  = mesh.getVertexAttribute(VertexAttributes.Usage.TextureCoordinates).offset / 4;
 
-		float repeatX = 100f; // how many times to repeat across X
-		float repeatZ = 100f; // how many times to repeat across Z
+		float repeatX = 50f; // how many times to repeat across X
+		float repeatZ = 50f; // how many times to repeat across Z
 
 // 1. Find the max Y (top face)
 		float maxY = Float.NEGATIVE_INFINITY;
@@ -126,16 +127,16 @@ public class MapManager {
 		Model model = loader.loadModel(Gdx.files.internal("map/structure/cottage.g3db"));
 
 		Texture diffuse = new Texture(Gdx.files.internal("map/structure/cottage_diffuse.png"));
-		for (Material mat : model.materials) {
-			mat.set(TextureAttribute.createDiffuse(diffuse));
-		}
 
 		Texture normal = new Texture(Gdx.files.internal("map/structure/cottage_normal.png"));
 		normal.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
 		for (Material mat : model.materials) {
+			mat.set(TextureAttribute.createDiffuse(diffuse));
 			mat.set(TextureAttribute.createNormal(normal));
+			mat.set(ColorAttribute.createDiffuse(Color.WHITE));
 		}
+
 
 		buildings.add(new Building(new Vector3((float) (Math.random() * 2000f), 0, -(float) (Math.random()*2000f)), model, (float) (Math.random() * 90f), .2f));
 		buildings.add(new Building(new Vector3((float) (Math.random() * 2000f), 0, -(float) (Math.random()*2000f)), model, (float) (Math.random() * 90f), .2f));
@@ -162,7 +163,7 @@ public class MapManager {
 		modelBatch.begin(camera);
 		modelBatch.render(groundInstance, environment);
 		for (Building b : buildings) {
-			modelBatch.render(b.instance);
+			modelBatch.render(b.instance, environment);
 		}
 		modelBatch.end();
 

@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
 import com.badlogic.gdx.graphics.g3d.decals.CameraGroupStrategy;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.environment.DirectionalLight;
+import com.badlogic.gdx.graphics.g3d.environment.PointLight;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -86,8 +87,16 @@ public class GameScreen implements Screen, InputProcessor {
         //3d world
         modelBatch = new ModelBatch();
         environment = new Environment();
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .05f, .05f, .05f, 1f));
-        environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, -0.3f, -0.2f));
+
+// Base ambient light (so shadows aren’t fully black)
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, 0.2f, 0.2f, 0.2f, 1f));
+
+// Sunlight-like directional light
+        environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, -0.8f, -0.2f));
+
+// Warm point light (like a lamp)
+        environment.add(new PointLight().set(1f, 0.9f, 0.7f, 30f, 20f, -40f, 50f));
+
 
 
         //3d camera
