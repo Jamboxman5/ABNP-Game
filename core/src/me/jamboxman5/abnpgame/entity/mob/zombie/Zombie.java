@@ -199,7 +199,7 @@ public class Zombie extends Mob {
 
         zombieDecal.setPosition(position.x, position.y, -position.z);
 
-        zombieDecal.translateY(20);
+        zombieDecal.translateY(60);
         zombieDecal.lookAt(camera.position, camera.up);
 
         zombieDecal.setScale(.25f);

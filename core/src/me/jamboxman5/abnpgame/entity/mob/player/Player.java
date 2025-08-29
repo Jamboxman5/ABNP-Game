@@ -63,7 +63,7 @@ public class Player extends Survivor {
 
 		footstep1 = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/entity/player/footsteps/Player_Footstep_1.wav"));
 		footstep2 = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/entity/player/footsteps/Player_Footstep_2.wav"));
-		collision = new Circle(position.x, position.y, 30);
+		collision = new Circle(position.x, position.y, 25);
 	}
 
 
@@ -87,11 +87,7 @@ public class Player extends Survivor {
 
 		aimTarget = displacement3D;
 
-		screenX = Gdx.graphics.getWidth()/2;
-		screenY = Gdx.graphics.getHeight()/2;
-
-		((Circle)collision).setPosition(new Vector2(position.x, position.z));
-
+		((Circle)collision).setPosition(new Vector2(position.x, position.z + 10).rotateAroundDeg(new Vector2(position.x, position.z), (float) (Math.toDegrees(getDrawingAngle()) + 360)));
 		boolean rotating = false;
 		float oldRotation = getRotation();
 		setRotation(getAngleToCursor());
@@ -277,10 +273,10 @@ public class Player extends Survivor {
 		return new Vector3(newX, point.y, newZ); // keep Y unchanged
 	}
 	
-	boolean changedAnimation(Animation<TextureRegion> newAnimation) {
+	protected boolean changedAnimation(Animation<TextureRegion> newAnimation) {
 		return currentAnimation != newAnimation;
 	}
-	
+
 	public void basicMove() {
 		
 		
@@ -348,7 +344,7 @@ public class Player extends Survivor {
 			float h = bodyDecal.getHeight() * scale;
 
 			Vector3 drawPos = new Vector3(position.x, position.y, -position.z);
-			drawPos.y += 10f;
+			drawPos.y += 80f;
 
 			Vector3 up = new Vector3(camera.up).nor();
 			Vector3 right = new Vector3(camera.direction).crs(up).nor();
@@ -380,7 +376,7 @@ public class Player extends Survivor {
 			float h = legsDecal.getHeight() * scale;
 
 			Vector3 drawPos = new Vector3(position.x, position.y, -position.z);
-			drawPos.y += 5f;
+			drawPos.y += 40f;
 
 			Vector3 up = new Vector3(camera.up).nor();
 			Vector3 right = new Vector3(camera.direction).crs(up).nor();
