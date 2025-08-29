@@ -61,11 +61,11 @@ public class RifleM4A1 extends Firearm {
 		this.name = "M4A1";
 		this.firingVelocity = 150;
 		this.type = me.jamboxman5.abnpgame.weapon.WeaponType.M4A1;
-		this.xOffset = 0;
+		this.xOffset = 9;
 		this.yOffset = 12;
-		this.shootXOffset = 8;
+		this.shootXOffset = 15;
 		this.shootYOffset = 12;
-		this.meleeXOffset = 0;
+		this.meleeXOffset = 12;
 		this.meleeYOffset = 14;
 		this.recoil = 1;
 

@@ -61,11 +61,11 @@ public class RifleAK47 extends Firearm {
 		this.name = "AK-47";
 		this.firingVelocity = 150;
 		this.type = me.jamboxman5.abnpgame.weapon.WeaponType.AK47;
-		this.xOffset = 0;
+		this.xOffset = 9;
 		this.yOffset = 12;
-		this.shootXOffset = 8;
+		this.shootXOffset = 15;
 		this.shootYOffset = 12;
-		this.meleeXOffset = 0;
+		this.meleeXOffset = 12;
 		this.meleeYOffset = 14;
 		this.recoil = 5.5;
 

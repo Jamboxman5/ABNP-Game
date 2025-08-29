@@ -146,11 +146,7 @@ public class Player extends Survivor {
 				|| Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
 
 
-			if ((int)screenX == gp.getMousePointer().x &&
-					(int)screenY == gp.getMousePointer().y) {
-				basicMove();
-				isMoving = true;
-			} else if (Gdx.input.isKeyPressed(InputKeys.FORWARD)) {
+			if (Gdx.input.isKeyPressed(InputKeys.FORWARD)) {
 				if (Gdx.input.isKeyPressed(InputKeys.LEFT)) {
 					move(rotateAroundY(aimTarget, position, 45f));
 				} else if (Gdx.input.isKeyPressed(InputKeys.RIGHT)) {
@@ -382,7 +378,7 @@ public class Player extends Survivor {
 			Vector3 right = new Vector3(camera.direction).crs(up).nor();
 
 			float offRight = 0f;
-			float offUp = 0f;
+			float offUp = 6f;
 
 			float cos = MathUtils.cosDeg(angleDeg);
 			float sin = MathUtils.sinDeg(angleDeg);
