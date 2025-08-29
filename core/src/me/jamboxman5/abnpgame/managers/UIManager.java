@@ -140,7 +140,7 @@ public class UIManager {
 
             Vector3 displacement = currentPosition.cpy().sub(lastPosition).scl(zoomFactor);
             radarAnimCounterX += displacement.x;
-            radarAnimCounterY += displacement.y;
+            radarAnimCounterY += displacement.z;
 
             radarAnimCounterX = radarAnimCounterX % space;
             radarAnimCounterY = radarAnimCounterY % space;
