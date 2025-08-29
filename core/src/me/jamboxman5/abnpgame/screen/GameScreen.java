@@ -86,8 +86,8 @@ public class GameScreen implements Screen, InputProcessor {
         //3d world
         modelBatch = new ModelBatch();
         environment = new Environment();
-        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .8f, .8f, .8f, 1f));
-        environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, -.8f, -.2f));
+        environment.set(new ColorAttribute(ColorAttribute.AmbientLight, .05f, .05f, .05f, 1f));
+        environment.add(new DirectionalLight().set(1f, 1f, 1f, -1f, -0.3f, -0.2f));
 
 
         //3d camera

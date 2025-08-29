@@ -6,12 +6,16 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.graphics.g3d.*;
 import com.badlogic.gdx.graphics.g3d.attributes.ColorAttribute;
+import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
+import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.JsonReader;
+import com.badlogic.gdx.utils.UBJsonReader;
 import me.jamboxman5.abnpgame.entity.Entity;
 import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
 import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
@@ -41,6 +45,7 @@ public class MapManager {
 	public Array<Projectile> disposingProjectiles = new Array<>();
 	public Array<Splatter> splatters = new Array<>();
 	public Array<Map> maps = new Array<>();
+	public Array<Building> buildings = new Array<>();
 
 	int splatterTimer = 0;
 
@@ -50,62 +55,94 @@ public class MapManager {
 	//3d
 
 	private Model groundModel;
-	private Model boxModel1;
-	private Model boxModel2;
-	private Model boxModel3;
-	private Model boxModel4;
-	private Model boxModel5;
+
 	private ModelInstance groundInstance;
-	private ModelInstance boxInstance1;
-	private ModelInstance boxInstance2;
-	private ModelInstance boxInstance3;
-	private ModelInstance boxInstance4;
-	private ModelInstance boxInstance5;
+
 
 	public MapManager(ABNPGame game) {
 		this.game = game;
 		activeMap = new Verdammtenstadt();
 
-		float height1 = (float) (Math.random() * 500f);
-		float height2 = (float) (Math.random() * 500f);
-		float height3 = (float) (Math.random() * 500f);
-		float height4 = (float) (Math.random() * 500f);
-		float height5 = (float) (Math.random() * 500f);
-
-
 		//3d 'assets'
 		ModelBuilder modelBuilder = new ModelBuilder();
-		groundModel = modelBuilder.createBox(10000f, 1f, 10000f,
-				new Material(ColorAttribute.createDiffuse(Color.GREEN)),
-				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+		// Create the box as before
+		groundModel = modelBuilder.createBox(
+				10000f, 1f, 10000f,
+				new Material(),
+				VertexAttributes.Usage.Position |
+						VertexAttributes.Usage.Normal |
+						VertexAttributes.Usage.TextureCoordinates
+		);
 		groundInstance = new ModelInstance(groundModel);
 		groundInstance.transform.setToTranslation(5000f, 0, -5000f);
 
-		boxModel1 = modelBuilder.createBox(200f, height1, 100f,
-				new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+// Load the texture
+		Texture grass = new Texture(Gdx.files.internal("map/environment/grass.png"));
+		grass.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
-		boxModel2 = modelBuilder.createBox(200f, height2, 200f,
-				new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+// Apply the texture to the material
+		for (Material mat : groundInstance.materials) {
+			mat.set(TextureAttribute.createDiffuse(grass));
+		}
 
-		boxModel3 = modelBuilder.createBox(400f, height3, 400f,
-				new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+// Modify top face UVs automatically
+		Mesh mesh = groundInstance.model.meshParts.get(0).mesh;
+		float[] vertices = new float[mesh.getNumVertices() * mesh.getVertexSize() / 4]; // float size
+		mesh.getVertices(vertices);
 
-		boxModel4 = modelBuilder.createBox(200f, height4, 100f,
-				new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+		int vertexSize = mesh.getVertexSize() / 4; // floats per vertex
+		int posOffset = mesh.getVertexAttribute(VertexAttributes.Usage.Position).offset / 4;
+		int uvOffset  = mesh.getVertexAttribute(VertexAttributes.Usage.TextureCoordinates).offset / 4;
 
-		boxModel5 = modelBuilder.createBox(200f, height5, 100f,
-				new Material(ColorAttribute.createDiffuse(Color.GRAY)),
-				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal);
+		float repeatX = 100f; // how many times to repeat across X
+		float repeatZ = 100f; // how many times to repeat across Z
 
-		boxInstance1 = new ModelInstance(boxModel1, (float) Math.random() * 1000f, height1/2f, -(float) Math.random() * 1000f);
-		boxInstance2 = new ModelInstance(boxModel2, (float) Math.random() * 1000f, height2/2f, -(float) Math.random() * 1000f);
-		boxInstance3 = new ModelInstance(boxModel3, (float) Math.random() * 1000f, height3/2f, -(float) Math.random() * 1000f);
-		boxInstance4 = new ModelInstance(boxModel4, (float) Math.random() * 1000f, height4/2f, -(float) Math.random() * 1000f);
-		boxInstance5 = new ModelInstance(boxModel5, (float) Math.random() * 1000f, height5/2f, -(float) Math.random() * 1000f);
+// 1. Find the max Y (top face)
+		float maxY = Float.NEGATIVE_INFINITY;
+		for (int i = 0; i < mesh.getNumVertices(); i++) {
+			int offset = i * vertexSize + posOffset;
+			float y = vertices[offset + 1];
+			if (y > maxY) maxY = y;
+		}
+
+// 2. Update UVs for all vertices at max Y
+		for (int i = 0; i < mesh.getNumVertices(); i++) {
+			int offset = i * vertexSize;
+			float y = vertices[offset + posOffset + 1];
+			if (Math.abs(y - maxY) < 0.001f) { // consider it top face
+				float x = vertices[offset + posOffset];
+				float z = vertices[offset + posOffset + 2];
+
+				vertices[offset + uvOffset]     = (x / 10000f) * repeatX; // U
+				vertices[offset + uvOffset + 1] = (z / 10000f) * repeatZ; // V
+			}
+		}
+
+		mesh.setVertices(vertices);
+
+
+		G3dModelLoader loader = new G3dModelLoader(new UBJsonReader());
+
+		Model model = loader.loadModel(Gdx.files.internal("map/structure/cottage.g3db"));
+
+		Texture diffuse = new Texture(Gdx.files.internal("map/structure/cottage_diffuse.png"));
+		for (Material mat : model.materials) {
+			mat.set(TextureAttribute.createDiffuse(diffuse));
+		}
+
+		Texture normal = new Texture(Gdx.files.internal("map/structure/cottage_normal.png"));
+		normal.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+
+		for (Material mat : model.materials) {
+			mat.set(TextureAttribute.createNormal(normal));
+		}
+
+		buildings.add(new Building(new Vector3((float) (Math.random() * 2000f), 0, -(float) (Math.random()*2000f)), model, (float) (Math.random() * 90f), .2f));
+		buildings.add(new Building(new Vector3((float) (Math.random() * 2000f), 0, -(float) (Math.random()*2000f)), model, (float) (Math.random() * 90f), .2f));
+		buildings.add(new Building(new Vector3((float) (Math.random() * 2000f), 0, -(float) (Math.random()*2000f)), model, (float) (Math.random() * 90f), .2f));
+		buildings.add(new Building(new Vector3((float) (Math.random() * 2000f), 0, -(float) (Math.random()*2000f)), model, (float) (Math.random() * 90f), .2f));
+		buildings.add(new Building(new Vector3((float) (Math.random() * 2000f), 0, -(float) (Math.random()*2000f)), model, (float) (Math.random() * 90f), .2f));
+
 	}
 
 	public void draw(Environment environment, DecalBatch batch, ModelBatch modelBatch, ShapeRenderer shapes, PerspectiveCamera camera) {
@@ -124,11 +161,9 @@ public class MapManager {
 
 		modelBatch.begin(camera);
 		modelBatch.render(groundInstance, environment);
-		modelBatch.render(boxInstance1, environment);
-		modelBatch.render(boxInstance2, environment);
-		modelBatch.render(boxInstance3, environment);
-		modelBatch.render(boxInstance4, environment);
-		modelBatch.render(boxInstance5, environment);
+		for (Building b : buildings) {
+			modelBatch.render(b.instance);
+		}
 		modelBatch.end();
 
 		drawSplatters(batch);
@@ -349,5 +384,25 @@ public class MapManager {
 			this.position = position;
 			this.alpha = 1f;
 		}
+	}
+
+	private static class Building {
+
+		Model model;
+		ModelInstance instance;
+		float rotation;
+		Vector3 position;
+
+		public Building(Vector3 position, Model model, float rotation, float scale) {
+			this.model = model;
+			this.rotation = rotation;
+			this.position = position;
+
+			instance = new ModelInstance(this.model, position);
+			instance.transform.scl(scale);
+			instance.transform.rotate(Vector3.Y, rotation);
+
+		}
+
 	}
 }
