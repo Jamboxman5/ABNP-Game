@@ -1,5 +1,7 @@
 package me.jamboxman5.abnpgame.entity.projectile;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Polygon;
@@ -92,12 +94,11 @@ public class Bullet extends Projectile{
 		}
 		drawn = true;
 
-		ABNPGame gp = ABNPGame.getInstance();
-
 		// Use the camera’s projection matrix
 
 		renderer.begin(ShapeRenderer.ShapeType.Filled);
-
+		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+		Gdx.gl.glDepthMask(true);
 		// Use world coordinates directly
 		float x = (float) worldX;
 		float y = (float) worldY;

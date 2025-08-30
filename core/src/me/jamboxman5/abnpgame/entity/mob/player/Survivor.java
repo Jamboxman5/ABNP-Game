@@ -1,6 +1,8 @@
 package me.jamboxman5.abnpgame.entity.mob.player;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -53,6 +55,8 @@ public abstract class Survivor extends Mob {
 
 
         end.rotateAroundDeg(start, jitter);
+        Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
+        Gdx.gl.glDepthMask(true);
 
 //        System.out.println(start.dst(end));
         shape.setColor(.8f, 0f, 0f, .5f);

@@ -110,7 +110,7 @@ public class GameScreen implements Screen, InputProcessor {
         spriteBatch = new SpriteBatch();
         worldShapes = new ShapeRenderer();
         uiShapes = new ShapeRenderer();
-
+        Gdx.gl.glDepthMask(true);
 //        Gdx.graphics.setSystemCursor(Cursor.SystemCursor.Crosshair);
     }
 
@@ -119,6 +119,7 @@ public class GameScreen implements Screen, InputProcessor {
 
         game.getPlayer().setPosition(game.getMapManager().getActiveMap().getPlayerSpawn());
         worldShapes.rotate(1, 0, 0, -90);
+        worldShapes.translate(0, 0, 60);
 
         Sounds.AMBIENCE.stop();
         Pixmap pixmap;
