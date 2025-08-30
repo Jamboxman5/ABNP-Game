@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.g3d.attributes.TextureAttribute;
 import com.badlogic.gdx.graphics.g3d.decals.Decal;
 import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
+import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
@@ -65,61 +66,79 @@ public class MapManager {
 
 		//3d 'assets'
 		ModelBuilder modelBuilder = new ModelBuilder();
-		// Create the box as before
-		groundModel = modelBuilder.createBox(
-				10000f, 1f, 10000f,
-				new Material(),
-				VertexAttributes.Usage.Position |
-						VertexAttributes.Usage.Normal |
-						VertexAttributes.Usage.TextureCoordinates
-		);
-		groundInstance = new ModelInstance(groundModel);
-		groundInstance.transform.setToTranslation(5000f, 0, -5000f);
 
-// Load the texture
+// Parameters
+		float width = 10000f;
+		float height = 1f;
+		float depth = 10000f;
+		int subdivisions = 100; // number of quads along each axis
+		float stepX = width / subdivisions;
+		float stepZ = depth / subdivisions;
+
+// Build the mesh with tangents for future normal maps
+		modelBuilder.begin();
+
+		MeshPartBuilder builder = modelBuilder.part(
+				"ground", GL20.GL_TRIANGLES,
+				VertexAttributes.Usage.Position | VertexAttributes.Usage.Normal | VertexAttributes.Usage.TextureCoordinates | VertexAttributes.Usage.Tangent,
+				new Material()
+		);
+
+// Generate quads
+		for (int i = 0; i < subdivisions; i++) {
+			for (int j = 0; j < subdivisions; j++) {
+				float x0 = i * stepX;
+				float x1 = x0 + stepX;
+				float z0 = -j * stepZ;
+				float z1 = z0 - stepZ;
+
+				builder.rect(
+						x0, 0, z0,
+						x1, 0, z0,
+						x1, 0, z1,
+						x0, 0, z1,
+						0, 1, 0 // normal pointing up
+				);
+			}
+		}
+
+		groundModel = modelBuilder.end();
+		groundInstance = new ModelInstance(groundModel);
+		groundInstance.transform.setToTranslation(0, 0, 0);
+
+// Load grass texture
 		Texture grass = new Texture(Gdx.files.internal("map/environment/grass.png"));
 		grass.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
 
-// Apply the texture to the material
+// Apply texture to all materials
 		for (Material mat : groundInstance.materials) {
 			mat.set(TextureAttribute.createDiffuse(grass));
 			mat.set(ColorAttribute.createDiffuse(Color.WHITE));
 		}
 
-// Modify top face UVs automatically
+// Modify UVs to repeat texture across the plane
 		Mesh mesh = groundInstance.model.meshParts.get(0).mesh;
-		float[] vertices = new float[mesh.getNumVertices() * mesh.getVertexSize() / 4]; // float size
+		float[] vertices = new float[mesh.getNumVertices() * mesh.getVertexSize() / 4];
 		mesh.getVertices(vertices);
 
-		int vertexSize = mesh.getVertexSize() / 4; // floats per vertex
+		int vertexSize = mesh.getVertexSize() / 4;
 		int posOffset = mesh.getVertexAttribute(VertexAttributes.Usage.Position).offset / 4;
 		int uvOffset  = mesh.getVertexAttribute(VertexAttributes.Usage.TextureCoordinates).offset / 4;
 
-		float repeatX = 50f; // how many times to repeat across X
-		float repeatZ = 50f; // how many times to repeat across Z
+		float repeatX = 50f;
+		float repeatZ = 50f;
 
-// 1. Find the max Y (top face)
-		float maxY = Float.NEGATIVE_INFINITY;
-		for (int i = 0; i < mesh.getNumVertices(); i++) {
-			int offset = i * vertexSize + posOffset;
-			float y = vertices[offset + 1];
-			if (y > maxY) maxY = y;
-		}
-
-// 2. Update UVs for all vertices at max Y
 		for (int i = 0; i < mesh.getNumVertices(); i++) {
 			int offset = i * vertexSize;
-			float y = vertices[offset + posOffset + 1];
-			if (Math.abs(y - maxY) < 0.001f) { // consider it top face
-				float x = vertices[offset + posOffset];
-				float z = vertices[offset + posOffset + 2];
+			float x = vertices[offset + posOffset];
+			float z = vertices[offset + posOffset + 2];
 
-				vertices[offset + uvOffset]     = (x / 10000f) * repeatX; // U
-				vertices[offset + uvOffset + 1] = (z / 10000f) * repeatZ; // V
-			}
+			vertices[offset + uvOffset]     = (x / width) * repeatX;
+			vertices[offset + uvOffset + 1] = (Math.abs(z) / depth) * repeatZ;
 		}
 
 		mesh.setVertices(vertices);
+
 
 
 		G3dModelLoader loader = new G3dModelLoader(new UBJsonReader());
@@ -153,9 +172,12 @@ public class MapManager {
 		Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT | GL20.GL_DEPTH_BUFFER_BIT);
 
-		Vector3 playerPos = game.getPlayer().getPosition();
+		Vector3 playerPos = game.getPlayer().getPosition().cpy();
 
-		camera.position.set(playerPos.x, camera.position.y, -playerPos.z);   // 50 units north of origin
+
+		Vector3 newCamPos = new Vector3(playerPos.x, camera.position.y, -playerPos.z);
+
+		camera.position.set(newCamPos);   // 50 units north of origin
 		camera.lookAt(playerPos.x, 0, -playerPos.z);             // look at ground center
 
 		camera.update();
