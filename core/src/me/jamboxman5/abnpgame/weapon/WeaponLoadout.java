@@ -105,4 +105,10 @@ public class WeaponLoadout {
 	}
 
 	public Array<Weapon> getOwnedWeapons() { return ownedWeapons; }
+	public Array<Weapon> getUnequippedWeapons() {
+		Array<Weapon> unequipped = new Array<>();
+		unequipped.addAll(ownedWeapons);
+		unequipped.removeAll(equippedWeapons, true);
+		return unequipped;
+	}
 }
