@@ -32,7 +32,9 @@ public class EquipMenuScreen implements Screen, InputProcessor {
 
     OrthographicCamera camera;
 
-    public Button[] buttons;
+    public Array<Button> buttons;
+    public Array<Button> scrollWeaponButtons;
+    public Array<Button> equippedWeaponButtons;
 
     public Button backButton1;
     public Button activeButton;
@@ -107,7 +109,7 @@ public class EquipMenuScreen implements Screen, InputProcessor {
             scrollDiff = 0;
         }
 
-        float lowerBound = Math.max(0, maxScroll - (Settings.screenHeight) + scrollMargin*2);
+        float lowerBound = Math.max(0, maxScroll - (Settings.screenWidth) + scrollMargin*2);
         if (scrollDiff > lowerBound) {
             scrolled = scrolled - (scrollDiff - lowerBound);
             scrollDiff = lowerBound;
@@ -127,7 +129,7 @@ public class EquipMenuScreen implements Screen, InputProcessor {
         }
         for (Button button : buttons) {
             if (button != backButton1) {
-                button.reposition(0, (int) scrolled);
+                button.reposition((int) -scrolled, 0);
             }
         }
 
@@ -218,27 +220,27 @@ public class EquipMenuScreen implements Screen, InputProcessor {
 
     private void getButtons() {
 
-        int buttonWidth = (int) (300*Settings.guiScale);
-        int buttonHeight = (int) (150*Settings.guiScale);
-        int x = (int) ((Settings.screenWidth/4f)*3f - (buttonWidth/2f));
-        scrollMargin = Settings.screenWidth - (x + buttonWidth);
-        int startY = (int) (Settings.screenHeight - scrollMargin - buttonHeight);
-        Array<Weapon> weapons = game.getPlayer().getWeaponLoadout().getOwnedWeapons();
+        int buttonHeight = (Settings.screenHeight/4);
+        int buttonWidth = (buttonHeight*2);
+        scrollMargin = Settings.hudMargin * 2;
+        int startX = (int) scrollMargin;
+        int y = 120;
+        Array<Weapon> weapons = game.getPlayer().getWeaponLoadout().getUnequippedWeapons();
 
         scrolled = 0;
         scrollDiff = 0;
 
-        buttons = new Button[weapons.size + 1];
+        buttons = new Array<>();
 
         int i = 0;
         for (final Weapon weapon : weapons) {
 
             if (maxScroll > 0) maxScroll += Settings.hudMargin;
-            maxScroll += buttonHeight;
+            maxScroll += buttonWidth;
 
-            Button button = new Button(x, startY, buttonWidth, buttonHeight, weapon.getHudSprite(), .15f * Settings.guiScale);
-            startY -= buttonHeight;
-            startY -= Settings.hudMargin;
+            Button button = new Button(startX, y, buttonWidth, buttonHeight, weapon.getHudSprite(), .15f * Settings.guiScale);
+            startX += buttonWidth;
+            startX += Settings.hudMargin;
 
             button.setAction(new Runnable() {
                 @Override
@@ -247,15 +249,16 @@ public class EquipMenuScreen implements Screen, InputProcessor {
                 }
             });
 
-            buttons[i] = button;
+            scrollWeaponButtons.add(button);
             i++;
 
         }
 
-        int y = 80;
-        x = 40;
+
+        y = 80;
+        int x = 40;
         backButton1 = new Button(x, y - 25, "< Main Menu", Fonts.BUTTONFONT, 1f);
-        buttons[i] = backButton1;
+        buttons.add(backButton1);
 
         Runnable backAction = new Runnable() {
             @Override
@@ -313,8 +316,8 @@ public class EquipMenuScreen implements Screen, InputProcessor {
     @Override
     public boolean scrolled(float amountX, float amountY) {
         scrolled += (amountY * 10 * Settings.guiScale);
-        if (scrolled > 0) scrolled = Math.min(scrolled, 20);
-        if (scrolled < 0) scrolled = Math.max(scrolled, -20);
+        if (scrolled > 0) scrolled = Math.min(scrolled, 40);
+        if (scrolled < 0) scrolled = Math.max(scrolled, -40);
 
         return false;
     }
