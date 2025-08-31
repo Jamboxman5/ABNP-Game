@@ -55,7 +55,7 @@ public class Ally extends Survivor {
                 if (canShoot()) {
                     if (weapons.getActiveWeapon().attack(this, Math.toRadians(jitter))) {
 
-                        jitter = (float) (Math.random() * weapons.getActiveWeapon().getRecoil());
+                        jitter = (float) (Math.random() * weapons.getActiveFirearm().getRecoil());
                         if (Math.random() > .5) jitter = -jitter;
 
                     }

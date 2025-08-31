@@ -22,6 +22,8 @@ public class Firearm extends Weapon {
 	protected int reloadSpeedMS;
 	protected int range;
 	protected int firingVelocity;
+	protected boolean reloading = false;
+	protected double recoil;
 
 	protected Sound reloadSound;
 	protected Sound outOfAmmoSound = Gdx.audio.newSound(Gdx.files.internal("sound/sfx/weapon/misc/Out_Of_Ammo.wav"));
@@ -100,6 +102,18 @@ public class Firearm extends Weapon {
 
 	public boolean canReload() {
 		return (!reloading && (loaded < getAdjustedMagSize()) && (currentAmmo.getAmmoCount() > 0));
+	}
+	public double getRecoil() {
+		double calcRecoil = recoil;
+		for (WeaponMod mod : equippedMods.getMods()) {
+			calcRecoil *= mod.getRecoilModifier();
+		}
+		return calcRecoil;
+	}
+
+	@Override
+	protected boolean canAttack() {
+		return super.canAttack() && (!reloading);
 	}
 
 	public int getAdjustedMagSize() {

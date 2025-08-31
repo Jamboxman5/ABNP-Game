@@ -27,8 +27,7 @@ public abstract class Weapon {
 	protected double damage;
 	protected double durability;
 	protected double weight;
-	protected boolean reloading = false;
-	protected double recoil;
+
 	
 	protected long attackRateMS;
 	protected long lastAttack;
@@ -71,7 +70,6 @@ public abstract class Weapon {
 	public abstract boolean attack(Survivor attacker, double radians);
 	public abstract boolean fakeAttack(Survivor attacker);
 	protected boolean canAttack() {
-	    if (reloading) return false;
 	    if ((System.currentTimeMillis() - lastAttack) < attackRateMS) return false;
 		return true;
 	}
@@ -95,8 +93,6 @@ public abstract class Weapon {
 	public int getMeleeXOffset() { return meleeXOffset; }
 
 	public float getMeleeYOffset() { return meleeYOffset; }
-	public double getRecoil() { return recoil;
-	}
 
 
 	public WeaponType getType() { return type; }

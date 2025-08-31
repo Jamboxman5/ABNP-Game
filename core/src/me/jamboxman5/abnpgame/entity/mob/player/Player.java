@@ -194,7 +194,7 @@ public class Player extends Survivor {
 				weapons.getActiveWeapon().fakeAttack(this);
 			} else if (weapons.getActiveWeapon().attack(this, Math.toRadians(jitter))) {
 				stateTime = 0;
-				jitter = (float) (Math.random() * weapons.getActiveWeapon().getRecoil());
+				if (weapons.getActiveWeapon() instanceof Firearm) jitter = (float) (Math.random() * weapons.getActiveFirearm().getRecoil());
 				if (Math.random() > .5) jitter = -jitter;
 
 			}
