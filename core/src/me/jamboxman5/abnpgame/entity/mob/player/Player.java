@@ -309,7 +309,7 @@ public class Player extends Survivor {
 
 			Vector2 mouse = ABNPGame.getInstance().getMousePointer();
 			Vector2 pos2D = new Vector2(position.x, position.z);
-			Vector2 mouseWorld = pos2D.cpy().add(CameraUtil.getWorldPosScreenCenterDisplacement(camera, mouse.x, mouse.y));
+			Vector2 mouseWorld = pos2D.cpy().add(CameraUtil.getWorldPosScreenCenterDisplacement(camera, shape.getTransformMatrix().getTranslation(new Vector3()).y, mouse.x, mouse.y));
 
 
 			drawRedDotSight(shape, pos2D, mouseWorld);
