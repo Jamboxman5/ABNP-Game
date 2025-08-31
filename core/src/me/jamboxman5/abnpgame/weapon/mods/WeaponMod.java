@@ -1,12 +1,13 @@
 package me.jamboxman5.abnpgame.weapon.mods;
 
 import me.jamboxman5.abnpgame.weapon.mods.firearm.ExtendedMagazine;
+import me.jamboxman5.abnpgame.weapon.mods.firearm.ForeGrip;
 import me.jamboxman5.abnpgame.weapon.mods.firearm.RedDotSight;
 import me.jamboxman5.abnpgame.weapon.mods.firearm.Silencer;
 
 public class WeaponMod {
 	
-	protected double accuracyModifier;
+	protected double recoilModifier;
 	protected double damageModifier;
 	protected double fireRateModifier;
 	protected double bulletSpreadModifier;
@@ -16,8 +17,10 @@ public class WeaponMod {
 
     public ModType getType() { return type; }
 
-    public enum ModType {
-		RedDotSight, Silencer, ExtendedMagazine;
+	public double getRecoilModifier() { return recoilModifier; }
+
+	public enum ModType {
+		RedDotSight, Silencer, ExtendedMagazine, ForeGrip;
 	}
 	
 	public static WeaponMod getByType(ModType type) {
@@ -26,15 +29,14 @@ public class WeaponMod {
 			return new RedDotSight();
 		case Silencer:
 			return new Silencer();
+		case ForeGrip:
+			return new ForeGrip();
 		case ExtendedMagazine:
 			return new ExtendedMagazine();
 		}
 		return new RedDotSight();
 	}
 
-	public double getAccuracyModifier() {
-		return accuracyModifier;
-	}
 
 	public double getDamageModifier() {
 		return damageModifier;
