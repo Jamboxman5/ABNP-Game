@@ -4,7 +4,7 @@ import me.jamboxman5.abnpgame.weapon.mods.WeaponMod;
 
 public class ExtendedMagazine extends WeaponMod {
 	public ExtendedMagazine() {
-		accuracyModifier = 1;
+		recoilModifier = 1;
 		damageModifier = 1;
 		fireRateModifier = 1;
 		bulletSpreadModifier = 1;

@@ -4,7 +4,7 @@ import me.jamboxman5.abnpgame.weapon.mods.WeaponMod;
 
 public class Silencer extends WeaponMod {
 	public Silencer() {
-		accuracyModifier = 1.2;
+		recoilModifier = 1.2;
 		damageModifier = .6;
 		fireRateModifier = 1;
 		bulletSpreadModifier = 1;
