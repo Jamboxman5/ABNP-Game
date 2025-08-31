@@ -13,6 +13,7 @@ import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.PistolTec9;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleAK47;
+import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM1Garand;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunAssault;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
@@ -107,9 +108,11 @@ public abstract class Weapon {
 			return new RifleM4A1();
 		case AK47:
 			return new RifleAK47();
+		case M1GARAND:
+			return new RifleM1Garand();
 		case WINCHESTER12:
 			return new ShotgunWinchester12();
-			case ASSAULTSHOTGUN:
+		case ASSAULTSHOTGUN:
 			return new ShotgunAssault();
 		case TEC9:
 			return new PistolTec9();
