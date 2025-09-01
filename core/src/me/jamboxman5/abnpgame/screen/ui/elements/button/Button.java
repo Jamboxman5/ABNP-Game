@@ -1,30 +1,23 @@
-package me.jamboxman5.abnpgame.screen.ui.elements;
+package me.jamboxman5.abnpgame.screen.ui.elements.button;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import me.jamboxman5.abnpgame.util.Fonts;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 public class Button {
 
     Rectangle bounds;
     String text;
-    Sprite sprite;
     BitmapFont font;
     boolean fill;
     float textScale;
-    float spriteScale;
-    Color color;
+    Color fillColor = new Color((75f/255f),0f,0f, .6f);
     TextAlign align;
     Runnable buttonAction;
 
@@ -37,10 +30,8 @@ public class Button {
         bounds = new Rectangle(x, y, width, height);
     }
 
-    public Button(int x, int y, int width, int height, Sprite sprite, float spriteScale) {
-        this.sprite = sprite;
-        this.spriteScale = spriteScale;
-        this.fill = true;
+    public Button(int x, int y, int width, int height, boolean fill) {
+        this.fill = fill;
         align = TextAlign.CENTER;
         textScale = 1f;
         bounds = new Rectangle(x, y, width, height);
@@ -69,14 +60,14 @@ public class Button {
         bounds = new Rectangle(x, y, Fonts.getTextWidth(text, font, textScale), Fonts.getTextHeight(text, Fonts.SELECTIONFONT, textScale));
     }
 
-    public Button(int x, int y, String string, BitmapFont font, Color color) {
+    public Button(int x, int y, String string, BitmapFont font, Color fillColor) {
         this(x,y,string,font, 1f);
-        this.color = color;
+        this.fillColor = fillColor;
         align = TextAlign.CENTER;
     }
 
-    public Button(int x, int y, String string, BitmapFont font, Color color, TextAlign align) {
-        this(x,y,string,font, color);
+    public Button(int x, int y, String string, BitmapFont font, Color fillColor, TextAlign align) {
+        this(x,y,string,font, fillColor);
         this.align = align;
     }
 
@@ -87,7 +78,7 @@ public class Button {
             renderer.begin(ShapeRenderer.ShapeType.Filled);
             Gdx.gl.glEnable(GL30.GL_BLEND);
             Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-            renderer.setColor(new Color((75f/255f),0f,0f, .6f));
+            renderer.setColor(fillColor);
             renderer.rect(bounds.x, bounds.y, bounds.width, bounds.height);
             renderer.end();
 
@@ -95,15 +86,7 @@ public class Button {
 
         batch.begin();
 
-        if (sprite != null) {
-            float oldScale = sprite.getScaleX();
-            sprite.setCenter(bounds.x + bounds.width/2f, bounds.y + bounds.height/2f);
-            sprite.setScale(spriteScale);
-            sprite.draw(batch);
-            sprite.setScale(oldScale);
-        }
-
-        if (text != null && text.length() > 0) {
+        if (text != null && !text.isEmpty()) {
             int x = 0;
             switch (align) {
                 case LEFT:
@@ -126,6 +109,14 @@ public class Button {
         }
 
         batch.end();
+    }
+
+    public void setFillColor(Color fillColor) {
+        this.fillColor = fillColor;
+    }
+
+    public void setFill(boolean fill) {
+        this.fill = fill;
     }
 
     public boolean contains(Vector2 point) {

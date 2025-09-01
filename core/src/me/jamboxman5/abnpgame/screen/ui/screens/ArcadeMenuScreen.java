@@ -11,13 +11,10 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import me.jamboxman5.abnpgame.main.ABNPGame;
-import me.jamboxman5.abnpgame.screen.ui.elements.Button;
+import me.jamboxman5.abnpgame.screen.ui.elements.button.Button;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
-
-import java.awt.*;
-import java.util.Set;
 
 public class ArcadeMenuScreen implements Screen {
 

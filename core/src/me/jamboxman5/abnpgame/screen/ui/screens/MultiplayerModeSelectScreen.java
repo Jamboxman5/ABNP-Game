@@ -11,7 +11,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.map.Map;
 import me.jamboxman5.abnpgame.screen.GameScreen;
-import me.jamboxman5.abnpgame.screen.ui.elements.Button;
+import me.jamboxman5.abnpgame.screen.ui.elements.button.Button;
 import me.jamboxman5.abnpgame.script.BasicScript;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
