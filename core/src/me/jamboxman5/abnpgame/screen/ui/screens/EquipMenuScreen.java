@@ -13,7 +13,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import me.jamboxman5.abnpgame.main.ABNPGame;
-import me.jamboxman5.abnpgame.screen.ui.elements.Button;
+import me.jamboxman5.abnpgame.screen.ui.elements.button.Button;
+import me.jamboxman5.abnpgame.screen.ui.elements.button.ButtonSprite;
 import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
@@ -48,6 +49,7 @@ public class EquipMenuScreen implements Screen, InputProcessor {
     private int infoY;
     private int infoHeight;
     private int infoWidth;
+    private int invWidth;
     private int scrollButtonHeight;
     private int scrollButtonWidth;
     private int invButtonHeight;
@@ -76,10 +78,15 @@ public class EquipMenuScreen implements Screen, InputProcessor {
 
         infoY = (int) ((Settings.screenHeight * (7.0/16.0)));
         infoHeight = (int) ((Settings.screenHeight * (9.0/16.0)) - scrollMargin);
-        infoWidth = (int) (Settings.screenWidth/2 - (Settings.hudMargin*2));
 
         invButtonHeight = (infoHeight - (scrollMargin * 2)) / 3;
         invButtonWidth = invButtonHeight * 2;
+
+        invWidth = (invButtonWidth * 2) + scrollMargin;
+
+        infoWidth = (int) (Settings.screenWidth - (scrollMargin * 3) - invWidth);
+
+
 
     }
 
@@ -142,7 +149,7 @@ public class EquipMenuScreen implements Screen, InputProcessor {
 
         updateActiveButton(game.getMousePointer());
         if (Gdx.input.isTouched()) {
-            if (activeButton != null && (System.currentTimeMillis() - lastButton > 500)) {
+            if (activeButton != null && (System.currentTimeMillis() - lastButton > 200)) {
                 Sounds.MENUSELECT.play(Settings.sfxVolume);
                 activeButton.press();
                 lastButton = System.currentTimeMillis();
@@ -192,8 +199,34 @@ public class EquipMenuScreen implements Screen, InputProcessor {
     public void draw() {
 
         drawBKG(spriteBatch);
+        drawMenuBgBlocks(spriteBatch, shapes);
         drawButtons(spriteBatch, shapes);
         drawSelectedWeapon(spriteBatch, shapes);
+    }
+
+    public void drawMenuBgBlocks(SpriteBatch batch, ShapeRenderer renderer) {
+
+        renderer.begin(ShapeRenderer.ShapeType.Filled);
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+        renderer.setColor(new Color((10f/255f),(10f/255f),(10f/255f), .9f));
+
+        //Selected Weapon Box Shadow
+        renderer.rect(scrollMargin- 10, infoY - 10, infoWidth + 20, infoHeight + 20);
+
+        //Weapon Inventory Box Shadow
+        renderer.rect(Settings.screenWidth - scrollMargin - invWidth - 10, infoY - 10, invWidth + 20, infoHeight + 20);
+
+        renderer.setColor(new Color((60f/255f),(10f/255f),(10f/255f), 1f));
+
+        //Selected Weapon Box
+        renderer.rect(scrollMargin, infoY, infoWidth, infoHeight);
+
+        //Weapon Inventory Box
+        renderer.rect(Settings.screenWidth - scrollMargin - invWidth, infoY, invWidth, infoHeight);
+
+        renderer.end();
+
     }
 
     public void drawSelectedWeapon(SpriteBatch batch, ShapeRenderer renderer) {
@@ -204,13 +237,6 @@ public class EquipMenuScreen implements Screen, InputProcessor {
         float margin = Settings.hudMargin * Settings.guiScale;
 
         float x = scrollMargin;
-
-        renderer.begin(ShapeRenderer.ShapeType.Filled);
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-        renderer.setColor(new Color((75f/255f),0f,0f, .6f));
-        renderer.rect(x, infoY, infoWidth, infoHeight);
-        renderer.end();
 
         x = (float) (x + (infoWidth/2.0));
         float y = (float) (infoY + ((infoHeight/6.0) * 5.0));
@@ -297,7 +323,7 @@ public class EquipMenuScreen implements Screen, InputProcessor {
             if (maxScroll > 0) maxScroll += scrollMargin;
             maxScroll += scrollButtonWidth;
 
-            Button button = new Button(startX, scrollerY, scrollButtonWidth, scrollButtonHeight, weapon.getHudSprite(), .15f * Settings.guiScale);
+            ButtonSprite button = new ButtonSprite(startX, scrollerY, scrollButtonWidth, scrollButtonHeight, weapon.getHudSprite(), .15f * Settings.guiScale);
             startX += scrollButtonWidth;
             startX += scrollMargin;
 
@@ -307,6 +333,9 @@ public class EquipMenuScreen implements Screen, InputProcessor {
                     selectedWeapon = weapon;
                 }
             });
+            button.setSpriteDropShadow(true);
+            button.setDropShadowOffset(6);
+            button.setDropShadowOpacity(.3f);
 
             scrollWeaponButtons.add(button);
 
@@ -329,14 +358,16 @@ public class EquipMenuScreen implements Screen, InputProcessor {
                 i++;
             }
 
-            Button button = new Button(x, y, invButtonWidth, invButtonHeight, weapon.getHudSprite(), .1f * Settings.guiScale);
-
+            ButtonSprite button = new ButtonSprite(x, y, invButtonWidth, invButtonHeight, weapon.getHudSprite(), .1f * Settings.guiScale);
+            button.setFill(false);
+            button.setSpriteDropShadow(true);
             button.setAction(new Runnable() {
                 @Override
                 public void run() {
                     selectedWeapon = weapon;
                 }
             });
+            button.setDropShadowOpacity(.6f);
 
             equippedWeaponButtons.add(button);
 
