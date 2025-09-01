@@ -16,11 +16,15 @@ public class ButtonSprite extends Button {
 
     Sprite sprite;
     float spriteScale;
+    boolean spriteShadow;
+    int spriteShadowOffset = 4;
+    float dropShadowOpacity = .5f;
 
     public ButtonSprite(int x, int y, int width, int height, Sprite sprite, float spriteScale) {
         super(x, y, width, height, true);
         this.sprite = sprite;
         this.spriteScale = spriteScale;
+        this.spriteShadow = false;
     }
 
     public ButtonSprite(int x, int y, Sprite sprite, float spriteScale) {
@@ -31,13 +35,26 @@ public class ButtonSprite extends Button {
                 false);
         this.sprite = sprite;
         this.spriteScale = spriteScale;
+        this.spriteShadow = true;
 
+    }
+
+    public void setSpriteDropShadow(boolean active) {
+        this.spriteShadow = active;
     }
 
     public void addText(String text, BitmapFont font, float txtScale) {
         this.text = text;
         this.textScale = txtScale;
         this.font = font;
+    }
+
+    public void setDropShadowOffset(int offset) {
+        this.spriteShadowOffset = offset;
+    }
+
+    public void setDropShadowOpacity(float opacity) {
+        this.dropShadowOpacity = opacity;
     }
 
     @Override
@@ -64,7 +81,16 @@ public class ButtonSprite extends Button {
             float oldScale = sprite.getScaleX();
             sprite.setCenter(bounds.x + bounds.width/2f, bounds.y + bounds.height/2f);
             sprite.setScale(spriteScale);
-            if (!fill && active) {
+
+            if (spriteShadow) {
+                sprite.setColor(0, 0, 0, dropShadowOpacity);
+                sprite.translate(spriteShadowOffset, -spriteShadowOffset);
+                sprite.draw(batch);
+                sprite.translate(-spriteShadowOffset, spriteShadowOffset);
+                sprite.setColor(Color.WHITE);
+            }
+
+            if (active) {
                 sprite.setColor(.5f, .5f, .5f, .9f);
             }
             sprite.draw(batch);
