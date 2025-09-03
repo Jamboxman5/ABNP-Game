@@ -1,6 +1,7 @@
 package me.jamboxman5.abnpgame.util;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -36,8 +37,14 @@ public class Settings {
     }
 
     public static void setResolution(Vector2 res) {
+        if ((screenWidth == res.x && screenHeight == res.y) && (Gdx.graphics.getWidth() == res.x && Gdx.graphics.getHeight() == res.y)) return;
+        Gdx.graphics.setUndecorated(false);
         screenWidth = Math.round(res.x);
         screenHeight = Math.round(res.y);
         Gdx.graphics.setWindowedMode(screenWidth, screenHeight);
+        if (Gdx.graphics.getWidth() != screenWidth || Gdx.graphics.getHeight() != screenHeight) {
+            Gdx.graphics.setUndecorated(true);
+            Gdx.graphics.setWindowedMode(screenWidth, screenHeight);
+        }
     }
 }
