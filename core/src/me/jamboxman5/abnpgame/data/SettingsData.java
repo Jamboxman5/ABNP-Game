@@ -22,7 +22,7 @@ public class SettingsData {
     static final String settingsFile = "settings.json";
     static final String settingsPath =  dataPath + settingsFile;
 
-    public static void loadSettings() {
+    public static boolean loadSettings() {
 
         String jsonString = null;
         try {
@@ -30,8 +30,9 @@ public class SettingsData {
             jsonString = DataManager.load(is);
             JsonObject settingsOBJ = JsonParser.parseString(jsonString).getAsJsonObject();
             bindSettings(settingsOBJ);
+            return true;
         } catch (IOException e) {
-            generateNewSettingsFile();
+            return false;
         }
 
     }

@@ -48,6 +48,7 @@
 			"weapons": [
 				{
 					"type": "M1911",
+					"equipped": true,
 					"loaded": 8,
 					"ammoType": "StandardAmmo",
 					"mods": []
