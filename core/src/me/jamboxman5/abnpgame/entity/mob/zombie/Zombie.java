@@ -59,6 +59,8 @@ public class Zombie extends Mob {
         this.rewardMoney = rewardMoney;
         this.rewardEXP = rewardEXP;
         this.pursuitType = pursuitType;
+        this.isSolid = false;
+
 
         activeSprites = attackSprites;
 

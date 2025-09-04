@@ -25,6 +25,7 @@ public abstract class Entity {
 	protected float rotation;
 	protected Shape2D collision;
 	protected int animFrame;
+	protected boolean isSolid;
 	
 	protected String direction;
 	protected final static float defaultSpriteScale = .25f;
@@ -46,6 +47,8 @@ public abstract class Entity {
 	public void setPosition(float x, float y, float z) { position = new Vector3(x, y, z); }
 	public void setPosition(Vector3 newPosition) { position = newPosition; }
 	public void setSpeed(double speed) { this.speed = speed; }
+
+	public boolean isSolid() { return isSolid; }
 
 	public abstract void update(float delta);
 	public abstract void draw(DecalBatch batch, ShapeRenderer shape, PerspectiveCamera camera);

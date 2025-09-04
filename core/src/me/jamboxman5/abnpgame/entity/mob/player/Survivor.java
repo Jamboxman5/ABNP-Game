@@ -48,6 +48,7 @@ public abstract class Survivor extends Mob {
         aimTarget = new Vector3();
         currentAnimation = idleAnimation;
         collision = new Circle(position.x, position.z, 15); // XZ plane
+        isSolid = false;
 
     }
 

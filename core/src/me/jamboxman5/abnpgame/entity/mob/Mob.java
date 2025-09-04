@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Vector3;
 import me.jamboxman5.abnpgame.entity.LivingEntity;
 import me.jamboxman5.abnpgame.main.ABNPGame;
+import me.jamboxman5.abnpgame.managers.MapManager;
 import me.jamboxman5.abnpgame.util.Settings;
 
 public abstract class Mob extends LivingEntity {
@@ -61,7 +62,13 @@ public abstract class Mob extends LivingEntity {
 		}
 
 		// Move position
-		position.add(velocity);
+		Vector3 newPosition = position.cpy().add(velocity);
+		MapManager map = ABNPGame.getInstance().getMapManager();
+		if (map.collides(newPosition)) {}
+		else {
+			position.add(velocity);
+		};
+
 
 		// Update collision circle in XZ plane
 		((Circle) collision).setPosition(position.x, position.z);

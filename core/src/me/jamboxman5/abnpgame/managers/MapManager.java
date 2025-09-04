@@ -14,6 +14,8 @@ import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.math.collision.BoundingBox;
+import com.badlogic.gdx.math.collision.OrientedBoundingBox;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.UBJsonReader;
@@ -185,7 +187,7 @@ public class MapManager {
 		modelBatch.begin(camera);
 		modelBatch.render(groundInstance, environment);
 		for (Building b : buildings) {
-			modelBatch.render(b.instance, environment);
+			modelBatch.render(b.buildingModel, environment);
 		}
 		modelBatch.end();
 
@@ -397,6 +399,17 @@ public class MapManager {
 		return s;
 	}
 
+	public boolean collides(Vector3 position) {
+		for (Entity e : entities) {
+			if (e.getCollision().contains(position.x, position.z) && e.isSolid()) return true;
+		}
+		for (Building b : buildings) {
+			if (b.getCollision().contains(position)) return true;
+
+		}
+		return false;
+	}
+
 	private static class Splatter {
 
 		float alpha;
@@ -412,7 +425,9 @@ public class MapManager {
 	private static class Building {
 
 		Model model;
-		ModelInstance instance;
+		ModelInstance buildingModel;
+		OrientedBoundingBox collision;
+
 		float rotation;
 		Vector3 position;
 
@@ -421,11 +436,21 @@ public class MapManager {
 			this.rotation = rotation;
 			this.position = position;
 
-			instance = new ModelInstance(this.model, position);
-			instance.transform.scl(scale);
-			instance.transform.rotate(Vector3.Y, rotation);
+			//BUILD MODEL
+			buildingModel = new ModelInstance(this.model, position);
+			buildingModel.transform.scl(scale);
+			buildingModel.transform.rotate(Vector3.Y, rotation);
+
+			//BUILD COLLISION BOX
+			collision = new OrientedBoundingBox();
+			BoundingBox bounds = new BoundingBox();
+			model.calculateBoundingBox(bounds);
+			collision.set(bounds, buildingModel.transform);
 
 		}
+
+		public OrientedBoundingBox getCollision() { return collision; }
+
 
 	}
 }
