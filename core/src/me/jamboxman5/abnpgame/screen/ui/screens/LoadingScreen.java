@@ -22,6 +22,8 @@ import me.jamboxman5.abnpgame.util.Fonts;
 import me.jamboxman5.abnpgame.util.Settings;
 import me.jamboxman5.abnpgame.util.Sounds;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
+import me.jamboxman5.abnpgame.weapon.firearms.pistol.PistolDesertEagle;
+import me.jamboxman5.abnpgame.weapon.firearms.pistol.PistolMac10;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.PistolTec9;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleAK47;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM14;
@@ -172,6 +174,8 @@ public class LoadingScreen implements Screen {
         RifleM1Garand.loadSprites(game.getAssetManager());
         RifleM14.loadSprites(game.getAssetManager());
         Pistol1911.loadSprites(game.getAssetManager());
+        PistolMac10.loadSprites(game.getAssetManager());
+        PistolDesertEagle.loadSprites(game.getAssetManager());
         PistolTec9.loadSprites(game.getAssetManager());
         ShotgunWinchester12.loadSprites(game.getAssetManager());
         ShotgunAssault.loadSprites(game.getAssetManager());

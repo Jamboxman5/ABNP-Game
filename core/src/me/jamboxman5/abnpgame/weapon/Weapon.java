@@ -11,6 +11,8 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 import me.jamboxman5.abnpgame.entity.mob.player.Survivor;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.Pistol1911;
+import me.jamboxman5.abnpgame.weapon.firearms.pistol.PistolDesertEagle;
+import me.jamboxman5.abnpgame.weapon.firearms.pistol.PistolMac10;
 import me.jamboxman5.abnpgame.weapon.firearms.pistol.PistolTec9;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleAK47;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM14;
@@ -101,6 +103,10 @@ public abstract class Weapon {
 		switch(type) {
 		case M1911:
 			return new Pistol1911();
+		case DESERTEAGLE:
+			return new PistolDesertEagle();
+		case MAC10:
+			return new PistolMac10();
 		case M4A1:
 			return new RifleM4A1();
 		case AK47:
