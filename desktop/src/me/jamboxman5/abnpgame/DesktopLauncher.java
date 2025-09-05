@@ -19,6 +19,7 @@ public class DesktopLauncher {
 		Graphics.DisplayMode displayMode = Lwjgl3ApplicationConfiguration.getDisplayMode();
 		Vector2 displayRes = new Vector2(displayMode.width, displayMode.height);
 		if (displayRes.x == Settings.screenWidth && displayRes.y == Settings.screenHeight) config.setDecorated(false);
+		Settings.getAvailableResolutions(displayRes);
 		config.setBackBufferConfig(8, 8, 8, 8, 24, 8, 4);
 		config.setWindowedMode(Settings.screenWidth,Settings.screenHeight);
 		config.useVsync(true);

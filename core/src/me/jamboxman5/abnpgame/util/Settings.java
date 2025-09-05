@@ -21,13 +21,43 @@ public class Settings {
 
     public static float hudMargin = 20;
 
-    public static Array<Vector2> resolutions = new Array<>(new Vector2[]{
-            new Vector2(800, 600),
-            new Vector2(1280, 720),
-            new Vector2(1366, 768),
-            new Vector2(1920, 1080),
-            new Vector2(2560, 1440)
-    });
+    public static Array<Vector2> resolutions = getAllResolutions();
+
+    public static void getAvailableResolutions(Vector2 screenRes) {
+        Array<Vector2> allResolutions = getAllResolutions();
+        resolutions = new Array<>();
+        for (Vector2 res : allResolutions) {
+            if (res.x <= screenRes.x && res.y <= screenRes.y) resolutions.add(res);
+        }
+    }
+
+    private static Array<Vector2> getAllResolutions() {
+        return new Array<>(new Vector2[]{
+                new Vector2(1024, 768),
+                new Vector2(1280, 720),
+                new Vector2(1280, 800),
+                new Vector2(1280, 960),
+                new Vector2(1366, 768),
+                new Vector2(1440, 900),
+                new Vector2(1600, 900),
+                new Vector2(1600, 1200),
+                new Vector2(1680, 1050),
+                new Vector2(1920, 1080),
+                new Vector2(1920, 1200),
+                new Vector2(2560, 1080),
+                new Vector2(2560, 1440),
+                new Vector2(2560, 1600),
+                new Vector2(3200, 1800),
+                new Vector2(3280, 2160),
+                new Vector2(3440, 1440),
+                new Vector2(3840, 1080),
+                new Vector2(3840, 1600),
+                new Vector2(5120, 1440),
+                new Vector2(5120, 2160),
+                new Vector2(5120, 2880),
+                new Vector2(7680, 4320),
+        });
+    }
 
     public static Vector2 getResolution() {
         for (Vector2 res : resolutions) {
