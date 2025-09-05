@@ -242,9 +242,11 @@ public class EquipMenuScreen implements Screen, InputProcessor {
         float y = (float) (infoY + ((infoHeight/6.0) * 5.0));
 
         batch.begin();
+        float oldscale = selectedWeapon.getHudSprite().getScaleX();
         selectedWeapon.getHudSprite().setScale(.2f * Settings.guiScale * (Settings.screenWidth/2560f));
         selectedWeapon.getHudSprite().setCenter(x, y);
         selectedWeapon.getHudSprite().draw(batch);
+        selectedWeapon.getHudSprite().setScale(oldscale);
 
         Fonts.drawScaled(Fonts.SELECTIONFONT,
                 1f,
