@@ -71,6 +71,19 @@ public class Button {
         this.align = align;
     }
 
+    public void resize(int px) {
+        if (px % 2 == 1) {
+            if (px > 0) px -= 1;
+            else {
+                px += 1;
+            }
+        }
+        bounds.width += px;
+        bounds.height += px;
+        bounds.x -= (px/2f);
+        bounds.y -= (px/2f);
+    }
+
     public void draw(SpriteBatch batch, ShapeRenderer renderer, boolean active) {
 
         if (fill) {
