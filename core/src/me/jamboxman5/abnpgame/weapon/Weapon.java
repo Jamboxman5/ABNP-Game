@@ -19,6 +19,7 @@ import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM14;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM1Garand;
 import me.jamboxman5.abnpgame.weapon.firearms.rifle.RifleM4A1;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunAssault;
+import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunKSG12;
 import me.jamboxman5.abnpgame.weapon.firearms.shotgun.ShotgunWinchester12;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponMod;
 import me.jamboxman5.abnpgame.weapon.mods.WeaponModLoadout;
@@ -119,6 +120,8 @@ public abstract class Weapon {
 			return new ShotgunWinchester12();
 		case ASSAULTSHOTGUN:
 			return new ShotgunAssault();
+		case KSG12:
+			return new ShotgunKSG12();
 		case TEC9:
 			return new PistolTec9();
 		}
