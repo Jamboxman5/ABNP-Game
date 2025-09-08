@@ -70,12 +70,12 @@ public class Firearm extends Weapon {
 			OnlinePlayer p = (OnlinePlayer) shooter;
 			currentAmmo.shoot(p.getRotation() + offset,
 					this,
-					new Vector2(shootPos.x, shootPos.z), drawFirst);
+					shootPos, drawFirst);
 			return true;
 		}
 		currentAmmo.shoot(shooter.getAimAngle() + offset,
 						  this,
-				new Vector2(shootPos.x, shootPos.z), drawFirst);
+				shootPos, drawFirst);
 //		Bullet bullet = new Bullet(gp.getPlayer().getAdjustedRotation(),
 //				150, 
 //				gp.getPlayer().getAdjustedWorldX(), 

@@ -269,7 +269,6 @@ public class GameScreen implements Screen, InputProcessor {
             zoomIn();
         }
 
-        game.getMapManager().updateProjectiles();
         game.getMapManager().updateEntities(delta);
     }
 

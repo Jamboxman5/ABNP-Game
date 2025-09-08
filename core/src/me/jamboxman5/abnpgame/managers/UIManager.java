@@ -342,7 +342,7 @@ public class UIManager {
         }
 
         //
-        debugTXT = "Active Projectiles: " + game.getMapManager().projectiles.size;
+        debugTXT = "Active Projectiles: " + game.getMapManager().getProjectiles().size;
         y-=spacer;
         x = (int) Fonts.getXForRightAlignedText(Settings.screenWidth-30, debugTXT, Fonts.INFOFONT, .4f * Settings.guiScale);
 //        Utilities.drawStringShadow(g2, debugTXT, x, y);

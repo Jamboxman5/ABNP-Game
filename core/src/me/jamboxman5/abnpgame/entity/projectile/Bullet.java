@@ -2,10 +2,13 @@ package me.jamboxman5.abnpgame.entity.projectile;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.PerspectiveCamera;
+import com.badlogic.gdx.graphics.g3d.decals.DecalBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.Array;
 import me.jamboxman5.abnpgame.entity.Entity;
 import me.jamboxman5.abnpgame.entity.LivingEntity;
@@ -25,11 +28,11 @@ public class Bullet extends Projectile{
 	boolean drawFirst;
 	boolean drawn;
 
-	public Bullet(double rotation, int speed, Vector2 position, int range, Ammo fired, Firearm firedFrom, boolean drawFirst) {
-		this.rotation = rotation;
+	public Bullet(float rotation, int speed, Vector3 position, int range, Ammo fired, Firearm firedFrom, boolean drawFirst) {
+        super(ABNPGame.getInstance());
+        this.rotation = rotation;
 		this.speed = speed;
-		this.worldX = position.x;
-		this.worldY = position.y;
+		this.position = position;
 		this.range = range;
 		this.drawFirst = drawFirst;
 		this.firedFrom = firedFrom;
@@ -41,7 +44,7 @@ public class Bullet extends Projectile{
 	}
 
 	@Override
-	public void update() {
+	public void update(float delta) {
 		if (!drawn) return;
 		if (traveled > range) ABNPGame.getInstance().getMapManager().disposeProjectile(this);
 		int xComp = (int) (speed * Math.cos(rotation));
@@ -49,8 +52,8 @@ public class Bullet extends Projectile{
 
 		Vector2[] collisionPoints = new Vector2[15];
 
-		float x = (float) worldX;
-		float y = (float) worldY;
+		float x = position.x;
+		float y = position.z;
 		for (int i = 0; i < 15; i++) {
 			collisionPoints[i] = new Vector2(x, y);
 			x += xComp/15.0;
@@ -59,8 +62,9 @@ public class Bullet extends Projectile{
 
 		ABNPGame game = ABNPGame.getInstance();
 		Array<LivingEntity> ignoring = new Array<>();
-		for (Entity e : game.getMapManager().getEntities()) {
+		for (Entity e : game.getMapManager().getEntities().toArray(Entity.class)) {
 			if (!(e instanceof LivingEntity)) continue;
+			if (e == gp.getPlayer()) continue;
 			LivingEntity entity = (LivingEntity) e;
 			for (Vector2 point : collisionPoints) {
 				if (entity.getCollision().contains(point) && !ignoring.contains(entity, true)) {
@@ -81,13 +85,14 @@ public class Bullet extends Projectile{
 			}
 		}
 
-		worldX += xComp;
-		worldY += yComp;
+		position.x += xComp;
+		position.z += yComp;
 		traveled += speed;
 	}
 
+
 	@Override
-	public void draw(ShapeRenderer renderer) {
+	public void draw(DecalBatch batch, ShapeRenderer shape, PerspectiveCamera camera) {
 		if (!drawFirst) {
 			drawFirst = true;
 			return;
@@ -96,21 +101,21 @@ public class Bullet extends Projectile{
 
 		// Use the camera’s projection matrix
 
-		renderer.begin(ShapeRenderer.ShapeType.Filled);
+		shape.begin(ShapeRenderer.ShapeType.Filled);
 		Gdx.gl.glEnable(GL20.GL_DEPTH_TEST);
 		Gdx.gl.glDepthMask(true);
 		// Use world coordinates directly
-		float x = (float) worldX;
-		float y = (float) worldY;
+		float x = position.x;
+		float y = position.z;
 
 		float xComp = (float) (speed * Math.cos(rotation));
 		float yComp = (float) (speed * Math.sin(rotation));
 
-		renderer.setColor(1f, 1f, 180f / 255f, 1f);
-		renderer.line(x, y,
+		shape.setColor(1f, 1f, 180f / 255f, 1f);
+		shape.line(x, y,
 				x + xComp * 2f,   y + yComp * 2f);
 
-		renderer.end();
+		shape.end();
 	}
 
 

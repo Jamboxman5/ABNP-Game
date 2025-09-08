@@ -33,7 +33,7 @@ public abstract class Entity {
 
 //	private int spriteCounter = 0;
 //	private int spriteNumber = 1;
-	
+
 	public Entity(ABNPGame gamePanel) {
 		gp = gamePanel;
 		setDirection("forward");
@@ -140,6 +140,8 @@ public abstract class Entity {
 
 			shape.set(ShapeRenderer.ShapeType.Line);
 			shape.polygon(poly.getTransformedVertices()); // already in world coords
+			shape.end();
+		} else {
 			shape.end();
 		}
 	}

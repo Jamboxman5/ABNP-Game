@@ -3,6 +3,7 @@ package me.jamboxman5.abnpgame.entity.projectile.ammo;
 
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import me.jamboxman5.abnpgame.entity.projectile.Bullet;
 import me.jamboxman5.abnpgame.main.ABNPGame;
 import me.jamboxman5.abnpgame.weapon.firearms.Firearm;
@@ -32,19 +33,19 @@ public abstract class Ammo {
 		}
 	}
 
-	public void shoot(double rotation, Firearm weapon, Vector2 start, boolean drawFirst) {
+	public void shoot(double rotation, Firearm weapon, Vector3 start, boolean drawFirst) {
 		double[] rotations = new double[shots];
 
 		for (int i = 0; i < shots; i++) {
 
-			double spreadRandom = (Math.random()/15) * spread;
+			double spreadRandom = (Math.random()/15f) * spread;
 			if (Math.random() > .5) spreadRandom = -spreadRandom;
 			rotations[i] = rotation + spreadRandom;
 
 		}
 
 		for (int i = 0; i < rotations.length; i++) {
-			Bullet bullet = new Bullet(rotations[i],
+			Bullet bullet = new Bullet((float) rotations[i],
 					(int)(weapon.getFiringVelocity() * speedBoost),
 					start,
 					(int)(weapon.getRange() * rangeBoost), this, weapon, drawFirst);
