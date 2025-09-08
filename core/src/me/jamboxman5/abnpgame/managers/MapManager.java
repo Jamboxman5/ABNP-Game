@@ -40,12 +40,9 @@ public class MapManager {
 	
 	private final ABNPGame game;
 
-	public Array<Entity> survivors = new Array<>();
-	public Array<Entity> disposingSurvivors = new Array<>();
 	public Array<Entity> entities = new Array<>();
 	public Array<Entity> disposingEntities = new Array<>();
-	public Array<Projectile> projectiles = new Array<>();
-	public Array<Projectile> disposingProjectiles = new Array<>();
+
 	public Array<Splatter> splatters = new Array<>();
 	public Array<Map> maps = new Array<>();
 	public Array<Building> buildings = new Array<>();
@@ -192,7 +189,6 @@ public class MapManager {
 		modelBatch.end();
 
 		drawSplatters(batch);
-		drawProjectiles(shapes);
 		drawEntities(batch, shapes, camera);
 	}
 	
@@ -202,11 +198,6 @@ public class MapManager {
 			if (entities.contains(e, false)) entities.removeValue(e, false);
 		}
 		disposingEntities = new Array<>();
-		for (Entity e : survivors) { e.update(delta); }
-		for (Entity e : disposingSurvivors) {
-			if (survivors.contains(e, false)) survivors.removeValue(e, false);
-		}
-		disposingSurvivors = new Array<>();
 	}
 
 	public Zombie getNearestZombie(Vector3 from) {
@@ -232,28 +223,11 @@ public class MapManager {
 				e.drawCollision(shapes);
 			}
 		}
-		for (Entity e : survivors) {
-			e.draw(batch, shapes, camera);
-			if (game.debugMode) {
-				e.drawCollision(shapes);
-			}
-		}
 
 	}
-	
-	public void updateProjectiles() {
-		for (Projectile p : projectiles) { p.update(); }
-		for (Projectile p : disposingProjectiles) {
-			if (projectiles.contains(p, false)) projectiles.removeValue(p, false);
-		}
-		disposingEntities = new Array<>();
-	}
-	public void drawProjectiles(ShapeRenderer renderer) {
-		for (Projectile p : projectiles) { p.draw(renderer); }
-	}
-	
+
 	public void addProjectile(Projectile p) {
-		projectiles.add(p);
+		entities.add(p);
 	}
 	public void drawSplatters(DecalBatch batch) {
 		if (splatters.size == 0) return;
@@ -282,7 +256,7 @@ public class MapManager {
 
 
 	public void disposeProjectile(Projectile p) {
-		disposingProjectiles.add(p);
+		disposingEntities.add(p);
 	}
 
 	public Map getActiveMap() {	return activeMap; }
@@ -311,8 +285,6 @@ public class MapManager {
 
 	public void clearMap() {
 		entities = new Array<>();
-		projectiles = new Array<>();
-		survivors = new Array<>();
 	}
 
 	public void addSplatter(Vector3 position) {
@@ -323,10 +295,10 @@ public class MapManager {
 		splatter.lookAt(splatter.getPosition().cpy().add(0f, 1f, 0f), new Vector3((float) (Math.random() * 90), 0f, (float) (Math.random() * 90)));
 	}
 
-	public void addAlly(Ally sarge) { survivors.add(sarge);}
+	public void addAlly(Ally sarge) { entities.add(sarge);}
 
 	public void addOnlinePlayer(OnlinePlayer joining) {
-		survivors.add(joining);
+		entities.add(joining);
 	}
 
 	public void updateOnlinePlayerPosition(PacketMove packet) {
@@ -351,7 +323,7 @@ public class MapManager {
 	}
 
 	private OnlinePlayer findOnlinePlayer(String uuid) {
-		for (Entity s : survivors) {
+		for (Entity s : entities) {
 			if (s instanceof OnlinePlayer) {
 				OnlinePlayer player = (OnlinePlayer) s;
 				if (uuid.equals(player.getID())) {
@@ -364,13 +336,13 @@ public class MapManager {
 
 	public void removeOnlinePlayer(PacketDisconnect disconnect) {
 		OnlinePlayer p = findOnlinePlayer(disconnect.uuid);
-		disposingSurvivors.add(p);
+		disposingEntities.add(p);
 	}
 
 	public void removeOnlinePlayers() {
-		for (Entity s : survivors) {
+		for (Entity s : entities) {
 			if (s instanceof OnlinePlayer) {
-				disposingSurvivors.add(s);
+				disposingEntities.add(s);
 			}
 		}
 	}
@@ -385,8 +357,8 @@ public class MapManager {
 
 	public Array<Survivor> getSurvivors() {
 		Array<Survivor> s = new Array<>();
-		for (Entity e : survivors) {
-			if (e != game.getPlayer()) s.add((Survivor) e);
+		for (Entity e : entities) {
+			if (e instanceof Survivor) s.add((Survivor) e);
 		}
 		return s;
 	}
@@ -400,7 +372,8 @@ public class MapManager {
 	}
 
 	public boolean collides(Vector3 position) {
-		for (Entity e : entities) {
+		for (Entity e : entities.toArray(Entity.class)) {
+			if (e.getCollision() == null) continue;
 			if (e.getCollision().contains(position.x, position.z) && e.isSolid()) return true;
 		}
 		for (Building b : buildings) {
@@ -408,6 +381,12 @@ public class MapManager {
 
 		}
 		return false;
+	}
+
+	public Array<Projectile> getProjectiles() {
+		Array<Projectile> projectiles = new Array<>();
+		for (Entity e : entities) if (e instanceof Projectile) projectiles.add((Projectile) e);
+		return projectiles;
 	}
 
 	private static class Splatter {
