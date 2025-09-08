@@ -98,7 +98,7 @@ public class PistolDesertEagle extends Firearm {
 		}
 
 		// Sounds
-		assets.load("sound/sfx/weapon/pistol/Desert_Eagle_Shot.wav", Sound.class);
+		assets.load("sound/sfx/weapon/pistol/Pistol_Desert_Eagle_Shot.wav", Sound.class);
 		assets.load("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
 		assets.load("sound/sfx/weapon/pistol/Pistol_Shot_Silencer.wav", Sound.class);
 	}
@@ -141,7 +141,7 @@ public class PistolDesertEagle extends Firearm {
 		reloadAnimation = new Animation<>(0.06f, reloadFrames, Animation.PlayMode.NORMAL);
 
 
-		attackSound = assets.get("sound/sfx/weapon/pistol/Desert_Eagle_Shot.wav", Sound.class);
+		attackSound = assets.get("sound/sfx/weapon/pistol/Pistol_Desert_Eagle_Shot.wav", Sound.class);
 		reloadSound = assets.get("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
 		silencerSound = assets.get("sound/sfx/weapon/pistol/Pistol_Shot_Silencer.wav", Sound.class);
 	}

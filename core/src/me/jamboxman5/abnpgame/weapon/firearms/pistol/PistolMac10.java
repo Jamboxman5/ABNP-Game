@@ -98,7 +98,7 @@ public class PistolMac10 extends Firearm {
 		}
 
 		// Sounds
-		assets.load("sound/sfx/weapon/pistol/Mac-10_Shot.wav", Sound.class);
+		assets.load("sound/sfx/weapon/pistol/Pistol_Mac-10_Shot.wav", Sound.class);
 		assets.load("sound/sfx/weapon/pistol/Tec-9_Reload.wav", Sound.class);
 		assets.load("sound/sfx/weapon/pistol/Pistol_Shot_Silencer.wav", Sound.class);
 	}
@@ -141,7 +141,7 @@ public class PistolMac10 extends Firearm {
 		reloadAnimation = new Animation<>(0.06f, reloadFrames, Animation.PlayMode.NORMAL);
 
 
-		attackSound = assets.get("sound/sfx/weapon/pistol/Mac-10_Shot.wav", Sound.class);
+		attackSound = assets.get("sound/sfx/weapon/pistol/Pistol_Mac-10_Shot.wav", Sound.class);
 		reloadSound = assets.get("sound/sfx/weapon/pistol/Tec-9_Reload.wav", Sound.class);
 		silencerSound = assets.get("sound/sfx/weapon/pistol/Pistol_Shot_Silencer.wav", Sound.class);
 	}

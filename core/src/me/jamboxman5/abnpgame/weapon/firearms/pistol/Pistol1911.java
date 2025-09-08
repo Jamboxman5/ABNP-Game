@@ -97,7 +97,7 @@ public class Pistol1911 extends Firearm {
 		}
 
 		// Sounds
-		assets.load("sound/sfx/weapon/pistol/Pistol_Shot.wav", Sound.class);
+		assets.load("sound/sfx/weapon/pistol/Pistol_M1911_Shot.wav", Sound.class);
 		assets.load("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
 		assets.load("sound/sfx/weapon/pistol/Pistol_Shot_Silencer.wav", Sound.class);
 	}
@@ -140,7 +140,7 @@ public class Pistol1911 extends Firearm {
 		reloadAnimation = new Animation<>(0.06f, reloadFrames, Animation.PlayMode.NORMAL);
 
 
-		attackSound = assets.get("sound/sfx/weapon/pistol/Pistol_Shot.wav", Sound.class);
+		attackSound = assets.get("sound/sfx/weapon/pistol/Pistol_M1911_Shot.wav", Sound.class);
 		reloadSound = assets.get("sound/sfx/weapon/rifle/Assault_Rifle_Reload.wav", Sound.class);
 		silencerSound = assets.get("sound/sfx/weapon/pistol/Pistol_Shot_Silencer.wav", Sound.class);
 	}
