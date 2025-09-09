@@ -156,7 +156,7 @@ public class EquipMenuScreen implements Screen, InputProcessor {
             }
         }
 
-        for (Button button : buttons) {
+        for (Button button : scrollWeaponButtons) {
             if (button != backButton1) {
                 button.reposition((int) -scrolled, 0);
             }
