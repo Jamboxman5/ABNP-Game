@@ -13,12 +13,15 @@ import com.badlogic.gdx.graphics.g3d.loader.G3dModelLoader;
 import com.badlogic.gdx.graphics.g3d.utils.MeshPartBuilder;
 import com.badlogic.gdx.graphics.g3d.utils.ModelBuilder;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Matrix3;
+import com.badlogic.gdx.math.Matrix4;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.math.collision.BoundingBox;
 import com.badlogic.gdx.math.collision.OrientedBoundingBox;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.UBJsonReader;
+import jdk.javadoc.internal.doclint.Env;
 import me.jamboxman5.abnpgame.entity.Entity;
 import me.jamboxman5.abnpgame.entity.mob.npc.Ally;
 import me.jamboxman5.abnpgame.entity.mob.player.OnlinePlayer;
@@ -182,10 +185,11 @@ public class MapManager {
 		camera.update();
 
 		modelBatch.begin(camera);
-		modelBatch.render(groundInstance, environment);
 		for (Building b : buildings) {
-			modelBatch.render(b.buildingModel, environment);
+			b.draw(modelBatch, environment);
 		}
+
+		modelBatch.render(groundInstance);
 		modelBatch.end();
 
 		drawSplatters(batch);
@@ -405,6 +409,7 @@ public class MapManager {
 
 		Model model;
 		ModelInstance buildingModel;
+		ModelInstance debugFrame;
 		OrientedBoundingBox collision;
 
 		float rotation;
@@ -426,10 +431,80 @@ public class MapManager {
 			model.calculateBoundingBox(bounds);
 			collision.set(bounds, buildingModel.transform);
 
+			Model wireModel = generateWireframe();
+			debugFrame = new ModelInstance(wireModel);
+
+			Matrix4 obbTransform = buildObbTransform(model, buildingModel.transform);
+			debugFrame.transform.set(obbTransform);
+
 		}
 
 		public OrientedBoundingBox getCollision() { return collision; }
 
 
+		public void draw(ModelBatch modelBatch, Environment environment) {
+
+			modelBatch.render(buildingModel, environment);
+
+			if (ABNPGame.getInstance().debugMode) {
+				modelBatch.render(debugFrame);
+			}
+
+		}
+	}
+
+	public static Model generateWireframe() {
+		ModelBuilder mb = new ModelBuilder();
+		mb.begin();
+		MeshPartBuilder b = mb.part(
+				"wireframe", GL20.GL_LINES,
+				VertexAttributes.Usage.Position,
+				new Material(ColorAttribute.createDiffuse(Color.RED))
+		);
+
+		Vector3[] c = {
+				new Vector3(-0.5f, -0.5f, -0.5f),
+				new Vector3( 0.5f, -0.5f, -0.5f),
+				new Vector3( 0.5f, -0.5f,  0.5f),
+				new Vector3(-0.5f, -0.5f,  0.5f),
+				new Vector3(-0.5f,  0.5f, -0.5f),
+				new Vector3( 0.5f,  0.5f, -0.5f),
+				new Vector3( 0.5f,  0.5f,  0.5f),
+				new Vector3(-0.5f,  0.5f,  0.5f)
+		};
+
+		// bottom square
+		b.line(c[0], c[1]); b.line(c[1], c[2]); b.line(c[2], c[3]); b.line(c[3], c[0]);
+		// top square
+		b.line(c[4], c[5]); b.line(c[5], c[6]); b.line(c[6], c[7]); b.line(c[7], c[4]);
+		// verticals
+		b.line(c[0], c[4]); b.line(c[1], c[5]); b.line(c[2], c[6]); b.line(c[3], c[7]);
+
+		return mb.end();
+	}
+
+	public static Matrix4 buildObbTransform(Model model, Matrix4 instanceTransform) {
+		BoundingBox localBounds = new BoundingBox();
+		model.calculateBoundingBox(localBounds);
+
+		Vector3 localCenter = localBounds.getCenter(new Vector3());
+
+		// get full dimensions and then half extents
+		Vector3 dims = localBounds.getDimensions(new Vector3()); // full width/height/depth
+		Vector3 halfExtents = dims.scl(0.5f);
+
+		// S = scale(halfExtents * 2)
+		Matrix4 S = new Matrix4().setToScaling(halfExtents.x * 2f, halfExtents.y * 2f, halfExtents.z * 2f);
+
+		// T = translate(localCenter)
+		Matrix4 T = new Matrix4().setToTranslation(localCenter);
+
+		// tmp = T * S  (so scaling happens first on the unit cube, then translated in model space)
+		Matrix4 tmp = T.mul(S); // tmp = T * S
+
+		// final = instanceTransform * tmp  (apply model instance transform after local offset+scale)
+		Matrix4 finalTransform = new Matrix4(instanceTransform).mul(tmp);
+
+		return finalTransform;
 	}
 }
