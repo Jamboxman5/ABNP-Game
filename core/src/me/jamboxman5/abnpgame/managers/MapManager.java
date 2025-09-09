@@ -381,7 +381,8 @@ public class MapManager {
 			if (e.getCollision().contains(position.x, position.z) && e.isSolid()) return true;
 		}
 		for (Building b : buildings) {
-			if (b.getCollision().contains(position)) return true;
+			Vector3 translatedPos = new Vector3(position.x, position.y, -position.z);
+			if (b.getCollision().contains(translatedPos)) return true;
 
 		}
 		return false;

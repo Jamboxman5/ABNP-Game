@@ -64,7 +64,15 @@ public abstract class Mob extends LivingEntity {
 		// Move position
 		Vector3 newPosition = position.cpy().add(velocity);
 		MapManager map = ABNPGame.getInstance().getMapManager();
-		if (map.collides(newPosition)) {}
+		if (map.collides(newPosition)) {
+//			System.out.println("COLLISION DETECTED");
+			//x comp
+			Vector3 newPositionX = position.cpy().add(velocity.x, velocity.y, 0);
+			if (!map.collides(newPositionX)) position = newPositionX;
+			//z comp
+			Vector3 newPositionZ = position.cpy().add(0, velocity.y, velocity.z);
+			if (!map.collides(newPositionZ)) position = newPositionZ;
+		}
 		else {
 			position.add(velocity);
 		};
