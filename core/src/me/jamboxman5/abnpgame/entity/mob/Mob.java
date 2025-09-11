@@ -67,11 +67,22 @@ public abstract class Mob extends LivingEntity {
 		if (map.collides(newPosition)) {
 //			System.out.println("COLLISION DETECTED");
 			//x comp
-			Vector3 newPositionX = position.cpy().add(velocity.x, velocity.y, 0);
-			if (!map.collides(newPositionX)) position = newPositionX;
+
+			for (int i = 0; i < 10; i++) {
+				Vector3 newPositionX = position.cpy().add(0, velocity.y, velocity.z * ((10-i)/10f));
+				if (!map.collides(newPositionX)) {
+					position = newPositionX;
+					break;
+				}
+			}
 			//z comp
-			Vector3 newPositionZ = position.cpy().add(0, velocity.y, velocity.z);
-			if (!map.collides(newPositionZ)) position = newPositionZ;
+			for (int i = 0; i < 10; i++) {
+				Vector3 newPositionZ = position.cpy().add(velocity.x * ((10-i)/10f), velocity.y, 0);
+				if (!map.collides(newPositionZ)) {
+					position = newPositionZ;
+					break;
+				}
+			}
 		}
 		else {
 			position.add(velocity);
